@@ -2,8 +2,17 @@
 
 db_file="$BARTIB_FILE"
 
-_on(){	# starts a new activity
+_new(){	# starts a new activity
+
+	[ -z "$2" ] && echo "On must defind Description" && exit 7
+	[ -z "$3" ] && echo "On must defind project Name" && exit 7
+
 	bartib start -d "$2" -p "$3"
+}
+
+_on(){	# starts a new activity
+	[ -z "$2" ] && echo "Remember to use Number to On activity"
+	bartib continue "${2:-0}"
 }
 
 _off(){	# stops all currently running activities
