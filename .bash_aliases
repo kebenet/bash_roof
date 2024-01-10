@@ -35,8 +35,8 @@ alias ttrc='_ttrc_init'
 alias ttenv='env | grep -E "TT.*"'
 
 alias gs='git status'
-alias gca='git commit -a -m "$1"'
-alias gcm='git commit -m "$1"'
+alias gca='git commit -a -m'
+alias gcm='git commit -m'
 alias glog="git log --graph --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 # functions alias Area
