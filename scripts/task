@@ -30,6 +30,7 @@ _resume(){	# continues a previous activity
 _last(){	# displays the descriptions and projects of recent activities
 	bartib last
 }
+
 _ls(){	# list recent activities by Date | Name Date
 	bartib list --today
 }
