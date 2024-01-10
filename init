@@ -1,0 +1,225 @@
+#!/bin/bash
+#FILE! Initialize startup functions
+
+
+hpp(){	# display help info
+	item=$(which "$1")
+	rg '^[.]?[a-z]+.*\b\(' "${item}" -N \
+	| sd '\(\)\s*\{?' '' | column -t -s $'\t'
+}
+
+
+_check_file_size(){
+
+	maxsize=300000 # 300kb limit
+	filesize=$(stat -c%s "$1")
+
+	if (( filesize > maxsize )); then
+	    show_msg2 "ERROR" "File size is over the limit. 100kb"
+	    return 7
+	fi
+
+}
+
+
+sub(){
+
+	#TODO! create sub recent files
+	item=$(fdls | fuzzy one "${1}")
+
+	thefile=$(realpath "${item}")
+
+	if ! _check_file_size "$item"; then
+		return 7
+	fi
+
+
+	st open "$thefile"
+	
+	filepath=$(varm relative "$thefile")
+
+	append_recents 'sub_recent_files' "${filepath}"
+
+}
+
+
+copy(){	# copy file path to clip
+
+    if [ "$#" -eq 1 ]; then
+
+        show_msg2 "TTFCLIP" "name of fclip"
+        return
+    fi
+
+	item="$(fdls | fzy)"
+
+	_fclip "$item"
+
+	show_msg2 "$item" "Copy to CLIP"
+
+}
+
+paste(){	# paste file to clipboard
+
+	if [ ! -f "$TTFCLIP" ]; then
+		show_msg2 "FILE ERROR!" "not a file or empty"
+		return 7
+	fi
+
+	read -rp "Continue (y/n)? " answer; if [[ $answer = "" ]]; then return 7; fi
+
+	cp "$TTFCLIP" "$PWD"
+
+	base=$(basename "$TTFCLIP")
+	show_msg2 "${base}" "DONE Copy to"
+	show_msg2 "$PWD" "."
+}
+
+_fclip() {
+	#CODE! press . to empty fclip
+	
+	if [[ "$1" == "." ]]; then
+		unset TTFCLIP
+		show_msg2 "EMPTY" "the clipboard"
+		return
+	fi
+
+	#CODE! store the directory path to TT fclip
+    TTFCLIP=$(realpath "${1}")
+    export TTFCLIP
+
+}
+
+duplicate(){	# duplicate file
+
+	#CODE! check if not file. [-f file] [-d dir]
+	if [ ! -f "$1" ]; then
+		show_msg2 "FILE ERROR!" "file arg to duplicate"
+		return 7
+	fi
+
+	show_msg2 "DUPLICATE" "provide new Name"
+	#CODE! read single line user input
+	read -er -p "new name ${ARROW} " -i "${1}" new
+
+	cp "${1}" "${new}"
+	show_msg2 "DONE!" "duplicate : $new"
+
+}
+
+
+remove(){	# remove file
+
+	item="$(fdls | fzy)"
+
+	rm "$item"
+
+	show_msg2 "$item" "Remove..."
+
+}
+
+
+stop() {	# stop at current folder
+
+    if [ "$#" -eq 1 ]; then
+        export SAVEPWD="$PWD"
+        show_msg2 "DONE save" "${PWD}"
+    else
+        if [ -z "$SAVEPWD" ]; then
+            show_msg2 "press ." "to save current folder"
+        else
+            cd "$SAVEPWD" || return
+        fi
+    fi
+}
+
+
+creat_shortcut_to(){	# create shortcut to folder
+
+
+	file="$1"
+	dirname=$(find_all_folders)
+
+    if [ -f "${file}" ]; then
+
+		ln "${file}"  -f -t "${dirname}"
+		echo "Done create shortcut"
+		echo "At ❯ ${BOLD}${dirname}"
+    else
+
+		show_msg2 "ERROR!" "Argument must be file"
+        echo "$file"
+    fi
+}
+
+
+newsh(){
+
+    show_input "New name" ""
+    cp "$TT_BASH/scripts/template.sh" "$new"
+
+    chmod 700 "$new"
+    lsa
+
+}
+
+
+__new_file(){
+	dirname="$1"
+    read  -er -p "${BOLD}New Name ${ARROW} " -i "new" newname
+    cp "$TT_BASH/scripts/template.sh" "$dirname/$newname"
+    echo "$dirname/$newname"
+}
+
+hp(){
+
+	full='[-]\w,\s(--)\w+'
+	simple='^\s*[-]+\w*'
+
+	echo "-s for simple version"
+	# check if $1 is -s, cmd =simple else full
+	[[ $1 == "-s" ]] && regex="$simple" || regex="$full"
+
+    data=$("${@: -1}" --help)
+
+    item=$(echo "$data"  | rg --trim "$regex" | fzy -l 20 | rg "^[-]+" -r "")
+
+    finditem=$(echo "$data" | rg -n -F "${item}")
+
+    index="${finditem%%:*}"
+
+    sed -n "${index},/^\s*-/{p}" <<< "$data"
+
+}
+
+hp_opt(){
+
+	local full='[-]\w,\s(--)\w+'
+	local simple='^\s*[-]+\w*'
+
+	echo "-s for simple version"
+
+	[[ $1 == "-s" ]] && regex="$simple" || regex="$full"
+
+	"${@: -1}" --help | rg "$regex" --trim 
+}
+
+rename(){
+
+	item="$(fdls | fzy -e "${1}" | fzy -q "${1}")"
+	if [ ! "${item}" ]; then
+		show_msg2 "CANCEL" "Operation..."
+		return 7
+	fi
+
+    show_input_change "New name" "${item}"
+    mv "${item}" "$new"
+
+    lsa
+}
+
+history_clean(){
+	item="$HOME/.bash_history"
+	awk '!seen[$0]++ && length($0) >= 3 && NF' "$item" > "$TT_TEMP"
+	sort -k 1,1 "$TT_TEMP" > "$item"
+}
