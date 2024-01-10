@@ -4,7 +4,7 @@
 db_file="$TT_PATTERN/advertise.ttdb"
 
 advertise_index=1
-advertise_index=15
+advertise_index=22
 
 show_time(){
 
@@ -51,7 +51,7 @@ generate_help(){	# display help info
 	warp head "$name"
 }
 
-
+#TODO! List todo and Task ,IDea from .md
 if [ "$#" -gt 0 ]; then
 
 	"$1" "$@" 
