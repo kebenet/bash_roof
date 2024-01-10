@@ -33,13 +33,11 @@ sub(){
 		return 7
 	fi
 
-
 	st open "$thefile"
 	
 	filepath=$(varm relative "$item")
 
-	append_recents 'sub_recent_files' "${filepath}"
-
+	append_recents "${filepath}" 'sub_recent_files' 
 }
 
 

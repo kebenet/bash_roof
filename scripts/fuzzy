@@ -19,4 +19,19 @@ set -e
 
 }
 
+.one2(){	# Select one from PIPE input
+
+	data="$2"
+	item=$(cat | fzy -e "$data")
+
+	count=$(echo "$item" | tr ' ' '\n' | wc -l)
+
+	if [ "$count" -ne 0 ]; then
+		item="$(echo "$item" | fzy -q "$data")"
+	fi
+
+	echo "$item"
+
+}
+
 ".$1" "$@"
