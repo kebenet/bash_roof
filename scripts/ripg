@@ -1,0 +1,37 @@
+#!/bin/bash
+#FILE! ripgrep commands
+
+
+. $TT_BASH/alias_cmd
+
+
+.ls(){
+
+	item="$(list_var 'RG_Regexs' | fzy)"
+	echo ${item} | awk -F':=>' '{print $2}'
+
+}
+
+
+.open(){
+
+	item="$(get_var_file 'RG_list')"
+	st open "$item"
+
+}
+
+
+.regex(){
+
+	item="$(get_var_file 'RG_Regexs')"
+	st open "$item"
+
+}
+
+
+.run(){
+	true
+}
+
+
+".$1" "$@"

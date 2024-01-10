@@ -1,0 +1,116 @@
+#!/bin/bash
+#FILE! Alias for most use cmd
+
+
+_ttrc_init(){
+
+	alias_file="$TT_BASH/dynamic_aliases"
+
+	if [ -f '.ttrc' ]; then
+		{
+			echo "# $PWD"
+			cat '.ttrc' 
+		} > "$alias_file"
+		. "$alias_file"
+
+	else
+		_ttrc_clear "$alias_file"
+	fi
+
+}
+
+
+_ttrc_clear(){	# remove all ttrc definitions
+
+	alias_file="$TT_BASH/dynamic_aliases"
+
+	if [ -s "$alias_file" ]; then
+
+		while read -r item; do
+		    unset "$item"
+		done < <(rg -o '^export \w+|^function \w+' "$alias_file" | cut -d ' ' -f2)
+
+		while read -r item; do
+			unalias "$item"; 
+		done < <(rg '^alias \w+' -o "$alias_file"| cut -d ' ' -f2)
+
+		> "$alias_file"
+	fi
+
+
+}
+
+
+fzy_select_one(){
+
+	item=$(cat | fzy -e "${1}")
+
+	count=$(echo "$item" | tr ' ' '\n' | wc -l)
+
+	if [ "$count" -gt 1 ]; then
+
+		item=$(echo "$item" | fzy -q "${1}")
+		[ $? -ne 0 ] && show_msg2 "CANCEL" "Operation..." && exit 7
+
+	fi
+
+	echo "$item"
+
+}
+
+
+
+set_var(){
+
+	if [ "${1}" ]; then
+		echo "${2}" > "${TT_PATTERN}/${1}.ttvar"
+	fi
+
+}
+
+
+get_var_file(){
+	echo "${TT_PATTERN}/${1}.ttvar"
+}
+
+
+set_recents(){
+	append_head "${2}" "${TT_PATTERN}/${1}.ttvar"
+}
+
+
+append_head(){
+	{
+		echo "$1"
+		cat "${2}"
+	} > ${TT_TEMP}
+
+	cat "${TT_TEMP}" | awk '!seen[$0]++ && NF' > "${2}"
+}
+
+
+append_clean(){	
+	{
+		cat "${2}"
+		echo "$1"
+	} > ${TT_TEMP}
+	
+	cat "${TT_TEMP}" | awk '!seen[$0]++ && NF' > "${2}"
+}
+
+append_recents(){
+	echo "$1" >> "${TT_PATTERN}/${2}.ttvar"
+}
+
+get_var(){
+	read -r input < "${TT_PATTERN}/${1}.ttvar"; echo "$input"
+}
+
+list_var(){
+
+	if [[ $1 == "-n" ]]; then
+		rg '^' -n "${TT_PATTERN}/${2}.ttvar"
+	else
+		cat "${TT_PATTERN}/${1}.ttvar"
+	fi
+}

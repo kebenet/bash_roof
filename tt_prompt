@@ -1,0 +1,76 @@
+#!/bin/bash
+#FILE! prompt area
+
+# ❯ ⬢ 
+
+right_prompt() {
+
+	project="$(get_var 'PWD_PROJECT')"
+	pitem=$(basename "${project}")
+
+	view="$(get_var_file 'subl_active_project')"
+	item=$(awk -F'/' '{print $(NF)}' "${view}")
+
+	item="($item)"
+	# Calculate the width of the terminal:
+	local term_size=$(tput cols)
+	local all=$(( ${#item} + ${#pitem} ))
+	local start_col=$((term_size - all - 6))
+
+	printf "%s%${start_col}s "
+	printf "${BWHITE}\ue0b6${BG_WHITE}${BYELLOW} ${pitem} ${END}${BWHITE}\uE0B0 ${BWHITE}${item}${END}"
+
+}
+
+__track_pwd() {
+	# Get the current directory
+	last_pwd=$(get_var 'LastPWD')
+	current_dir="$PWD"
+
+	#check if last and current is same
+	[[ "$last_pwd" == "$current_dir" ]] && return
+
+	# Record the current directory in a file
+	set_recents 'LastPWD' "$current_dir"
+
+}
+
+__cd_last_PWD(){
+
+	ifile=$(get_var_file 'LastPWD')
+	dir=$(sed -n '2p' "$ifile")
+	cd "$dir"
+	sed -i '1d' "$ifile"
+}
+
+#CODE! set on off show PWD
+_ps1one(){
+	ONEPS1="${WHITE}⬢ ${MAGENTA}$(basename $PWD)${END}"
+}
+
+
+__last_time=$(get_var 'Timer')
+[ ! "${__last_time}" ] && __last_time=$(date +%s)
+
+
+_run_ads(){
+
+	current_time=$(date +%s)
+	time_diff=$((current_time - __last_time))
+	
+	hour=$((60 * 15))
+
+	if [[ $time_diff -ge $hour ]]; then
+
+		advertise
+		__last_time="$(date +%s)"
+		set_var 'Timer' "$__last_time"
+
+	fi
+}
+
+
+# PROMPT_COMMAND="right_prompt;_ps1one; $PROMPT_COMMAND"
+PROMPT_COMMAND="_run_ads;$PROMPT_COMMAND"
+PROMPT_COMMAND="__track_pwd;$PROMPT_COMMAND"
+

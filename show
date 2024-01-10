@@ -1,0 +1,41 @@
+#!/bin/bash
+#FILE! show messaging echo
+
+show_input(){
+  read  -erp "${BOLD}${1}${ARROW} " -i "${2}" new
+  echo "$new"
+}
+
+_done_msg(){
+  echoe "${BRED}'DONE'${END} save Operation at :"
+  echoe "${ARROW} ${Tt_File_Types}"
+}
+
+_error_key(){
+  echoe "${BRED}'Error:'${END} must provide ${BRED}KEY${END}"
+  echoe "${ARROW} ${Tt_File_Types}"
+}
+
+show_confirm() {
+
+  read -p "Confirmation: (y/n) ❯" confirm
+  if [ "$confirm" = "y" ]; then
+    "$@"
+  else
+    echo "User canceled the Operations..."
+  fi
+}
+
+show_msg2(){
+  echo -e "${BMAGENTA}${1}${END} ${BOLD}${2}${END}"
+}
+
+show_error(){
+ #CODE! show msg as error output
+  echo -e "${BMAGENTA}${1}${END} ${BOLD}${2}${END}" >&2
+}
+
+export -f show_confirm
+export -f show_error
+export -f show_msg2
+export -f show_input

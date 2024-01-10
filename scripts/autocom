@@ -1,0 +1,38 @@
+#!/bin/bash
+#FILE! Completion generator 
+
+completion_file="${TT_PATTERN}/completions.ttpath"
+shared="${TT_TEMP}"
+
+#CODE! Generate completion to ${TT_PATTERN}/completions.ttpath
+.gen(){
+
+	_find_export "$TT_BASH/VARIABLE" > "$completion_file"
+
+	# cd "$TT_PATTERN"
+	# fd . -H -t f -d 1 -E '*.pattern'  >> $completion_file 
+	# cat $completion_file
+
+}
+
+.item(){
+
+	dirs="${PWD/$TT_PATTERN/$TT_PATTERN}"
+	cd "$TT_PATTERN"
+	fd . -H -t f -d 1 -E '*.pattern'
+
+}
+
+_find_export(){
+
+	regex='^export (TT|XDG|HOME)'
+	cat "$1" | rg "$regex" |cut -d " " -f 2 | cut -d= -f 1
+
+}
+
+.env(){
+	regex='^export (TT|XDG|HOME|PATH)'
+	cat "$Tt_VARIABLE" | rg "$regex" |cut -d " " -f 2
+}
+
+".$1" "$@"

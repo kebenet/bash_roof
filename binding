@@ -1,0 +1,32 @@
+#!/bin/sh
+
+
+
+__cmd_complete(){
+	
+	old="${READLINE_LINE}"
+
+	all=$(
+	{
+	    declare -F | awk '{print $3}' | grep -v '^__'
+	    alias | awk -F'[ =]' '{print $2}'
+	    export | cut -d "=" -f 1 | awk '{print "$"$3}'
+	} | sort -u | fzy
+	)
+
+	# _append $all
+	READLINE_LINE="${old}${all}"
+	READLINE_POINT=${#READLINE_LINE}
+	
+}
+
+
+__last() {
+
+	item=$(history  1 | cut -c 8- \
+		| warp head '$('|warp tail ')')
+    READLINE_LINE="${READLINE_LINE}${item}"
+	READLINE_POINT=0
+	# READLINE_POINT=${#READLINE_LINE}
+
+}

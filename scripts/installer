@@ -1,0 +1,51 @@
+#!/bin/bash
+set -e
+
+.untar(){   # Untar the tar files
+    item=`fd '.*tar.*?' -t f -d 2 | fzy`
+
+    [ $? -ne 0 ] && show_msg2 "CANCEL" "Operation..." && exit 7
+    [ -z "$item" ] && show_msg2 "ERROR" "Empty" && exit 7
+
+    case "$item" in
+
+        *.tar) tar -xvf "$item" ;;
+        *.tar.gz) tar -xzf "$item" ;;
+        *.tar.bz2) tar -xjf "$item" ;;
+        *.tar.xz) tar -xJf "$item" ;;
+        *.tar.lz) tar --lzip -xf "$item" ;;
+        *.tar.zst) tar --zstd -xf "$item" ;;
+        *.tar.lz4) tar --lz4 -xf "$item" ;;
+        *) echo "Unsupported file extension: $item" ;;
+
+    esac
+
+}
+
+
+.move(){    # move the Latest files to HOME directories
+
+    cd "$MYFILES"
+    item=$(fd . -t f -d 1 -x ls -la --time-style=long-iso |
+    cut -d ' ' -f7- | sort | tail -n 1)
+
+    item=$(echo "$item" | cut -d' ' -f2 )
+    echo "item"
+
+    . $TT_BASH/show
+    show_confirm
+
+    [ $? -ne 0 ] && exit 7
+
+    mv "$item" ~
+
+}
+
+
+# _show_confirm(){
+#   read -p "Confirmation: (y/n) ❯" confirm
+#   [ "$confirm" = "y" ] && show_msg2 "Cancel" 'Operation...' && exit 7
+# }
+
+
+".$1" "$@"

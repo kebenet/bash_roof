@@ -1,0 +1,16 @@
+#!/bin/bash
+export XDG_CONFIG_HOME="~/.config"
+export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship/starship.toml"
+export TT_SUBLIME="${HOME}/.config/sublime-text"
+export TT_PACKAGES="${TT_SUBLIME}/Packages"
+export TT_WORKSPACE="${HOME}/workspace"
+export TT_BASH="${TT_WORKSPACE}/bash"
+export TT_CONFIG="${TT_WORKSPACE}/TtConfig"
+export TT_Editor="${TT_PACKAGES}/TtEditor"
+export TT_SUBLIME_CMD="${TT_Editor}/sublime_cmd"
+export TT_PATTERN="${TT_WORKSPACE}/TtPattern"
+export TT_TEMP="/dev/shm/Tt_temp_file.tmp"
+export PATH="${TT_WORKSPACE}/bash/scripts:$PATH"
+export Tt_VARIABLE="${TT_BASH}/VARIABLE"
+export TT_Completion="${TT_BASH}/bash.sublime-completions"
+

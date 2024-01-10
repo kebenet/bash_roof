@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+.one(){	# Select one from PIPE input
+
+	data="$2"
+	item=$(cat | fzy -e "$data")
+
+	count=$(echo "$item" | tr ' ' '\n' | wc -l)
+
+	if [ "$count" -lt 3 ]; then
+
+		item="$(echo "$item" | fzy -e "$data" | tail -n 1)"
+	else
+		item="$(echo "$item" | fzy -q "$data")"
+	fi
+
+	echo "$item"
+
+}
+
+".$1" "$@"

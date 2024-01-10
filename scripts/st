@@ -1,0 +1,168 @@
+#!/bin/sh
+#FILE! Run Sublime command
+
+cmdfile="$TT_Editor/_bashrun.py"
+def="fire."
+
+fold(){
+	cmd="${def}fold_all()"
+	_fire_cmd "${cmd}"
+}
+
+close_all(){
+	cmd="${def}close_all()"
+	_fire_cmd "${cmd}"
+}
+
+sidebar(){
+	cmd="${def}toogle_side_bar()"
+	_fire_cmd "${cmd}"
+}
+
+send_ls(){
+
+	cmd="${def}send_ls()"
+	_fire_cmd "${cmd}"
+
+	cat '/home/teraboteraba/ipcvar'
+	
+}
+
+send_set(){
+
+	shift
+	cmd="${def}send_set('${1}', '${2}')"
+	_fire_cmd "${cmd}"
+
+}
+
+send_get(){
+
+	shift
+
+	cmd="${def}send_get('${1}')"
+
+	_fire_cmd "${cmd}"
+
+	item="$(cat '/home/teraboteraba/ipcvar')"
+	echo "${item}"
+	
+}
+
+get_symbol(){
+	shift
+	cat "${TT_PATTERN}/subl_active_symbol.ttvar"
+}
+
+set_active_symbol(){
+	shift
+	cmd="${def}set_active_symbol()"
+	_fire_cmd "${cmd}"
+}
+
+insert(){
+
+	shift
+	cmd="${def}insert('${1}')"
+	_fire_cmd "${cmd}"
+
+}
+
+open_line(){
+	shift
+	
+	cmd="${def}open_line('${1}', ${2})"
+	_fire_cmd "${cmd}"
+}
+
+get_line(){
+	shift
+	
+	cmd="${def}get_line()"
+	_fire_cmd "${cmd}"
+	# sleep 0.1
+}
+
+line(){
+	shift
+	cmd="${def}goto_line(${1})"
+	_fire_cmd "${cmd}"
+}
+
+open(){
+	shift
+	cmd="${def}open_file('${1}')"
+	_fire_cmd "${cmd}"
+}
+
+reload(){
+	shift
+	cmd="${def}reload('${1}')"
+	_fire_cmd "${cmd}"
+}
+
+
+open_dir(){
+
+	item="$(realpath "${PWD}")"
+
+	cmd="${def}open_dir('${item}')"
+	_fire_cmd "${cmd}"
+}
+
+__project_action() {
+
+
+  isnew="$2"
+  item=$(fd . -t f -H -d 1 -e "sublime-project" "$TT_CONFIG" | 
+  		awk -F'/' '{print $(NF)}' | fuzzy one "$1")
+
+  result="$TT_CONFIG/$item"
+  cmd="${def}open_project('$result', ${isnew})"
+
+  _fire_cmd "${cmd}"
+  echo "$result"
+
+}
+
+change_project() {
+
+  item=$(__project_action "$2" "False")
+  rg 'path' -m 1 "$item" | cut -d: -f2 | tr -d '"'
+  # cd $result
+
+}
+
+open_project() {
+
+  __project_action "$2" "True"
+}
+
+close_project() {
+
+	cmd="${def}close_project()"
+	_fire_cmd "${cmd}"
+}
+
+open_session(){
+	shift
+	# cmd="${def}open_session(${@})"
+	cmd="${def}open_session(${*})"
+	_fire_cmd "${cmd}"
+}
+
+_fire_cmd(){
+	sed -i '7c'"${1}" "${cmdfile}"
+}
+
+
+#CODE! when using as pipe 
+if [ ! -t 0 ]; then
+	item="$(cat)"
+	echo "$item"
+	insert "0" "${item}"
+fi
+
+"$1" "$@"
+
+

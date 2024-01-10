@@ -1,0 +1,151 @@
+#!/bin/bash
+#FILE! JUMP operations
+
+
+cdp(){
+
+	var_name="PWD_PROJECT"
+
+	if [ "$#" -gt 0 ]; then
+
+		if [[ "$1" == "." ]]; then
+		    get_var "$var_name"
+		    
+		elif [[ "$1" == "ls" ]]; then
+			list_var "$var_name"
+		    
+		elif [[ "$1" == "cd" ]]; then
+			
+			#CODE! select var to top as change pwdp
+			item=$(list_var "$var_name" | fzy)
+			cd "${item}"
+			set_recents "$var_name" "${item}"
+		fi
+	else
+		set_recents "$var_name" "${PWD}"
+	    show_msg2 "DONE add CDP: " "${PWD}"
+	    show_msg2 "Aviable CMD: " "ls cd cdir ."
+	fi
+	
+}
+
+
+aa(){
+	
+	namedir="Toggle_dirs"
+	nameidx="Toggle_index"
+
+	Toggle_index=$(get_var "$nameidx" '0')
+	Toggle_dirs=$(get_var "$namedir" ' ')
+
+
+	if [[ $# -eq 0 ]]; then
+
+		if [ -n "${Toggle_dirs}" ]; then
+
+			Toggle_index=$((Toggle_index + 1))
+
+			item=$(echo "$Toggle_dirs" | cut -d: -f${Toggle_index})
+			item=$(eval "echo \"$item\"")
+			cd "$item"
+			len=$(echo "${Toggle_dirs}" |grep -o ":"| wc -l)
+
+			Toggle_index=$((Toggle_index % ${len}))
+
+			set_var "$nameidx" "${Toggle_index}"
+			
+		fi
+
+	elif [ "$#" -ge 1 ]; then
+
+		if [ "$1" = "." ]; then
+			# ls recent and current 
+			list_var "$namedir"
+			return
+		else
+			# set dir to toggles
+			Toggle_dirs=$(expand_name "$@")
+			Toggle_index=0
+
+			set_recents "$namedir" "$Toggle_dirs"
+			set_var "$nameidx" "$Toggle_index"
+
+			echo "Directories: $Toggle_dirs"
+		fi
+
+	else
+		echo "Invalid argument. toogle jump"
+	fi
+
+}
+
+expand_name(){
+	
+	jumpdir="${TT_PATTERN}/jump_folders.ttpath"
+
+	data=""
+	for item in "$@"
+	do
+		name=$(cat "$jumpdir" | fzy -e "$item" | head -n 1) # get full path
+		data+="${name}:"
+	done
+	echo "$data"
+
+}
+
+
+j(){
+
+	if [ "$#" -eq 0 ]; then
+	    show_msg2 "EMPTY Arg" "provide string to search.."
+	    return 7
+	fi
+
+	# support multiple words?
+
+	jumpfile="${TT_PATTERN}/fd_exclude_folders.pattern"
+
+	#CODE! the exclude folder make fd more fast. less travel ops
+	exclude="$(cat "$jumpfile" | tr '\n' ' ')"
+
+	list=$(eval "fd ${1} -t d -H "$exclude" ~")
+
+	items="$(echo ${list} | tr ' ' '\n' | fzy -e ${1})"
+	
+
+	count="$(echo "$items" | tr ' ' '\n'| wc -l)"
+
+	# echo "$count"
+
+	if [ "$count" -eq 1 ]; then
+    	cd "$items"
+	else
+    	# echo  "$items"
+	    cd "$(echo ${items} |tr ' ' '\n' | fzy -q ${1})"
+	fi
+
+	ls
+
+}
+
+
+zz(){
+
+	jumpdir="${TT_PATTERN}/jump_folders.ttpath"
+
+	if [[ "$1" =~ ^[0-9]+$ ]]; then
+    	item=$(sed -n "${1}p" "$jumpdir")
+    	echo ${BOLD}${item}${END}
+    	item=$(eval "echo \"$item\"")
+    	cd "$item"
+    	ls
+	else
+	    items=$(cat "$jumpdir" | rargs basename {} | rg '^' -n)
+	    printf "%s\n" "${items[@]}" | pr -t -3
+	fi
+	
+}
+
+
+
+

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+language="bash"
+
+
+.fix() {
+
+	multiline_var=$(cat << EOF
+	can you help me to fix my bash script as shellcheck?
+	finds bugs and fixed as shellcheck 
+	Context is provided below within #contextstart! and #contextend!
+
+	#contextstart!
+	$(cat "$2")
+	#contextend!
+EOF
+	)
+	echo "$multiline_var" | bito 
+}
+
+.ask() {
+	shift
+	echo "$@" | bito
+}
+
+
+".$1" "$@"
+

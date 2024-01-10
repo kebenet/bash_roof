@@ -1,0 +1,52 @@
+#!/bin/bash
+
+varname="WORK_QUE"
+
+#CODE! change PWD varname 
+if [ "$#" -gt 0 ]; then
+
+	if [[ "$1" == "." ]]; then
+		get_var "$varname"
+	    
+	elif [[ "$1" == "ls" ]]; then
+		list_var "$varname"
+
+	elif [[ "$1" == "done" ]]; then
+		show_msg2 "DONE delete Que: " "DONE append to done work que"
+	    
+	elif [[ "$1" == "rm" ]]; then
+		
+		#CODE! select index then delete using sed
+		item=$(list_var "$varname" | fzy)
+		varpath="$(get_var_file ${varname})"
+
+		index=$(echo "${item}" | cut -f 1)
+
+		if [ ! "${item}" ]; then
+			echo "User Cancel operation.."
+			return 7
+		fi
+
+		sed -i "${index}d" "${varpath}"
+
+	elif [[ "$1" == "sub" ]]; then
+		
+		#CODE! select var to top as change pwdp
+		item=$(list_var "$varname" | fzy )
+
+		echo "$item" | rargs -d: st open_line "{1}" "{3}"
+
+	fi
+else
+	# active file, symbol and line
+
+	st set_active_symbol
+	sleep 0.2
+	symbol="$(get_var 'subl_active_symbol')"
+
+	set_recents "$varname" "${symbol}"
+
+	show_msg2 "DONE add to Que: " "$(get_var "$varname")"
+    show_msg2 "Aviable CMD: " "sub ls rm ."
+fi
+

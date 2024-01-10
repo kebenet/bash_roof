@@ -1,0 +1,144 @@
+#!/bin/bash
+
+
+# save into scripts db
+dbfile="$TT_PATTERN/scripts.ttdb"
+play_file="$TT_BASH/scripts/_play_runner"
+saperator="#::=>PLAY!"
+PLAY_TITLE="#TITLE!"
+
+
+.new() {	# create new PLAY item [-s] for save
+
+	[ ${!#} == '-s' ] && .save
+
+	{
+		echo "#!/bin/bash"
+		echo "${PLAY_TITLE} "
+		echo ""
+		echo "echo hello TERABO"
+	} > "$play_file"
+
+	st reload "$play_file"
+
+}
+
+
+.save() {	# save PLAY item into db with title
+	local title
+
+	if [ -z "$1" ]; then
+		# get title at line 2 in Play file
+		_title=$(awk 'NR==2 {print}' "$play_file")
+
+		if [[ $_title == $PLAY_TITLE* ]]; then
+
+			title=`echo $_title | cut -d' ' -f2-`
+		else
+			read -rp "SAVE last Title ❯ " title
+		fi
+	else
+		title="$1"
+	fi
+
+	newdate=$(date +%Y-%m-%d)
+	{
+		echo "${saperator}$title:$newdate"
+		awk 'NR>1 {print}' "$play_file"
+	} >> "$dbfile"
+
+}
+
+
+.search() {
+
+	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
+	| cut -d: -f 1,2| fzy)
+	_get_code "$item"
+}
+
+
+.select() {	# search & select Play item
+	{
+		echo "#!/bin/bash"
+		.search 
+	} > "$play_file"
+	st reload "$play_file"
+}
+
+
+.last() {	# search & view LAST Play item
+
+	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
+	| cut -d: -f 1,2| tail -n 1)
+	{
+		echo "#!/bin/bash"
+		_get_code "$item"
+	} > "$play_file"
+
+	st reload "$play_file"
+
+}
+
+.update() {	# Update Last Play item
+
+	index=$(rg "^${saperator}" -n  "$dbfile" | 
+		sd "${saperator}" ""|tail -n 1| cut -d: -f1)
+
+	range delete_tail $index "$dbfile"
+	.save
+
+}
+
+.cat() {	# search & view Play item at terminal
+	.search
+}
+
+.ls() {	# list all Play items
+	rg "^${saperator}" "$dbfile"| sd ".*${saperator}" "" \
+	|awk -F ':' '{ printf "%s\t%s\n", $1, $2 }'
+}
+
+
+_run() {
+	shift
+	_play_runner "$@"
+}
+
+
+.db() {	# Open Play Database file
+	st open "$dbfile"
+}
+
+
+.sub() {	# Open Play file
+	st open "$play_file"
+}
+
+
+# ================================================= Private functions
+
+
+_get_code() {
+
+	item="$1"
+	[ -z "$item" ] && echo "Canceling..." && exit 7
+	
+	line=$(echo "$item" | cut -d: -f1)
+	line=$((line+1))
+
+	range until $line "^$saperator" "$dbfile"
+}
+
+
+if [ "$#" -gt 0 ]; then
+	cmd="$1"
+
+	if rg -q "^[.]$cmd" "$0"; then
+		".$cmd" "$@" 
+	else
+ 		_play_runner "$@"
+ 	fi
+else
+	_play_runner "$@"
+fi

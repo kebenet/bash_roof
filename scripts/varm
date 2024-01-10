@@ -1,0 +1,83 @@
+#!/bin/bash
+#FILE! Persistent Bash variables Manager
+set -e
+
+var_file="$TT_BASH/VARIABLE"
+temp_file="$TT_TEMP"
+
+.dir(){	# Append current dir to VARIABLE as Env Path
+
+	key=$(basename "$PWD" | tr '[:lower:]' '[:upper:]')
+	item="$(.relative . $PWD | warp double)"
+
+	echo "${key}=${item}" # >> "${var_file}"
+	# _make_uniq
+
+}
+
+.sub(){	# Open VARIABLE File
+	st open "$var_file"
+}
+
+.file(){	# Append Selected file to VARIABLE as Env Path
+
+	key=$(basename "$2" |warp str . |  warp upper)
+	item=$(.relative . "$2" | warp double)
+	echo "${key}=${item}"
+
+}
+
+
+.relative(){	# get relative path by env variables like realpath
+
+	local thedir
+	arg="$2"
+	real=$(realpath "$arg")
+
+	if [ -f "${arg}" ]; then
+		thedir=$(dirname "$real")
+	elif [ -d "${arg}" ]; then
+		thedir="$real"
+	fi
+
+	item=$(_loop_parent "$thedir" | warp head '$')
+	itempath=$(eval echo "${item}")
+	echo "${real/$itempath/$item}"
+
+}
+
+
+_loop_parent(){
+
+	local dirs="${1}"
+
+	while [ "$dirs" != "/" ]; do
+		item="$(_find_env $dirs)"
+		if [ "${item}" ]; then
+			break
+		fi
+	    dirs=$(dirname "$dirs")
+	done
+
+	if [ ! "${item}" ]; then
+		item="HOME=/home/"
+	fi
+	echo "${item}"
+
+}
+
+
+_find_env(){
+	regex='^(TT|Tt|XDG|HOME)'
+	export | cut -d " " -f 3| rg "${regex}" | 
+	rg '"'$1'"' -F | cut -d= -f 1
+}
+
+_make_uniq(){
+	cat "${var_file}" | awk -F '=' '!seen[$0]++ && NF' > "$temp_file"
+	mv "${temp_file}" "${var_file}"
+}
+
+
+
+".$1" "$@"

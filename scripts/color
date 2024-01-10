@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Function to print text in specified color using ANSI escape codes
+clr() {
+    local color
+    local text
+    local result=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --white)
+                color="\033[97m"  # White
+                shift
+                text="$1"
+                ;;
+            --green)
+                color="\033[32m"  # Green
+                shift
+                text="$1"
+                ;;
+            --bold)
+                color="\033[1m"  # Bold
+                shift
+                text="$1"
+                ;;
+            *)
+                shift
+                ;;
+        esac
+
+        if [ -n "$color" ]; then
+            result+="$(echo -e "${color}${text}\033[0m")\n"
+        fi
+        color=""
+        shift
+    done
+
+    echo -e "$result"
+}
+
+# Example usage
+clr --white 'this white text' --green 'my text is green' --bold 'Im the bold'

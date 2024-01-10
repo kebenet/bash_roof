@@ -1,0 +1,24 @@
+#!/bin/sh
+
+
+show_input(){
+  read  -erp "${BOLD}${2}${ARROW} " -i "$3" new
+  echo "$new"
+}
+
+show_confirm() {
+
+  read -p "Confirmation: (y/n) ❯" confirm
+  if [ "$confirm" = "y" ]; then
+    exit 0
+  else
+    echo "User canceled the Operations..."
+    exit 7
+  fi
+}
+
+show_msg(){
+  echo -e "${BMAGENTA}${2}${END} ${BOLD}${3}${END}"
+}
+
+

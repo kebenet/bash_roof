@@ -1,0 +1,92 @@
+#!/bin/bash
+# Jump with toogle behaviour
+
+_jumpfile="${TT_PATTERN}/jump_files.ttpath"
+_jumpdir="${TT_PATTERN}/jump_folders.ttpath"
+
+.db(){	# open jump [file | folder] in editor
+
+	item=$( { echo '$TT_PATTERN/jump_files.ttpath'; echo '$TT_PATTERN/jump_folders.ttpath'; } | fzy )
+	item=$(eval "echo \"${item}\"")
+	st open "$item"
+
+}
+
+.aline(){	# Append Line to choosen [Jump file]
+	eline a "$(fuzzy one < "$_jumpfile")"
+}
+
+.rmd(){	# Delete Line from choosen [Jump Directory]
+	eline d "$_jumpdir"
+}
+
+.rmf(){	# Delete Line from choosen [Jump file]
+	eline d "$_jumpfile"
+}
+
+.lsf(){	# Cat ls [Jump file]
+	cat "${_jumpfile}"
+}
+
+
+.lsd(){	# Cat ls [Jump Directory]
+	cat "${_jumpdir}"
+}
+
+
+.open(){	# open jump [file | folder]
+	set -e
+
+	item="$( .lsf | awk -F'/' '{print $(NF)}' | fuzzy one "$2" )"
+
+	item=`.lsf | fzy -e "$item"`
+
+	item=$(eval "echo \"${item}\"")
+	
+	st open "${item}"
+
+}
+
+.file() {	# add to jump files
+
+	item=$(fd . -H -t f -d 2 | fuzzy one "${2}")
+
+	[ ! "${item}" ] && show_msg2 "CANCEL" "Operation..." && exit 7
+
+	filepath=$(varm relative "$item")
+
+	_append_uniq "${filepath}" "$_jumpfile"
+	show_msg2 "DONE add : " "$filepath"
+
+}
+
+.dir() {	# add folder to jump list
+
+	filepath=$(varm relative ".")
+	_append_uniq "${filepath}" "$_jumpdir"
+	echo $?
+	show_msg2 "DONE add : " "$filepath"
+
+}
+
+_append_uniq(){	# append at top of file and uniq then remove empty line
+	{
+		cat "${2}"
+		echo "$1"
+	} > "${TT_TEMP}"
+
+	awk '!seen[$0]++ && NF' < "${TT_TEMP}" > "${2}"
+
+}
+
+.make(){	# reconstruct all jump lists
+
+	cat "$_jumpfile" | rargs varm relative {} > "$TT_TEMP"
+	mv "$TT_TEMP" "$_jumpfile"
+
+	cat "$_jumpdir" | rargs varm relative {} > "$TT_TEMP"
+	mv "$TT_TEMP" "$_jumpdir"
+	
+}
+
+".$1" "$@"

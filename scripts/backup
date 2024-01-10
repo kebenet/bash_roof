@@ -1,0 +1,109 @@
+#!/bin/bash
+#FILE! backup service
+
+.bash(){
+
+	# Set the source and destination directories
+	source_dir="$TT_BASH"
+	backup_dir="$HOME/.Backup"
+
+	timestamp=$(date +%Y%m%d%H%M%S)
+
+	backup_file="bash-backup_${timestamp}.tar.gz"
+
+	cd "$TT_WORKSPACE"
+
+	tar -czpf "$backup_file" bash/
+
+	# Check if the backup was successful
+	if [ $? -eq 0 ]; then
+	  echo "Backup created successfully: ${backup_dir}/${backup_file}"
+	else
+	  echo "Backup creation failed"
+	fi
+
+	mv "$backup_file" "${backup_dir}/"
+	cd "$backup_dir"
+	ls -a
+
+}
+
+
+.sublime(){
+	cd ~
+	timestamp=$(date '+%Y%m%d%H%M%S')
+	backup_folders=~/.Backup
+
+	# Store directories in an array
+	dirs=()
+	while IFS=  read -r -d $'\0'; do
+		dirs+=("$REPLY")
+	done < <(find . -type d -name 'Tt*' ! -path '*/.cache/*' -print0)
+
+	# Print each directory 
+	for dir in "${dirs[@]}"; do
+		echo "$dir"
+	done
+
+	read -p "Creating ${BCYAN}BACKUP${END} now to folder.. (y/n) " confirm
+
+	if [[ $confirm == "y" ]]; then
+		# Create a backup
+		file=${backup_folders}/sublime_backup_${timestamp}.tar.gz
+		tar -czf "${file}" "${dirs[@]}"
+		tar -tzf "${file}"
+		echo "Done ${BCYAN}BACKUP${END} operation."
+	else
+		echo "User canceled operation."
+	fi
+
+}
+
+
+.remove() {
+	# Directory to clean up
+	dir=~/.Backup
+
+	# List files sorted by creation date, keep only file names
+	files=$(ls -lt $dir)
+
+	# Initialize file counter
+	count=0
+
+	# Initialize remove list
+	remove_list=""
+
+	# Iterate over files
+	for file in $files
+	do
+	# Increment counter
+	count=$((count+1))
+
+	# If counter is greater than 15
+	if [ $count -gt 16 ]
+	then
+	  # Add file to remove list
+	  remove_list="$remove_list $file"
+	fi
+	done
+
+	# Print files to keep and files to remove
+	echo "Files to keep:"
+	ls -lt $dir | head -n 16
+	echo "Files to remove:"
+	echo $remove_list
+
+	# Ask for user confirmation
+	read -p "Do you want to remove these files? (yes/no) " -r
+	echo
+	if [[ $REPLY == "yes" ]]
+	then
+	# If user confirms, remove files
+	for file in $remove_list
+	do
+	  rm "$dir/$file"
+	done
+	fi
+}
+
+".$1" "$@"

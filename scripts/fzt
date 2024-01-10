@@ -1,0 +1,161 @@
+#!/bin/bash
+
+trap 'cleanup' SIGINT SIGTERM SIGQUIT
+
+tput civis
+index=1
+num_columns=2
+terminal_width=$(tput cols)
+
+progress(){
+
+	progress_bar=""
+
+	for i in {10..1}
+	do
+		progress_bar+="#"
+		echo "Progress: $progress_bar"
+		sleep .5
+		tput cuu1
+	done
+	echo "$progress_bar"
+}
+
+
+horizontal_menu(){
+
+	local mode
+	
+	while true; do
+
+		selector "$index"
+		mode=$(read_key)
+
+		case "$mode" in
+			[0-9]) echo "$mode";break ;;
+			'[A') index=$((index-num_columns)) ;; 	# up
+			'[B') index=$((index+num_columns)) ;; 	# down
+			'[D') index=$((index-1))  ;;			# left
+			'[C') index=$((index+1))  ;;			# right
+			$'\t') index=$((index+1)) ;;		# tab
+			$'') break ;;						# enter
+			'esc') break ;;						# esc
+			# *) >&2 echo 'ERR bad input'; return ;;
+		esac
+
+		tput rc
+
+	done
+}
+
+
+selector(){
+
+	# maxlen=$(fd . -d 1|awk '{ if (length > max) max = length } END { print max }')
+	
+	# read stdin
+	fd . -d 1|rg '^' -n --color=auto  \
+	| awk -v cols="$num_columns" -v width="$terminal_width" -v highlight="$index" '
+	  BEGIN {
+	  	bg="\033[40m"
+	  	reset="\033[0m"
+		col_width = int(width / cols)
+		count = 0
+		printf "%s", reset
+	  }
+	  {
+		count++
+		if (count == highlight ) {
+			printf "%s%-*s\033[0m",bg, col_width, $0
+		} else {
+			printf "%-*s", col_width, $0
+		}
+		if (count % cols == 0) {
+			printf "\n"
+		}
+	  }
+	  END {
+		if (count % cols != 0) {
+			printf "\n"
+		}
+	  }
+	  '
+}
+
+
+read_key(){
+
+	IFS=''
+	read -rsn1 mode
+
+	if [ "$mode" = $'\x1b' ]; then
+		read -rsn2 -t 0.01 mode
+		[ "$mode" = '' ] && echo "esc" && return
+	fi
+
+	echo "${mode}"
+
+}
+
+reader(){
+
+	local mode
+	mode=$(read_key)
+
+	case "$mode" in
+		[0-9]) echo "$mode" ;;
+		'[A') echo UP ;;
+		'[B') echo DN ;;
+		'[D') echo LEFT ;;
+		'[C') echo RIGHT ;;
+		$'\t') echo TAB ;;
+		'esc') echo ESCAPE ;;
+		$' ') echo SPACE ;;
+		$'') echo ENTER ;;
+		*) >&2 echo 'ERR bad input'; return ;;
+	esac
+
+}
+
+
+setup_lines(){
+
+	max_line=$(tput lines)
+	row_count=$(ls --color=never|pr -T -2|wc -l)
+
+	echo -en "\e[6n"
+	read -rs -d ';' position
+	read -rsn 2
+
+	line="${position#*[}"
+
+	lineandcount=$((row_count + line))
+	line_dif=$((max_line - line))
+	min=$((line_dif - row_count))
+	best_line=$((line - -min - 1))
+	# best_line=$((best_line - 1))
+
+	if [ "$lineandcount" -gt "$max_line" ]; then
+		selector
+		tput cup "$best_line"
+		tput sc
+		horizontal_menu
+	else
+		tput sc
+		horizontal_menu
+	fi
+
+
+}
+
+
+cleanup(){
+	tput cnorm
+}
+
+# _get_line
+setup_lines
+# selector
+# horizontal_menu
+
+cleanup

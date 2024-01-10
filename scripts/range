@@ -1,0 +1,66 @@
+#!/bin/bash
+
+
+
+.until(){
+
+	line=$(($2 + 1))
+	pattern="$3"
+	thefile="$4"
+
+	sed -n "${line},/$3/ {/${3}/d; p;}" "$4"
+
+}
+
+.delete_tail(){
+	sed -i "$2,\$d" "$3"
+}
+
+.swap(){
+
+	shift
+
+	one1=$1
+	one2=$2
+	two1=$3
+	two2=$4
+	item="$5"
+
+	[ "$#" -ne 5 ] && echo "need 4 args" && exit 7
+	[ ! -f "$item" ] && echo "no such file" && exit 8
+
+	first=$((two1-1))
+	secd=$((one1-1))
+
+	ex -s \
+	-c "${one1},${one2}m${first}" \
+	-c "$two1,${two2}m${secd}" -c x "${item}"
+
+}
+
+
+.swap_single(){
+	shift
+
+	one1=$1
+	two1=$2
+
+	first=$((two1-1))
+	secd=$((one1-1))
+
+	ex -s \
+	-c "${one1}m${first}" \
+	-c "${two1}m${secd}" -c x "${3}"
+
+}
+
+
+.ls_bash(){
+
+	rg '#!/bin/(bash|sh)' --fixed-strings --files-with-matches
+	awk '/^/w+/,/^}/' "$1"
+
+}
+
+
+".$1" "$@"

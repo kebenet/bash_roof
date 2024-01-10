@@ -1,0 +1,117 @@
+#!/bin/bash
+#FILE! Bash Templates 
+
+.symbols(){
+	shift
+	# sample symbol, get_var, workon
+	#CODE! this is holdon_que symbol
+
+	dirs="$(get_var 'PWDPROJECT')"
+
+	for i in "$@"; do
+		echo "${files}" | fzy -e "$i" | head -n 1 | \
+		xargs -I {} echo '"'"{}"'",'
+	done
+
+	item=$({
+	        declare -F | awk '{print $3}'
+	        export | cut -d "=" -f 1 | awk '{print "@"$3}'
+	    } | fzy)
+
+	dirs="$(get_var 'PWDPROJECT')"
+
+	item=$({
+	        declare -F | awk '{print $3}'
+	        export | cut -d "=" -f 1 | awk '{print "@"$3}'
+	    } | fzy)
+
+	if [ ! "${item}" ]; then
+		show_msg2 "CANCEL" "Operation..."
+		return 7
+	fi
+
+	reg="^${item}"
+
+	if [[ $item == "@"* ]]; then
+		# export
+		item=$(echo "$item" | cut -c 2-)
+		reg="^(export ${item})"
+	fi
+
+    found=$(rg "${reg}" -n --max-depth 3 --hidden --no-heading --max-count 1 "$dirs") 
+
+    echo "$found" | rargs -d: st open_line "{1}" "{2}"
+}
+
+.ls(){	# list files
+	fd . -t f -d 2 -H
+}
+
+.adds(){
+	shift
+	list="$(_to_jsonlist $@)"
+
+	echo ${list}
+	exit
+
+	st "open_session" "${list}"
+}
+
+_to_args(){
+	echo input.txt | jq -Rn '{ "args": (inputs | select(. != "")) }'
+}
+
+_to_jsonlist(){
+
+	PWDP="$PWD"
+	
+	echo ${PWDP}
+
+	item=$(fd . -t f -d 3 -H )
+	[ ! "${item}" ] && echo 'Canceling...' && return 7
+
+	{
+		echo "["
+		for i in "$@"; do
+			echo "${item}" | fzy -e "$i" | head -n 1 | \
+			xargs -I {} echo '"'"{}"'",'
+		done
+		echo "]"
+	} | tr '\n' ' '
+
+}
+
+.open(){
+
+	show_msg2 "OPEN"  "JUMP File"
+	jumpfile="${TT_PATTERN}/jump_files.ttpath"
+
+    item="$(_select_file ${jumpfile})"
+	
+	st open "${item}"
+    echo ${item}
+
+}
+
+_select_file(){
+
+    index=$(cat "${1}"| awk -F'/' '{print NR ": " $(NF-1) "/" $(NF)}' | fzy | cut -d: -f1) 
+
+     if [ ! "${item}" ]; then
+    	awk "NR==${index}" "${1}"
+    else
+    	show_msg2 "USER" "Cancel Operations"
+    	exit 7
+    fi
+
+}
+
+.thelp(){
+	show_msg2 "open"  "JUMP File"
+	show_msg2 "adds"  "files session to list"
+	show_msg2 "OPEN"  "JUMP File"
+	show_msg2 "OPEN"  "JUMP File"
+	show_msg2 "OPEN"  "JUMP File"
+}
+
+".$1" "$@"

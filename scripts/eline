@@ -1,0 +1,124 @@
+#!/bin/bash
+# duplicate line any files
+
+options="$1"
+filepath="$2"
+
+
+main(){
+
+
+	if [ ! "${filepath}" ]; then
+		select_pwd
+	fi
+
+	item=$(rg '^' -n "$filepath" | fzy)
+
+	if [ ! "${item}" ]; then
+		exit 7
+	fi
+
+	echo "Empty the input to Cancel operation.."
+
+	#CODE! read's input as index and item
+	IFS=: read index old <<< "$item"
+
+	#CODE! editing with initial text
+	read -e -p "${BOLD}Edit ${ARROW} " -i "${old}" new
+	# new=$(echo "$old" | readlines)
+
+	if [ ! "${new}" ]; then
+		echo "User Cancel operation.."
+		exit 7
+	fi
+
+
+	fullpath=$(realpath "$filepath")
+
+
+	#CODE! realpath not work at $HOME dir
+	if [[ "$PWD" == "$HOME" ]]; then
+		fullpath="${filepath}"
+	fi
+
+	#DONE! save to Undo info
+	record.sh "save" "$fullpath" "${index}" "${old}"
+
+	case "$options" in
+	  a)
+		append
+	    echo "DONE Append line"
+	    ;;
+	  c)
+		change
+	    echo "DONE Change line"
+	    ;;
+	  d)
+		delete
+	    echo "DONE Delete line"
+	    ;; 
+	  *)
+	    echo "Usage: $0 {a|c|d}"
+		echo "Usage: $0 {append|change|delete}"
+	    exit 7
+	    ;;
+	esac
+
+}
+
+append(){
+	#CODE! Append below line using sed
+	sed -i "${index}a\\${new}" "${filepath}"
+}
+
+change(){
+	
+	#CODE! Change at line using sed
+	sed -i "${index}c\\${new}" "${filepath}"
+}
+
+delete(){
+	#CODE! Remove at line using sed
+	sed -i "${index}d" "${filepath}"
+}
+
+select_pwd(){
+
+	filepath="$(fd . -H -t f -d 2 | fzy)"
+
+	if [ ! "${filepath}" ] || [ ! -f "${filepath}" ]; then
+		echo "User Cancel operation.."
+		exit 7
+	fi
+}
+
+display_error(){
+	thelp
+	exit 7
+}
+
+check(){
+
+	if [ "$options" ]; then
+	    main
+	else
+		display_error
+	fi
+}
+
+run_pipe(){
+	#CODE! read finput from pipe
+	filepath="$(cat)"
+
+	echo ${filepath}
+
+	main
+}
+
+thelp(){
+	show_msg2 "ARGS"  "[a,c,d]"
+	show_msg2 "Usage"  "[append|change|delete]"
+	show_msg2 "Script"  "$0"
+}
+
+main

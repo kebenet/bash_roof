@@ -1,0 +1,8 @@
+#!/bin/bash
+#TITLE! test expand semi word
+
+# echo ${*}
+
+# get filename only
+jump lsf | awk -F'/' '{print $(NF)}'| fzy -e "$1"
+

@@ -1,0 +1,190 @@
+#!/bin/bash
+
+# Usage:
+# First, search files recursively for text using ag (SilverSearcher). This could be refactored to use grep probably
+# $ refactor gen 'function' > lines.txt
+# Lines.txt will contain the file paths, line numbers, and line contents like so: (one entry per line)
+# index.js:52:            handler: function onNext() {
+# Now, using your favorite editor, edit the lines.txt file with any changes you want to make to those lines (using something search replace, a text editor, or a bash script)
+# Save the file and now run the script again to update all the files accordingly:
+# refactor run lines.txt
+
+# Note: You can also use `refactor dry lines.txt` to show the changes that will be made
+# Note2: Make sure that you run the script from the same directory and that you don't make line-numbering changes between gen and run
+
+UNDO_file="${PWD}/_refactor.ttundo"
+
+
+.gen(){	# generate code replacement file at current directory 
+	regex="$2"
+	[ ! "${2}" ] && echo "empty Pattern. Cancel.." && exit 7
+	
+	rg $regex  -n --hidden --no-heading --color never > "${UNDO_file}"
+	[ ! $? -eq 0 ] && echo "ripgrep Error.." && exit 7
+	
+	cat "${UNDO_file}"
+	show_msg2 "DO SEARCH At"  "$(basename $PWD)"
+}
+
+.testing(){
+	regex="$2"
+	[ ! "${regex}" ] && echo "empty Pattern. Cancel.." && exit 7
+	
+	rg $regex  -n --hidden --no-heading --color never > "${UNDO_file}"
+	[ ! $? -eq 0 ] && echo "ripgrep Error.." && exit 7
+
+	cat "${UNDO_file}"
+
+	read  -e -p "${BOLD}Press y to continue ${ARROW} " -i "y" new
+	[ ! "${new}" ] && echo "cancelling.." && exit 7
+
+	sed -i "s/\b${item}\b/${new}/g" "${UNDO_file}"
+
+	dry
+	
+	show_msg2 "DONE Gen at: " "$(basename $PWD)"
+}
+
+.dry(){	# Testing and preview the replacement Refactor Files
+
+	CHANGE_FILE="${UNDO_file}"
+	echo ${UNDO_file}
+	cat $CHANGE_FILE | while read line
+	do
+		# echo "print value of"
+		# The relative file path
+		F=${line%%:*}
+
+		# The line number
+		LINE=${line#*:}
+		# echo ${LINE}
+		LINE=${LINE%%:*}
+		# echo ${LINE}
+
+		# The replacement line from the lines file
+		REPL=${line#*:}
+		REPL=${line#*:}
+
+		# Pull the existing line from the file
+		EXISTING=`cat $F | head -n $LINE | tail -n 1`
+
+		echo $F:$LINE
+		echo -e '\t\e[31m'$EXISTING
+		echo -e '\t\e[32m'$REPL
+		echo -e '\e[39m'
+	done;
+
+}
+
+.replace(){	# Confirm to Replace All Files
+
+	CHANGE_FILE="${UNDO_file}"
+	cat $CHANGE_FILE | while read line
+	do
+		# The relative file path
+		F=${line%%:*}
+		
+		# The line number
+		LINE=${line#*:}
+		LINE=${LINE%%:*}
+		
+		# The replacement line
+		REPL=${line#*:}
+		REPL=${REPL#*:}
+		
+		# Hack the text before and after the line off and splice in the changed line. 
+		# Output to a tempfile
+
+		{ cat $F | head -n $((LINE-1)); echo -e $REPL; cat $F | \
+		tail -n +$((LINE+1)); } > "${TT_TEMP}"
+
+		cat "${TT_TEMP}" > $F
+		rm "${TT_TEMP}"
+	done;
+}
+
+.undo(){	# Undo All replacement
+
+	CHANGE_FILE="${UNDO_file}"
+	cat $CHANGE_FILE | while read line
+	do
+		F=${line%%:*}
+
+		# The line number
+		LINE=${line#*:}
+		# echo ${LINE}
+		LINE=${LINE%%:*}
+
+		# Pull the existing line from the file
+		EXISTING=`cat $F | head -n $LINE | tail -n 1`
+
+		echo $EXISTING
+		# undo rename path
+	done;
+}
+
+.rename(){	# Rename Variable file name with in Code: TODO: not complete
+
+	item=$(fd . "$TT_PATTERN" -x basename |cut -d. -f1|fzy)
+
+	# echo "${item}"
+	[ ! "${item}" ] && echo "cancelling.." && exit 7
+	echo "${item}"
+
+	refactor gen "\b${item}\b" > "${UNDO_file}"
+
+	read  -e -p "${BOLD}Press y to continue ${ARROW} " -i "$item" new
+	[ ! "${new}" ] && echo "cancelling.." && exit 7
+
+	sed -i "s/\b${item}\b/${new}/g" "${UNDO_file}"
+
+	refactor dry
+
+	exit
+
+	# sleep 1
+	st open "${UNDO_file}"
+
+	read  -e -p "${BOLD}Press y to continue ${ARROW} " -i "y" new
+	# rename file path
+
+	[ ! "${new}" ] && echo "cancelling.." && exit 7
+	
+	echo ${item}
+	# rg "\b${item}\b" "$TT_BASH"
+
+}
+
+.rm(){
+	rm "$UNDO_file"
+}
+
+
+.help(){
+	echo "Usage:"
+	echo
+	echo "First, search files recursively for text using ag (SilverSearcher). This could"
+	echo "be refactored to use grep probably"
+	echo "    $ refactor gen 'function' > lines.txt"
+	echo
+	echo "Lines.txt will contain the file paths, line numbers, and line contents like so:"
+	echo "(one entry per line)"
+	echo "    index.js:52:            handler: function onNext() {"
+	echo
+	echo "Now, using your favorite editor, edit the lines.txt file with any changes you"
+	echo "want to make to those lines (using something search replace, a text editor, or"
+	echo "a bash script)"
+	echo
+	echo "Save the file and now run the script again to update all the files accordingly:"
+	echo "    refactor run lines.txt"
+	echo 
+	echo "Note: You can also use 'refactor dry lines.txt' to show the changes that"
+	echo "will be made"
+	echo
+	echo "Note2: Make sure that you run the script from the same directory and that"
+	echo "you don't make line-numbering changes between gen and run"
+}
+
+
+
+".$1" "$@"

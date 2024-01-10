@@ -1,0 +1,18 @@
+#!/bin/bash
+#FILE! on_exit functions
+
+
+__on_exit() {
+    echo "TERABO Performing cleanup tasks..."
+
+    set_var "RG_options" "${RG_options}"
+}
+
+# Export function Area
+
+export -f set_var
+export -f get_var
+export -f list_var
+export -f set_recents
+
+trap __on_exit EXIT

@@ -1,0 +1,320 @@
+#!/bin/bash
+#FILE! config dotfile editing
+
+
+line_ranges(){
+
+	item=$(fd -e py -d 2 -x grep -Hn "${1}")
+
+	filename=$(echo "$item" | awk -F ':' '{print $1}')
+	line_number=$(echo "$item" | awk -F ':' '{print $2}')
+
+}
+
+
+_line_opento_change(){
+
+	tmpfile=$(_create_temp)
+
+	# Data to temp before open to editor
+	echo "${1}" > $tmpfile
+
+	dte $tmpfile
+
+	# echo back edited data
+	cat "${tmpfile}"
+
+	rm -f ${tmpfile}
+
+}
+
+
+#CODE! using sed to get range of lines
+_get_range_by_sed(){
+
+	ptn="^class"
+	item=$(rg --no-heading -Hn -t "*.py" "${ptn}" | fzy)
+
+	filename=$(echo "$item" | awk -F ':' '{print $1}')
+	line=$(echo "$item" | awk -F ':' '{print $2}')
+	match=$(echo "$item" | awk -F ':' '{print $3}')
+
+	echo "Filename: $filename"
+	echo "Line one:$line"
+	echo "CLASS:$match"
+
+	# must add 1 
+	line=$(($line + 1))
+
+	#CODE! using sed print line until match at index
+	item2=$(sed -n "${line},/"${ptn}"/{p}" "$filename")
+	
+}
+
+_edit_range_by_sed() {
+	
+    local filename=$1
+    local line=$2
+    local line2=$3
+
+    temp_file=$(mktemp)
+    sed -n "${line},${line2}p" "$filename" > "$temp_file"
+
+    vim "$temp_file"
+
+    new_content=$(cat "$temp_file")
+    sed -i "${line},${line2}c\\$new_content" "$filename"
+
+    rm "$temp_file"
+
+}
+
+
+edit_range_by_micro() {
+	#CODE! Edit range only using editor and ed/ex
+
+
+    local line=$1
+    local line2=$2
+    local temp_file=$(mktemp)
+
+    cat > "$temp_file"
+
+    micro "$temp_file"
+
+    new_content=$(cat "$temp_file")
+    
+    #CODE! Use ex to replace the original lines
+    {
+        echo "${line},${line2}c"
+        echo "$new_content"
+        echo "."
+        echo "w"
+        echo "q"
+    } | ex /dev/stdin
+
+    rm "$temp_file"
+
+
+}
+
+change_config_file(){
+
+	file=${Tt_File_Types}
+	tmpfile=$(_create_temp)
+	
+	key=$(echo "$1" | jqext)
+
+	value=$(jq ".${keys}" "$file")
+
+	 # get files
+	 fd . -t f -H -
+
+	# open config to editing
+
+}
+
+filetype_make_change(){
+
+	file=${Tt_File_Types}
+	tmpfile=$(_create_temp)
+	
+	# Get a list of keys in the filetype file
+	keys=$(jq 'keys[]' "$file" | fzy)
+	
+	# Get the value of the selected key
+	value=$(jq ".${keys}" "$file")
+	
+	# Write the selected JSON object to the temporary file
+	echo "{$keys:$value}" > $tmpfile
+
+	# Open the temporary file with micro for editing
+	micro ${tmpfile}
+
+	# Check if the JSON in the temporary file is valid
+    if ! jq . "${tmpfile}" >/dev/null 2>&1; then
+        echo "Error: The JSON in the temporary file is not valid."
+        return 1
+    fi
+
+	# Remove the old JSON object from the original file
+	jq "del(.${keys})" "$file" > temp && mv temp "$file"
+	
+	# Append the edited temporary JSON file to the main JSON file
+	jq -s '.[0] * .[1]' "${file}" ${tmpfile} > temp && mv temp "${file}"
+
+	_done_msg
+
+	rm -f ${tmpfile}
+	
+}
+
+jqext(){
+
+	# Check if there are any arguments
+	if [ "$#" -gt 0 ]; then
+		echo $(_jq_get_keys "$1")
+	else
+		while IFS= read -r line
+		do
+			echo $(jq 'keys[]' "${Tt_File_Types}" | fzy -e "${1}" | head -n 1)
+		done
+	fi
+}
+
+filetype_remove_key(){
+
+	file=${Tt_File_Types}
+	tmpfile=$(_create_temp)
+	
+	# Get a list of keys in the filetype file
+	keys=$(jq 'keys[]' "$file" | fzy)
+	
+	# check if user cancel operatiob..
+	if ! __check_isnull ${keys}; then
+
+		# TODO create Undo operation
+		jq "del(.${keys})" "$file" > ${tmpfile} && mv ${tmpfile} "$file"
+		echoe "${BRED}DONE${END} delete Operation..."
+	else
+		echoe "${BRED}Canceling${END} Operations..."
+	fi
+}
+
+
+
+
+filetype_duplicate_key(){
+
+	file=${Tt_File_Types}
+	tmpfile=$(_create_temp)
+	
+	# Get a list of keys in the filetype file
+	keys=$(jq 'keys[]' "$file" | fzy)
+	
+	value=$(jq ".${keys}" "$file")
+
+	newkey="$1"
+
+	if ! __check_isnull ${newkey}; then
+		keys="\"${newkey}\""
+	fi
+
+	echo "{$keys:$value}" > $tmpfile
+
+	micro ${tmpfile}
+
+	# Check if the JSON in the temporary file is valid
+	if ! jq . "${tmpfile}" >/dev/null 2>&1; then
+		echo "Error: The JSON in the temporary file is not valid."
+		return 1
+	fi
+
+	# Append the edited temporary JSON file to the main JSON file
+	jq -s '.[0] * .[1]' "${file}" ${tmpfile} > temp && mv temp "${file}"
+
+	_done_msg
+
+	rm -f ${tmpfile}
+}
+
+
+filetype_append_newkey(){
+
+	file=${Tt_File_Types}
+	tmpfile=$(_create_temp)
+
+	key="${1}"
+
+	if __check_isnull ${key}; then
+		_error_key
+		return 1
+	fi
+
+	value='["sample"]'
+
+	# Create a temporary JSON file with the new key-value pair
+	jq --null-input --arg key "$key" --argjson value "$value" '{ ($key): $value }' > ${tmpfile}
+
+	# Open the temporary JSON file in Vim for editing
+	micro ${tmpfile}
+
+	# Check if the JSON in the temporary file is valid
+	if ! jq . "${tmpfile}" >/dev/null 2>&1; then
+		echo "Error: The JSON in the temporary file is not valid."
+		return 1
+	fi
+
+	# Append the edited temporary JSON file to the main JSON file
+	jq -s '.[0] * .[1]' "${file}" ${tmpfile} > temp && mv temp "${file}"
+
+	_done_msg
+
+	rm -f ${tmpfile}
+}
+
+
+filetype_findby_ext(){
+	
+	type="${1}"
+
+	if ! [ -n "${type}" ]; then 
+		_error_key
+		return 1
+	fi 
+
+	# type=$(echo "$type" | jqext)
+
+	json=$(cat $Tt_File_Types)
+
+	# Check if the key exists using jq
+	haskey=$(echo "$json" | jq --arg type "$type" 'has($type)')
+	# echo $haskey
+
+	if [ "$haskey" = "true" ]; then
+
+		result=$(echo "$json" | jq -r --arg type "$type" '.[$type][] | "-e \(.)"')
+		# result=$(echoe "$result" | tr "\n" " ")
+		echo "$result"
+	else
+		echoe "Key ${BRED}'$type'${END} not_in_${BRED}Tt_File_Types${END}"
+	fi
+	
+}
+
+_create_temp(){
+	tmpfile=$(mktemp /tmp/tmpfile.XXXXXX)
+	echo $tmpfile
+}
+
+
+trap_tmpfile() {
+	local tmpfile=$1
+	trap 'rm -f "$tmpfile"' RETURN
+}
+
+__check_isempty(){
+
+	if [ -z "${1}" ]; then
+		echoe "Must give key argument from ${ARROW}"
+		echo "${Tt_File_Types}"
+		return 1
+	fi
+	return 0
+}
+
+
+__find_unused_var_in_ttpattern(){
+	
+	item=$(ls | warp str .| warp sep '|'| warp double \
+	| warp head "rg --no-heading -N -I -o --colors 'match:none' " \
+	| warp tail ' "$TT_BASH"' | warp run | awk '!seen[$0]++')
+
+	item=$(echo ${item} | tr ' ' '|')
+
+	ls | rg "${item}" -v
+
+}
+
+
+

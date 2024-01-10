@@ -1,0 +1,24 @@
+#!/bin/bash
+#FILE! project structure template generator
+
+
+.python(){
+
+	dir_name="$2"
+	[[ -z $dir_name ]] && echo "Please provide a directory name" && exit
+	# generate python project structure with test folder and __init__.py file
+	# generate main file with default main function
+	mkdir $dir_name
+	mkdir $dir_name/test
+	touch $dir_name/__init__.py
+	touch $dir_name/test/__init__.py
+	touch $dir_name/test/test.py
+	touch $dir_name/main.py
+
+	# create main function with pass in main.py file
+	echo "def main(): pass" >> $dir_name/main.py
+}
+
+".$1" "$@"
+
+show_msg2 "Usage"  "python, pyinit"
