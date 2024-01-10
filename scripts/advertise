@@ -4,7 +4,7 @@
 db_file="$TT_PATTERN/advertise.ttdb"
 
 advertise_index=1
-advertise_index=25
+advertise_index=28
 
 show_time(){
 

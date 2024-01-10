@@ -34,6 +34,11 @@ alias ste='cd $(st change_project tteditor)'
 alias ttrc='_ttrc_init'
 alias ttenv='env | grep -E "TT.*"'
 
+alias gs='git status'
+alias gca='git commit -a -m "$1"'
+alias gcm='git commit -m "$1"'
+alias glog="git log --graph --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
 # functions alias Area
 
 alias find_all_files="fd . -H -t f | fzy -p 'Files ❯ '"

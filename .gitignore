@@ -1,5 +1,5 @@
-bash-binding.md
-template.sh
-todo
-z.zsh
-_play_runner
+scripts/bash-binding.md
+scripts/template.sh
+scripts/todo
+scripts/z.zsh
+scripts/_play_runner
