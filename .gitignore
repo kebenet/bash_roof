@@ -1,3 +1,4 @@
+.gitignore
 .reserve/
 scripts/template.sh
 scripts/todo
