@@ -8,3 +8,4 @@ warp head 'color=$(' | warp tail '); shift; text="$1"; ;;' > "$TT_TEMP"
 rg '^ansi::(\w+)' -or '$1' "$thefile" | warp head '--' | warp tail ')' |
 paste - "$TT_TEMP"
 
+
