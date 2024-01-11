@@ -49,7 +49,7 @@ symbol(){
 	item=$(rg "^([.]?\w+|\w+)" -n "${view}" |fzy)
 	echo ${item}
 	index="$(echo $item | cut -d ':' -f 1)"
-	st open_line "${view}" "${index}"
+	st open_line "$view" "$index"
 
 }
 
@@ -70,7 +70,7 @@ code_python(){
 	item="${var// /.*?}"
 	nospace="$(tr -d ' '  <<< $@)"
 
-	echo 'Regexs: ' ${item}
+	echo 'Regexs: ' "$item"
 
 	_rgcode "$item" -t py\
 	| fzy -e "$nospace" | fzy -q "$nospace"
@@ -135,7 +135,7 @@ symbols_bash(){
 		return 7
 	fi
 
-	reg="^${item}"
+	reg="^$item"
 
 	if [[ $item == "@"* ]]; then
 		# export
@@ -144,7 +144,7 @@ symbols_bash(){
 	fi
 	
 
-    rg "${reg}"  -N --follow --max-depth 3 --hidden \
+    rg "$reg"  -N --follow --max-depth 3 --hidden \
 		--after-context 7 "$dirs"
 
 }
@@ -173,7 +173,7 @@ find_code(){
 
 find_code_rg(){
 
-	[ ! "${1}" ] && echo "Cannot Empty Query!" && return 7
+	[ ! "$1" ] && echo "Cannot Empty Query!" && return 7
 	
 	cd $TT_BASH
 	var="$@"
@@ -187,13 +187,13 @@ find_code_rg(){
 
 view_code(){
 
-	[ ! "${1}" ] && echo "Cannot Empty Query!" && return 7
+	[ ! "$1" ] && echo "Cannot Empty Query!" && return 7
 	
 	var="$@"
 	item="${var// /.*?}"
 	nospace="$(tr -d ' '  <<< $@)"
 
-	echo ${item}
+	echo "$item"
 	_rgcode "($item)" \
 	| fzy -e "$nospace" | fzy -q "$nospace"
 }
@@ -217,7 +217,7 @@ find_elv_help(){
     base="$TT_ELVISH_DOC"
     reff="$XDG_CONFIG_HOME/elvish/elvish-doc/elvish_docs.md"
 
-    url=$(cat "${reff}" | fzy)
+    url=$(cat "$reff" | fzy)
     www-browser "${elv}/${url}"
 
 }
@@ -229,8 +229,8 @@ cheat(){
     show_msg2 "Options -l"  "change language"
 
     if [[ ${1} == "-l" ]]; then
-    	export LANG="${2}"
-      	show_msg2 "Set lang" "to ${2}"
+    	export LANG="$2"
+      	show_msg2 "Set lang" "to $2"
       return
     fi
     
@@ -246,7 +246,7 @@ find_python(){
 	dirs="$(get_var 'PWD_PROJECT')"
 	cd $dirs
 	ptn="^class"
-	item=$(rg "${ptn}" --no-heading -Hn -t py  | fzy)
+	item=$(rg "$ptn" --no-heading -Hn -t py  | fzy)
 
 	filename=$(echo "$item" | awk -F ':' '{print $1}')
 	line=$(echo "$item" | awk -F ':' '{print $2}')
