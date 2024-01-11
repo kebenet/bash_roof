@@ -134,8 +134,8 @@ _get_code() {
 if [ "$#" -gt 0 ]; then
 	cmd="$1"
 
-	if rg -q "^[.]$cmd" "$0"; then
-		".$cmd" "$@" 
+	if rg -q "^fn_$cmd" "$0"; then
+		"fn_$1" "$@" 
 	else
  		_play_runner "$@"
  	fi
