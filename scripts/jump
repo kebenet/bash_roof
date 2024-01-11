@@ -37,9 +37,9 @@ fn_lsd(){	# Cat ls [Jump Directory]
 fn_open(){	# open jump [file | folder]
 	set -e
 
-	item="$( .lsf | awk -F'/' '{print $(NF)}' | fuzzy one "$2" )"
+	item="$( fn_lsf | awk -F'/' '{print $(NF)}' | fuzzy one "$2" )"
 
-	item=`.lsf | fzy -e "$item"`
+	item=`fn_lsf | fzy -e "$item"`
 
 	item=$(eval "echo \"${item}\"")
 	
