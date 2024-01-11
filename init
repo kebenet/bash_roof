@@ -24,7 +24,7 @@ _check_file_size(){
 
 sub(){
 
-	#TODO! create sub recent files
+	#TODO! create sub recent files- done
 	item=$(fdls | fuzzy one "${1}")
 
 	thefile=$(realpath "${item}")

@@ -7,12 +7,12 @@ __auto(){
 	old="${READLINE_LINE}"
 	if [ -z $old ]; then
 		__script_complete
-		return
-	else
-		item=$(hpp $old | fuzzy one)		
 	fi
 
-	READLINE_LINE="${old}${item}"
+	item=$(hpp $old | fuzzy one | cut -d ' ' -f1)
+	# item=$(echo "$item" one)
+
+	READLINE_LINE="${old} ${item}"
 	READLINE_POINT=${#READLINE_LINE}
 
 }
