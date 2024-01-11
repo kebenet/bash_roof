@@ -1,6 +1,19 @@
 #!/bin/sh
 
 
+__script_complete(){	# completion sub commands
+
+	cd "$TT_BASH/scripts"
+	old="${READLINE_LINE}"
+
+	item=$(fdls | fuzzy one)
+
+	READLINE_LINE="${old}${item}"
+	READLINE_POINT=${#READLINE_LINE}
+
+	cd "$OLDPWD"
+	
+}
 
 __cmd_complete(){
 	
