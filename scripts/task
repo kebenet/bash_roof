@@ -2,7 +2,7 @@
 
 db_file="$BARTIB_FILE"
 
-_new(){	# starts a new activity
+fn_new(){	# starts a new activity
 
 	[ -z "$2" ] && echo "On must defind Description" && exit 7
 	[ -z "$3" ] && echo "On must defind project Name" && exit 7
@@ -10,58 +10,58 @@ _new(){	# starts a new activity
 	bartib start -d "$2" -p "$3"
 }
 
-_on(){	# starts a new activity
+fn_on(){	# starts a new activity
 	[ -z "$2" ] && echo "Remember to use Number to On activity"
 	bartib continue "${2:-0}"
 }
 
-_off(){	# stops all currently running activities
+fn_off(){	# stops all currently running activities
 	bartib stop
 }
 
-_cancel(){	# cancels all currently running activities
+fn_cancel(){	# cancels all currently running activities
 	bartib cancel
 
 }
 
-_edit(){	# opens the activity log in an editor
+fn_edit(){	# opens the activity log in an editor
 	st open "$BARTIB_FILE"
 }
 
-_check(){	# checks file and reports parsing errors
+fn_check(){	# checks file and reports parsing errors
 	bartib check
 }
 
-_resume(){	# continues a previous activity
+fn_resume(){	# continues a previous activity
 	bartib continue "${2:-0}"
 }
 
-_last(){	# displays the descriptions and projects of recent activities
+fn_last(){	# displays the descriptions and projects of recent activities
 	bartib last
 }
 
-_ls(){	# list recent activities by Date | Name Date
+fn_ls(){	# list recent activities by Date | Name Date
 	bartib list --today
 }
 
-_yesterday(){	# list recent activities by yesterday
+fn_yesterday(){	# list recent activities by yesterday
 	bartib list --yesterday
 }
 
-_week(){	# list recent activities by week
+fn_week(){	# list recent activities by week
 	bartib list --current_week
 }
 
-_lsc(){	# lists all currently running activities
+fn_lsc(){	# lists all currently running activities
 	bartib current
 }
 
-_lsp(){	# list all projects
+fn_lsp(){	# list all projects
 	bartib projects
 }
 
-_report(){	# reports duration of tracked activities
+fn_report(){	# reports duration of tracked activities
 	bartib report
 }
 
-"_$1" "$@" 
+"fn_$1" "$@" 
