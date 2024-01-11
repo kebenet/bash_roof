@@ -114,4 +114,4 @@ _select_file(){
 	show_msg2 "OPEN"  "JUMP File"
 }
 
-".$1" "$@"
+"fn_$1" "$@"

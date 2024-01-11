@@ -66,7 +66,7 @@ __dynamic_alias(){
 
 
 if [ -n "$1" ]; then
-	".$1" "$@"
+	"fn_$1" "$@"
 	exit 0
 fi
 

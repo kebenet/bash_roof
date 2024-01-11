@@ -89,4 +89,4 @@ _append_uniq(){	# append at top of file and uniq then remove empty line
 	
 }
 
-".$1" "$@"
+"fn_$1" "$@"

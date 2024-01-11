@@ -35,4 +35,4 @@ _find_export(){
 	cat "$Tt_VARIABLE" | rg "$regex" |cut -d " " -f 2
 }
 
-".$1" "$@"
+"fn_$1" "$@"

@@ -19,6 +19,6 @@
 	echo "def main(): pass" >> $dir_name/main.py
 }
 
-".$1" "$@"
+"fn_$1" "$@"
 
 show_msg2 "Usage"  "python, pyinit"
