@@ -1,7 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 #TITLE! test expand semi word
 
 # echo ${*}
+
+
+fn_gen(){
+	return
+}
 
 # get filename only
 jump lsf | awk -F'/' '{print $(NF)}'| fzy -e "$1"

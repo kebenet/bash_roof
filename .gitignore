@@ -1,6 +1,6 @@
 .reserve/
 scripts/template.sh
 scripts/todo
-scripts/_play_runner
+../_play_runner
 .bash_aliases
 scripts/advertise
