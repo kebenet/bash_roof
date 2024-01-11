@@ -4,8 +4,8 @@
 
 hpp(){	# display help info
 	item=$(which "$1")
-	rg '^[.]?[a-z]+.*\b\(' "${item}" -N \
-	| sd '\(\)\s*\{?' '' | column -t -s $'\t'
+	rg '^([.])?[a-z]+.*\b\(' "${item}" -N \
+	| sd '\(\)\s*\{?' '' # | column -t -s $'\t'
 }
 
 

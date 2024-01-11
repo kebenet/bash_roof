@@ -2,13 +2,21 @@
 
 
 __auto(){
+	
+	local item
 	old="${READLINE_LINE}"
-
-	item=$(hpp $old | fuzzy one)
+	if [ -z $old ]; then
+		__script_complete
+		return
+	else
+		item=$(hpp $old | fuzzy one)		
+	fi
 
 	READLINE_LINE="${old}${item}"
 	READLINE_POINT=${#READLINE_LINE}
+
 }
+
 
 __script_complete(){	# completion sub commands
 
@@ -23,6 +31,7 @@ __script_complete(){	# completion sub commands
 	cd "$OLDPWD"
 	
 }
+
 
 __cmd_complete(){
 	
