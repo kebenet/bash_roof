@@ -1,7 +1,6 @@
-scripts/bash-binding.md
+.reserve/
 scripts/template.sh
 scripts/todo
-scripts/z.zsh
 scripts/_play_runner
 .bash_aliases
 scripts/advertise
