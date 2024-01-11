@@ -6,29 +6,36 @@ __auto(){
 	local item
 	old="${READLINE_LINE}"
 	if [ -z $old ]; then
-		__script_complete
+		item=$(_get_script_file)
+	else
+		item="$old"
 	fi
 
-	item=$(hpp $old | fuzzy one | cut -d ' ' -f1)
+	subitem=$(hpp $item | fuzzy one | cut -d ' ' -f1)
 	# item=$(echo "$item" one)
 
-	READLINE_LINE="${old} ${item}"
+	READLINE_LINE="${item} ${subitem}"
 	READLINE_POINT=${#READLINE_LINE}
 
 }
 
+_get_script_file(){
+
+	# cd  |
+	item=$(fdls --base-directory "$TT_BASH/scripts" |fuzzy one)
+	# cd "$OLDPWD"
+	echo "$item"
+}
 
 __script_complete(){	# completion sub commands
 
-	cd "$TT_BASH/scripts"
 	old="${READLINE_LINE}"
 
-	item=$(fdls | fuzzy one)
+	item=$(_get_script_file)
 
 	READLINE_LINE="${old}${item}"
 	READLINE_POINT=${#READLINE_LINE}
 
-	cd "$OLDPWD"
 	
 }
 
