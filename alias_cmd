@@ -31,7 +31,7 @@ _ttrc_clear(){	# remove all ttrc definitions
 		done < <(rg -o '^export \w+|^function \w+' "$alias_file" | cut -d ' ' -f2)
 
 		while read -r item; do
-			unalias "$item"; 
+			unalias "$item";
 		done < <(rg '^alias \w+' -o "$alias_file"| cut -d ' ' -f2)
 
 		> "$alias_file"

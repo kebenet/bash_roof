@@ -1,6 +1,15 @@
 #!/bin/sh
 
 
+__auto(){
+	old="${READLINE_LINE}"
+
+	item=$(hpp $old | fuzzy one)
+
+	READLINE_LINE="${old}${item}"
+	READLINE_POINT=${#READLINE_LINE}
+}
+
 __script_complete(){	# completion sub commands
 
 	cd "$TT_BASH/scripts"
