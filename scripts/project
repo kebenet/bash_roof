@@ -2,7 +2,7 @@
 #FILE! project structure template generator
 
 
-.python(){
+fn_python(){
 
 	dir_name="$2"
 	[[ -z $dir_name ]] && echo "Please provide a directory name" && exit

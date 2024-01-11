@@ -8,7 +8,7 @@ saperator="#::=>PLAY!"
 PLAY_TITLE="#TITLE!"
 
 
-.new() {	# create new PLAY item [-s] for save
+fn_new() {	# create new PLAY item [-s] for save
 
 	[ ${!#} == '-s' ] && .save
 
@@ -24,7 +24,7 @@ PLAY_TITLE="#TITLE!"
 }
 
 
-.save() {	# save PLAY item into db with title
+fn_save() {	# save PLAY item into db with title
 	local title
 
 	if [ -z "$1" ]; then
@@ -50,7 +50,7 @@ PLAY_TITLE="#TITLE!"
 }
 
 
-.search() {
+fn_search() {
 
 	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
 	| cut -d: -f 1,2| fzy)
@@ -58,7 +58,7 @@ PLAY_TITLE="#TITLE!"
 }
 
 
-.select() {	# search & select Play item
+fn_select() {	# search & select Play item
 	{
 		echo "#!/bin/bash"
 		.search 
@@ -67,7 +67,7 @@ PLAY_TITLE="#TITLE!"
 }
 
 
-.last() {	# search & view LAST Play item
+fn_last() {	# search & view LAST Play item
 
 	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
 	| cut -d: -f 1,2| tail -n 1)
@@ -80,7 +80,7 @@ PLAY_TITLE="#TITLE!"
 
 }
 
-.update() {	# Update Last Play item
+fn_update() {	# Update Last Play item
 
 	index=$(rg "^${saperator}" -n  "$dbfile" | 
 		sd "${saperator}" ""|tail -n 1| cut -d: -f1)
@@ -90,11 +90,11 @@ PLAY_TITLE="#TITLE!"
 
 }
 
-.cat() {	# search & view Play item at terminal
+fn_cat() {	# search & view Play item at terminal
 	.search
 }
 
-.ls() {	# list all Play items
+fn_ls() {	# list all Play items
 	rg "^${saperator}" "$dbfile"| sd ".*${saperator}" "" \
 	|awk -F ':' '{ printf "%s\t%s\n", $1, $2 }'
 }
@@ -106,12 +106,12 @@ _run() {
 }
 
 
-.db() {	# Open Play Database file
+fn_db() {	# Open Play Database file
 	st open "$dbfile"
 }
 
 
-.sub() {	# Open Play file
+fn_sub() {	# Open Play file
 	st open "$play_file"
 }
 

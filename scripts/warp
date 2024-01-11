@@ -4,37 +4,37 @@
 tempf="/dev/shm/tttempfiles"
 
 
-.lower(){	# Convert stdin to lowercase
+fn_lower(){	# Convert stdin to lowercase
 
     tr '[:upper:]' '[:lower:]'
 }
 
-.upper(){	# Convert stdin to uppercase.
+fn_upper(){	# Convert stdin to uppercase.
 
     tr '[:lower:]' '[:upper:]'
 }
 
-.title(){	# Convert stdin to titlecase.
+fn_title(){	# Convert stdin to titlecase.
 
     .lower | sed 's/\<./\u&/g' | sed "s/'[[:upper:]]/\L&\l/g"
 }
 
-.detox(){	# Make text from stdin slightly less insane
+fn_detox(){	# Make text from stdin slightly less insane
 
     sed 's/[^A-Za-z0-9 ]/ /g' | squeeze | sed 's/ /_/g' | .lower
 }
 
-.camel(){	# Make text from stdin camel case.
+fn_camel(){	# Make text from stdin camel case.
 
     sed 's/_/ /g' | sed 's/\<\(.\)/\U\1/g' | sed 's/ //g'
 }
 
-.snake(){	# Make text from stdin snake case
+fn_snake(){	# Make text from stdin snake case
 
     sed 's/\([[:upper:]]\)/ \1/g' | .detox
 }
 
-.squeeze(){	# Removes leading/trailing whitespace and condenses
+fn_squeeze(){	# Removes leading/trailing whitespace and condenses
 
     local char=${1:-[[:space:]]}
     sed "s%\(${char//%/\\%}\)\+%\1%g" | .trim "$char"
@@ -42,7 +42,7 @@ tempf="/dev/shm/tttempfiles"
 
 # ==================================== TERABOTERABA
 
-.sep(){	# Convert/Join lines into Saperator
+fn_sep(){	# Convert/Join lines into Saperator
 
 	item=$(cat| tr '\n' "${2}")
 	echo "${item%?}"
@@ -50,35 +50,35 @@ tempf="/dev/shm/tttempfiles"
 }
 
 
-.trim(){	# Trim stdin space.
+fn_trim(){	# Trim stdin space.
 	awk '{$1=$1};1'
 }
 
 
-.pair(){	# surround 2 Pair from lines
+fn_pair(){	# surround 2 Pair from lines
 	awk -v one="$2" -v two="$3" '{ print one $0 two }'
 }
 
-.single(){	# surround stdin by Single quote
+fn_single(){	# surround stdin by Single quote
 	awk '{ print "\x27" $0 "\x27" }'
 }
 
 
-.double(){	# surround stdin by Double quote
+fn_double(){	# surround stdin by Double quote
 	awk '{ print "\"" $0 "\"" }'
 }
 
 
-.head(){	# Append stdin at Head
+fn_head(){	# Append stdin at Head
 	awk -v item="$2" '{ print item $0 }'
 }
 
 
-.tail(){	# Append stdin at Tail
+fn_tail(){	# Append stdin at Tail
 	awk -v item="$2" '{ print $0 item }'
 }
 
-.each(){	# generate all args combine with [-] as stdin.
+fn_each(){	# generate all args combine with [-] as stdin.
 	shift
 	while read -r line; do
 		echo "${@/-*/$line}"
@@ -86,12 +86,12 @@ tempf="/dev/shm/tttempfiles"
 }
 
 
-.com(){	# Merge from [stdin & args] by a delimiter
+fn_com(){	# Merge from [stdin & args] by a delimiter
 	paste -d "$2" - "${tempf}"
 }
 
 
-.merge(){	# Merge from [stdin & args] by a delimiter
+fn_merge(){	# Merge from [stdin & args] by a delimiter
 
 	sep="$2"
 	shift 2
@@ -100,7 +100,7 @@ tempf="/dev/shm/tttempfiles"
 }
 
 
-.mergeawk(){	# Merge awk from [stdin & args] by a delimiter
+fn_mergeawk(){	# Merge awk from [stdin & args] by a delimiter
 
 	sep="$2"
 	args=("${@:3}")
@@ -115,7 +115,7 @@ tempf="/dev/shm/tttempfiles"
 	}'
 }
 
-.str(){	# get substring from stdin by delimiter
+fn_str(){	# get substring from stdin by delimiter
 
 	while read -r line; do
 		ops="$2"
@@ -125,21 +125,21 @@ tempf="/dev/shm/tttempfiles"
 }
 
 
-.lines(){	# Convert Spaces to Lines
+fn_lines(){	# Convert Spaces to Lines
 	tr ' ' '\n'
 }
 
 
-.store(){	# Store to temp then print result
+fn_store(){	# Store to temp then print result
 	tee - "$tempf"
 }
 
 
-.eval(){	# Eval all lines
+fn_eval(){	# Eval all lines
 		rargs eval "${line}"
 }
 
-.arg(){	# Take args as command and Eval all Lines
+fn_arg(){	# Take args as command and Eval all Lines
 	
 	while read -r line; do
 		eval "$2 ${line}"
@@ -147,12 +147,12 @@ tempf="/dev/shm/tttempfiles"
 }
 
 
-.num(){	# print & add numbers
+fn_num(){	# print & add numbers
 	awk '{ print NR ":" $0 }'
 }
 
 
-.range(){	# Take Range of lines from stdin
+fn_range(){	# Take Range of lines from stdin
 	awk -v one="$2" -v two="$3" \
 	'NR >= one && NR <= two'
 }

@@ -2,7 +2,7 @@
 
 
 
-.until(){
+fn_until(){
 
 	line=$(($2 + 1))
 	pattern="$3"
@@ -12,11 +12,11 @@
 
 }
 
-.delete_tail(){
+fn_delete_tail(){
 	sed -i "$2,\$d" "$3"
 }
 
-.swap(){
+fn_swap(){
 
 	shift
 
@@ -39,7 +39,7 @@
 }
 
 
-.swap_single(){
+fn_swap_single(){
 	shift
 
 	one1=$1
@@ -55,7 +55,7 @@
 }
 
 
-.ls_bash(){
+fn_ls_bash(){
 
 	rg '#!/bin/(bash|sh)' --fixed-strings --files-with-matches
 	awk '/^/w+/,/^}/' "$1"

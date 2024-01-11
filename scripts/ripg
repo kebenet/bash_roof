@@ -5,7 +5,7 @@
 . $TT_BASH/alias_cmd
 
 
-.ls(){
+fn_ls(){
 
 	item="$(list_var 'RG_Regexs' | fzy)"
 	echo ${item} | awk -F':=>' '{print $2}'
@@ -13,7 +13,7 @@
 }
 
 
-.open(){
+fn_open(){
 
 	item="$(get_var_file 'RG_list')"
 	st open "$item"
@@ -21,7 +21,7 @@
 }
 
 
-.regex(){
+fn_regex(){
 
 	item="$(get_var_file 'RG_Regexs')"
 	st open "$item"
@@ -29,7 +29,7 @@
 }
 
 
-.run(){
+fn_run(){
 	true
 }
 

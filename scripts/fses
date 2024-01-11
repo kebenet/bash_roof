@@ -1,7 +1,7 @@
 #!/bin/bash
 #FILE! Bash Templates 
 
-.symbols(){
+fn_symbols(){
 	shift
 	# sample symbol, get_var, workon
 	#CODE! this is holdon_que symbol
@@ -43,11 +43,11 @@
     echo "$found" | rargs -d: st open_line "{1}" "{2}"
 }
 
-.ls(){	# list files
+fn_ls(){	# list files
 	fd . -t f -d 2 -H
 }
 
-.adds(){
+fn_adds(){
 	shift
 	list="$(_to_jsonlist $@)"
 
@@ -81,7 +81,7 @@ _to_jsonlist(){
 
 }
 
-.open(){
+fn_open(){
 
 	show_msg2 "OPEN"  "JUMP File"
 	jumpfile="${TT_PATTERN}/jump_files.ttpath"
@@ -106,7 +106,7 @@ _select_file(){
 
 }
 
-.thelp(){
+fn_thelp(){
 	show_msg2 "open"  "JUMP File"
 	show_msg2 "adds"  "files session to list"
 	show_msg2 "OPEN"  "JUMP File"

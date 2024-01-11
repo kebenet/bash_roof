@@ -5,7 +5,7 @@ set -e
 var_file="$TT_BASH/VARIABLE"
 temp_file="$TT_TEMP"
 
-.dir(){	# Append current dir to VARIABLE as Env Path
+fn_dir(){	# Append current dir to VARIABLE as Env Path
 
 	key=$(basename "$PWD" | tr '[:lower:]' '[:upper:]')
 	item="$(.relative . $PWD | warp double)"
@@ -15,11 +15,11 @@ temp_file="$TT_TEMP"
 
 }
 
-.sub(){	# Open VARIABLE File
+fn_sub(){	# Open VARIABLE File
 	st open "$var_file"
 }
 
-.file(){	# Append Selected file to VARIABLE as Env Path
+fn_file(){	# Append Selected file to VARIABLE as Env Path
 
 	key=$(basename "$2" |warp str . |  warp upper)
 	item=$(.relative . "$2" | warp double)
@@ -28,7 +28,7 @@ temp_file="$TT_TEMP"
 }
 
 
-.relative(){	# get relative path by env variables like realpath
+fn_relative(){	# get relative path by env variables like realpath
 
 	local thedir
 	arg="$2"

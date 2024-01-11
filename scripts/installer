@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-.untar(){   # Untar the tar files
+fn_untar(){   # Untar the tar files
     item=`fd '.*tar.*?' -t f -d 2 | fzy`
 
     [ $? -ne 0 ] && show_msg2 "CANCEL" "Operation..." && exit 7
@@ -23,7 +23,7 @@ set -e
 }
 
 
-.move(){    # move the Latest files to HOME directories
+fn_move(){    # move the Latest files to HOME directories
 
     cd "$MYFILES"
     item=$(fd . -t f -d 1 -x ls -la --time-style=long-iso |

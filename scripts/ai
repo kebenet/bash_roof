@@ -4,7 +4,7 @@
 language="bash"
 
 
-.fix() {
+fn_fix() {
 
 	multiline_var=$(cat << EOF
 	can you help me to fix my bash script as shellcheck?
@@ -19,7 +19,7 @@ EOF
 	echo "$multiline_var" | bito 
 }
 
-.ask() {
+fn_ask() {
 	shift
 	echo "$@" | bito
 }

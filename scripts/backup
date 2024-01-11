@@ -1,7 +1,7 @@
 #!/bin/bash
 #FILE! backup service
 
-.bash(){
+fn_bash(){
 
 	# Set the source and destination directories
 	source_dir="$TT_BASH"
@@ -29,7 +29,7 @@
 }
 
 
-.sublime(){
+fn_sublime(){
 	cd ~
 	timestamp=$(date '+%Y%m%d%H%M%S')
 	backup_folders=~/.Backup
@@ -60,7 +60,7 @@
 }
 
 
-.remove() {
+fn_remove() {
 	# Directory to clean up
 	dir=~/.Backup
 

@@ -21,7 +21,7 @@ __dynamic_alias(){
 }
 
 
-.new(){	# create .ttrc file
+fn_new(){	# create .ttrc file
 
 	show_msg2 "Creating"  ".ttrc file"
 	if [ ! -f '.ttrc' ]; then
@@ -32,7 +32,7 @@ __dynamic_alias(){
 }
 
 
-.open(){	# open .ttrc file if aviable
+fn_open(){	# open .ttrc file if aviable
 
 	if [ -f '.ttrc' ]; then
 		st open '.ttrc'
@@ -43,7 +43,7 @@ __dynamic_alias(){
 }
 
 
-.clear(){	# remove all ttrc definitions
+fn_clear(){	# remove all ttrc definitions
 
 	alias_file="$TT_BASH/dynamic_aliases"
 
