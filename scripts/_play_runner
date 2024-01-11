@@ -1,13 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 #TITLE! test expand semi word
 
-# echo ${*}
+thefile="$(which color)"
+rg '^ansi::(\w+)' -o "$thefile" |
+warp head 'color=$(' | warp tail '); shift; text="$1"; ;;' > "$TT_TEMP"
 
-
-fn_gen(){
-	return
-}
-
-# get filename only
-jump lsf | awk -F'/' '{print $(NF)}'| fzy -e "$1"
+rg '^ansi::(\w+)' -or '$1' "$thefile" | warp head '--' | warp tail ')' |
+paste - "$TT_TEMP"
 
