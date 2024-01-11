@@ -1,6 +1,8 @@
 #!/bin/bash
 
-
+if [[ ! $PATH == */workspace/bash/scripts* ]]; then
+	PATH="/home/teraboteraba/workspace/bash/scripts:/usr/local/bin:/usr/bin:/bin"
+fi
 export XDG_CONFIG_HOME="~/.config"
 export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship/starship.toml"
 export TT_SUBLIME="${HOME}/.config/sublime-text"
