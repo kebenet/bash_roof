@@ -141,12 +141,12 @@ clr() {
 clr "$@"
 
 # Example usage
-# clr --black 'this white text' --green 'my text is green' --bold 'Im the bold'
-# clr --black2 'this white text' --yellow2 'my text is green' --red2 'Im the bold'
-# clr --faint 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
-# clr --red 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
-# clr --black 'this white text' --green 'my text is green' --bold 'Im the bold'
-# clr --black2 'this white text' --yellow2 'my text is green' --red2 'Im the bold'
-# clr --faint 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
-# clr --red 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
+clr --black 'this white text' --green 'my text is green' --bold 'Im the bold'
+clr --black2 'this white text' --yellow2 'my text is green' --red2 'Im the bold'
+clr --faint 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
+clr --red 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
+clr --black 'this white text' --green 'my text is green' --bold 'Im the bold'
+clr --black2 'this white text' --yellow2 'my text is green' --red2 'Im the bold'
+clr --faint 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
+clr --red 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
 
