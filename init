@@ -160,9 +160,13 @@ creat_shortcut_to(){	# create shortcut to folder
 newsh(){
 
     show_input "New name" ""
+
+    [ -z "$new" ] && echo 'empty cancel' && return 7
+    
     cp "$TT_BASH/scripts/template.sh" "$new"
 
     chmod 700 "$new"
+    git status
     lsa
 
 }
