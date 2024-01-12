@@ -12,6 +12,10 @@ fn_until(){
 
 }
 
+fn_print(){	# print gigen range 1,2 file
+	sed -n "$2,$3p" "$4"
+}
+
 fn_delete_tail(){
 	sed -i "$2,\$d" "$3"
 }
