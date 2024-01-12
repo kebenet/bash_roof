@@ -166,13 +166,6 @@ newsh(){
 }
 
 
-__new_file(){
-	dirname="$1"
-    read  -er -p "${BOLD}New Name ${ARROW} " -i "new" newname
-    cp "$TT_BASH/scripts/template.sh" "$dirname/$newname"
-    echo "$dirname/$newname"
-}
-
 hp(){
 
 	full='[-]\w,\s(--)\w+'
@@ -225,3 +218,4 @@ history_clean(){
 	awk '!seen[$0]++ && length($0) >= 3 && NF' "$item" > "$TT_TEMP"
 	sort -k 1,1 "$TT_TEMP" > "$item"
 }
+
