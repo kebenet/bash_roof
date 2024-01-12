@@ -1,6 +1,12 @@
 #!/bin/bash
 #FILE! Initialize startup functions
 
+gitcm(){
+	item=$(git status | sed -n 5p | warp trim)
+	msg="$@"
+	echo "$item - $msg"
+	git commit -a -m "$item - $msg"
+}
 
 hpp(){	# display help info
 	item=$(which "$1")
