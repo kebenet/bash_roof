@@ -1,7 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
+terabomap=1
 
 __auto(){
+
+	if [ $terabomap -eq 0 ]; then
+		READLINE_LINE="${READLINE_LINE}:"
+		READLINE_POINT=${#READLINE_LINE}
+		return
+	fi
 
 	local item
 	old="${READLINE_LINE}"
@@ -18,6 +25,15 @@ __auto(){
 	READLINE_POINT=${#READLINE_LINE}
 
 }
+
+onoff() {
+    if [ $terabomap -eq 0 ]; then
+        terabomap=1
+    else
+        terabomap=0
+    fi
+}
+
 
 _get_script_file(){
 
