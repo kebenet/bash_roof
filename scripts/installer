@@ -42,10 +42,9 @@ fn_move(){    # move the Latest files to HOME directories
 }
 
 
-# _show_confirm(){
-#   read -p "Confirmation: (y/n) ❯" confirm
-#   [ "$confirm" = "y" ] && show_msg2 "Cancel" 'Operation...' && exit 7
-# }
+fn_unzip(){
+    unzip "$2"
+}
 
 
 "fn_$1" "$@"
