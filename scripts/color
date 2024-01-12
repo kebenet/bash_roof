@@ -1,7 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-# ANSI_OSC="${ANSI_ESC}]"
-# ANSI_ST="${ANSI_ESC}\\"
 ANSI_ESC=$'\033'
 ANSI_CSI="${ANSI_ESC}["
 
@@ -73,63 +71,63 @@ __color() {
 # Function to print text in specified color using ANSI escape codes
 clr() {
     local color
-    local text
     # local result=""
 
     while [ $# -gt 0 ]; do
         case "$1" in
-        --bell)         color="$BELL"; shift; text="$1"; ;;
-        --bgblack2)     color="$BGBLACK2"; shift; text="$1"; ;;
-        --bgblack)      color="$BGBLACK"; shift; text="$1"; ;;
-        --bgblue2)      color="$BGBLUE2"; shift; text="$1"; ;;
-        --bgblue)       color="$BGBLUE"; shift; text="$1"; ;;
-        --bgcolor)      color="$BGCOLOR"; shift; text="$1"; ;;
-        --bgcyan2)      color="$BGCYAN2"; shift; text="$1"; ;;
-        --bgcyan)       color="$BGCYAN"; shift; text="$1"; ;;
-        --bggreen2)     color="$BGGREEN2"; shift; text="$1"; ;;
-        --bggreen)      color="$BGGREEN"; shift; text="$1"; ;;
-        --bgmagenta2)   color="$BGMAGENTA2"; shift; text="$1"; ;;
-        --bgmagenta)    color="$BGMAGENTA"; shift; text="$1"; ;;
-        --bgred2)       color="$BGRED2"; shift; text="$1"; ;;
-        --bgred)        color="$BGRED"; shift; text="$1"; ;;
-        --bgrgb)        color="$BGRGB"; shift; text="$1"; ;;
-        --bgwhite2)     color="$BGWHITE2"; shift; text="$1"; ;;
-        --bgwhite)      color="$BGWHITE"; shift; text="$1"; ;;
-        --bgyellow2)    color="$BGYELLOW2"; shift; text="$1"; ;;
-        --bgyellow)     color="$BGYELLOW"; shift; text="$1"; ;;
-        --black2)       color="$BLACK2"; shift; text="$1"; ;;
-        --black)        color="$BLACK"; shift; text="$1"; ;;
-        --blink)        color="$BLINK"; shift; text="$1"; ;;
-        --blue2)        color="$BLUE2"; shift; text="$1"; ;;
-        --blue)         color="$BLUE"; shift; text="$1"; ;;
-        --bold)         color="$BOLD"; shift; text="$1"; ;;
-        --color)        color="$COLOR"; shift; text="$1"; ;;
-        --cyan2)        color="$CYAN2"; shift; text="$1"; ;;
-        --cyan)         color="$CYAN"; shift; text="$1"; ;;
-        --faint)        color="$FAINT"; shift; text="$1"; ;;
-        --fraktur)      color="$FRAKTUR"; shift; text="$1"; ;;
-        --frame)        color="$FRAME"; shift; text="$1"; ;;
-        --green2)       color="$GREEN2"; shift; text="$1"; ;;
-        --green)        color="$GREEN"; shift; text="$1"; ;;
-        --magenta2)     color="$MAGENTA2"; shift; text="$1"; ;;
-        --magenta)      color="$MAGENTA"; shift; text="$1"; ;;
-        --red2)         color="$RED2"; shift; text="$1"; ;;
-        --red)          color="$RED"; shift; text="$1"; ;;
-        --resetbg)      color="$RESETBG"; shift; text="$1"; ;;
-        --resetcolor)   color="$RESETCOLOR"; shift; text="$1"; ;;
-        --resetfg)      color="$RESETFG"; shift; text="$1"; ;;
-        --rgb)          color="$RGB"; shift; text="$1"; ;;
-        --underline)    color="$UNDERLINE"; shift; text="$1"; ;;
-        --white2)       color="$WHITE2"; shift; text="$1"; ;;
-        --white)        color="$WHITE"; shift; text="$1"; ;;
-        --yellow2)      color="$YELLOW2"; shift; text="$1"; ;;
-        --yellow)       color="$YELLOW"; shift; text="$1"; ;;
+        --bell)         shift; color="$BELL$1"; ;;
+        --bgblack2)     shift; color="$BGBLACK2$1"; ;;
+        --bgblack)      shift; color="$BGBLACK$1"; ;;
+        --bgblue2)      shift; color="$BGBLUE2$1"; ;;
+        --bgblue)       shift; color="$BGBLUE$1"; ;;
+        --bgcolor)      shift; color="$BGCOLOR$1"; ;;
+        --bgcyan2)      shift; color="$BGCYAN2$1"; ;;
+        --bgcyan)       shift; color="$BGCYAN$1"; ;;
+        --bggreen2)     shift; color="$BGGREEN2$1"; ;;
+        --bggreen)      shift; color="$BGGREEN$1"; ;;
+        --bgmagenta2)   shift; color="$BGMAGENTA2$1"; ;;
+        --bgmagenta)    shift; color="$BGMAGENTA$1"; ;;
+        --bgred2)       shift; color="$BGRED2$1"; ;;
+        --bgred)        shift; color="$BGRED$1"; ;;
+        --bgrgb)        shift; color="$BGRGB$1"; ;;
+        --bgwhite2)     shift; color="$BGWHITE2$1"; ;;
+        --bgwhite)      shift; color="$BGWHITE$1"; ;;
+        --bgyellow2)    shift; color="$BGYELLOW2$1"; ;;
+        --bgyellow)     shift; color="$BGYELLOW$1"; ;;
+        --black2)       shift; color="$BLACK2$1"; ;;
+        --black)        shift; color="$BLACK$1"; ;;
+        --blink)        shift; color="$BLINK$1"; ;;
+        --blue2)        shift; color="$BLUE2$1"; ;;
+        --blue)         shift; color="$BLUE$1"; ;;
+        --bold)         shift; color="$BOLD$1"; ;;
+        --color)        shift; color="$COLOR$1"; ;;
+        --cyan2)        shift; color="$CYAN2$1"; ;;
+        --cyan)         shift; color="$CYAN$1"; ;;
+        --faint)        shift; color="$FAINT$1"; ;;
+        --fraktur)      shift; color="$FRAKTUR$1"; ;;
+        --frame)        shift; color="$FRAME$1"; ;;
+        --green2)       shift; color="$GREEN2$1"; ;;
+        --green)        shift; color="$GREEN$1"; ;;
+        --magenta2)     shift; color="$MAGENTA2$1"; ;;
+        --magenta)      shift; color="$MAGENTA$1"; ;;
+        --red2)         shift; color="$RED2$1"; ;;
+        --red)          shift; color="$RED$1"; ;;
+        --resetbg)      shift; color="$RESETBG$1"; ;;
+        --resetcolor)   shift; color="$RESETCOLOR$1"; ;;
+        --resetfg)      shift; color="$RESETFG$1"; ;;
+        --rgb)          shift; color="$RGB$1"; ;;
+        --underline)    shift; color="$UNDERLINE$1"; ;;
+        --white2)       shift; color="$WHITE2$1"; ;;
+        --white)        shift; color="$WHITE$1"; ;;
+        --yellow2)      shift; color="$YELLOW2$1"; ;;
+        --yellow)       shift; color="$YELLOW$1"; ;;
+
             *) shift ;;
         esac
 
         if [ -n "$color" ]; then
             # result+="$(echo -e "${color}${text}\033[0m")\n"
-            echo "${color}${text}\033[0m"
+            printf "${color}\033[0m"
         fi
         color=""
         shift
@@ -139,14 +137,5 @@ clr() {
 }
 
 clr "$@"
-
-# Example usage
-clr --black 'this white text' --green 'my text is green' --bold 'Im the bold'
-clr --black2 'this white text' --yellow2 'my text is green' --red2 'Im the bold'
-clr --faint 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
-clr --red 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
-clr --black 'this white text' --green 'my text is green' --bold 'Im the bold'
-clr --black2 'this white text' --yellow2 'my text is green' --red2 'Im the bold'
-clr --faint 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
-clr --red 'this faint' --bgwhite 'frame text' --fraktur 'Im the bold'
+echo
 

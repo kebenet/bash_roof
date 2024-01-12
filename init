@@ -8,6 +8,10 @@ hpp(){	# display help info
 	| sd '(\(\)\s*\{?)|(fn_)' '' | column -t -s $'\t'
 }
 
+tere() {
+    local result=$(command tere "$@")
+    [ -n "$result" ] && cd -- "$result"
+}
 
 _check_file_size(){
 
