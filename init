@@ -2,7 +2,7 @@
 #FILE! Initialize startup functions
 
 gitcm(){
-	item=$(git status | sed -n 5p | warp trim)
+	item=$(git diff --name-only)
 	msg="$@"
 
 	git commit -a -m "$item - $msg"
