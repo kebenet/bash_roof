@@ -20,7 +20,7 @@ fn_delete_tail(){
 	sed -i "$2,\$d" "$3"
 }
 
-fn_swap(){
+fn_swap(){	# swap by 2 given rangle
 
 	shift
 
@@ -43,7 +43,7 @@ fn_swap(){
 }
 
 
-fn_swap_single(){
+fn_swap_single(){	# swap by 2 given index
 	shift
 
 	one1=$1
@@ -59,7 +59,7 @@ fn_swap_single(){
 }
 
 
-fn_ls_bash(){
+fn_ls_bash(){	# Get all file with shebang
 
 	rg '#!/bin/(bash|sh)' --fixed-strings --files-with-matches
 	awk '/^/w+/,/^}/' "$1"
