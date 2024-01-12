@@ -1,12 +1,6 @@
 #!/bin/bash
 #FILE! Initialize startup functions
 
-gitcm(){
-	item=$(git diff --name-only)
-	msg="$@"
-
-	git commit -a -m "$item - $msg"
-}
 
 hpp(){	# display help info
 	item=$(which "$1")
