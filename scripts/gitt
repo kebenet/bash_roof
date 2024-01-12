@@ -2,28 +2,41 @@
 
 fn_add(){
 
-	item=$(git diff --name-only)
-	# [ -z "$item" ] && echo 'nothing to commit' && exit 7
-
+	item=$(_first_uncommit_file)
 	read -rp "Desc $ARROW " desc
 	[ -z "$desc" ] && echo 'empty description..' && exit 7
 
 	shift
 	git add "$@"
 	git commit -m "$item - $desc"
+
+}
+
+fn_all(){
+
+	item=$(_first_uncommit_file)
+	[ -z "$desc" ] && echo 'empty nothing to commit..' && exit 7
 	
+	read -rp "Desc $ARROW " desc
+	[ -z "$desc" ] && echo 'empty description..' && exit 7
+
+	git commit -a -m "$item - $desc"
+
 }
 
 
 fn_commit(){
-	item=$(git diff --name-only | sed -n '1p')
-	git commit -m "$item - $@"
+	item=$(_first_uncommit_file)
+	git commit -m "$item - $*"
 }
 
 
 fn_ls(){
 	git diff --name-only
-	git status
 }
 
-"fn_$1" "$@" 
+_first_uncommit_file(){
+	git diff --name-only | sed -n '1p'
+}
+
+"fn_$1" "$@"
