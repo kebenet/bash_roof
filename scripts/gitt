@@ -20,13 +20,15 @@ fn_all(){	# Auto Add files and commit msg
 
 }
 
-fn_single(){	# Add single file and commit msg
+fn_single(){	# Add single file and commit
+	local thefile="$2"
 
 	item=$(_first_uncommit_file)
 	[ -z "$item" ] && echo 'no uncommit file..' && exit 7
+	[ ! -f "$thefile" ] && echo 'no file arg..' && exit 7
 
 	desc=$(_read-desc)
-	git add "$2"
+	git add "$thefile"
 	git commit -m "$item - $desc"
 }
 
