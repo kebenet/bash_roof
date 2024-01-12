@@ -1,5 +1,5 @@
-#!/bin/sh
-
+#!/bin/bash
+#FILE! Player for testing scripts
 
 # save into scripts db
 dbfile="$TT_PATTERN/scripts.ttdb"
@@ -10,7 +10,9 @@ PLAY_TITLE="#TITLE!"
 
 fn_new() {	# create new PLAY item [-s] for save
 
-	[ ${!#} == '-s' ] && .save
+	if [ ${!#} == '-s' ]; then
+		fn_save
+	fi
 
 	{
 		echo "#!/bin/bash"
@@ -61,7 +63,7 @@ fn_search() {
 fn_select() {	# search & select Play item
 	{
 		echo "#!/bin/bash"
-		.search 
+		fn_search 
 	} > "$play_file"
 	st reload "$play_file"
 }
@@ -86,12 +88,12 @@ fn_update() {	# Update Last Play item
 		sd "${saperator}" ""|tail -n 1| cut -d: -f1)
 
 	range delete_tail $index "$dbfile"
-	.save
+	fn_save
 
 }
 
 fn_cat() {	# search & view Play item at terminal
-	.search
+	fn_search
 }
 
 fn_ls() {	# list all Play items
