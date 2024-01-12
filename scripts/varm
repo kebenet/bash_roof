@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #FILE! Persistent Bash variables Manager
-set -e
+
 
 var_file="$TT_BASH/VARIABLE"
 temp_file="$TT_TEMP"
@@ -34,14 +34,14 @@ fn_relative(){	# get relative path by env variables like realpath
 	arg="$2"
 	real=$(realpath "$arg")
 
-	if [ -f "${arg}" ]; then
+	if [ -f "$arg" ]; then
 		thedir=$(dirname "$real")
-	elif [ -d "${arg}" ]; then
+	elif [ -d "$arg" ]; then
 		thedir="$real"
 	fi
 
 	item=$(_loop_parent "$thedir" | warp head '$')
-	itempath=$(eval echo "${item}")
+	itempath=$(eval echo "$item")
 	echo "${real/$itempath/$item}"
 
 }
@@ -49,33 +49,33 @@ fn_relative(){	# get relative path by env variables like realpath
 
 _loop_parent(){
 
-	local dirs="${1}"
+	local dirs="$1"
 
 	while [ "$dirs" != "/" ]; do
 		item="$(_find_env $dirs)"
-		if [ "${item}" ]; then
+		if [ "$item" ]; then
 			break
 		fi
 	    dirs=$(dirname "$dirs")
 	done
 
-	if [ ! "${item}" ]; then
+	if [ ! "$item" ]; then
 		item="HOME=/home/"
 	fi
-	echo "${item}"
+	echo "$item"
 
 }
 
 
 _find_env(){
 	regex='^(TT|Tt|XDG|HOME)'
-	export | cut -d " " -f 3| rg "${regex}" | 
+	export | cut -d " " -f 3| rg "$regex" | 
 	rg '"'$1'"' -F | cut -d= -f 1
 }
 
 _make_uniq(){
-	cat "${var_file}" | awk -F '=' '!seen[$0]++ && NF' > "$temp_file"
-	mv "${temp_file}" "${var_file}"
+	cat "$var_file" | awk -F '=' '!seen[$0]++ && NF' > "$temp_file"
+	mv "$temp_file" "$var_file"
 }
 
 
