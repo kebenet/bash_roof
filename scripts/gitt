@@ -15,6 +15,7 @@ fn_add(){
 fn_all(){
 
 	item=$(_first_uncommit_file)
+	fn_ls
 	
 	read -rp "Desc $ARROW " desc
 	[ -z "$desc" ] && echo 'empty description..' && exit 7
