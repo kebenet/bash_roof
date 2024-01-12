@@ -4,7 +4,7 @@
 gitcm(){
 	item=$(git status | sed -n 5p | warp trim)
 	msg="$@"
-	echo "$item - $msg"
+
 	git commit -a -m "$item - $msg"
 }
 
