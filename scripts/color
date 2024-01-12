@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # ANSI_OSC="${ANSI_ESC}]"
 # ANSI_ST="${ANSI_ESC}\\"
@@ -50,19 +50,19 @@ BLINK="${ANSI_CSI}5m"
 BELL=$'\007'
 
 
-ansi::rgb() {
+__rgb() {
     printf '%s38;2;%s;%s;%sm' "$ANSI_CSI" "$1" "$2" "$3"
 }
 
-ansi::bgRgb() {
+__bgRgb() {
     printf '%s48;2;%s;%s;%sm' "$ANSI_CSI" "$1" "$2" "$3"
 }
 
-ansi::bgColor() {
+__bgColor() {
     printf '%s48;5;%sm' "$ANSI_CSI" "$1"
 }
 
-ansi::color() {
+__color() {
     printf '%s38;5;%sm' "$ANSI_CSI" "$1"
 }
 
@@ -129,7 +129,7 @@ clr() {
 
         if [ -n "$color" ]; then
             # result+="$(echo -e "${color}${text}\033[0m")\n"
-            echo -e "${color}${text}\033[0m"
+            echo "${color}${text}\033[0m"
         fi
         color=""
         shift
