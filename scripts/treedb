@@ -48,10 +48,7 @@ show(){
 	last=${!#}
 	[[ ! $last =~ ^[0-9]+$ ]] && last=1
 	
-
 	index=$(echo "$topindex" | cut -d ' ' -f"$last")
-	echo "line index" "$index"
-	echo "last index" "$last"
 
 	# title
 	item=$(sed -n "${index}p" "$thefile")
