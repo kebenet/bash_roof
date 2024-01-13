@@ -8,7 +8,7 @@ temp_file="$TT_TEMP"
 fn_dir(){	# Append current dir to VARIABLE as Env Path
 
 	key=$(basename "$PWD" | tr '[:lower:]' '[:upper:]')
-	item="$(.relative . $PWD | warp double)"
+	item="$(.relative $PWD | warp double)"
 
 	echo "${key}=${item}" # >> "${var_file}"
 	# _make_uniq
@@ -22,14 +22,14 @@ fn_sub(){	# Open VARIABLE File
 fn_file(){	# Append Selected file to VARIABLE as Env Path
 
 	key=$(basename "$2" |warp str . |  warp upper)
-	item=$(.relative . "$2" | warp double)
+	item=$(.relative "$2" | warp double)
 	echo "${key}=${item}"
 
 }
 
 
 fn_append_recents(){	# Append Relative path to Recents file
-	filepath=$(fn_relative . "$2")
+	filepath=$(fn_relative "$2")
 	echo "$filepath" >> "${TT_PATTERN}/${3}.ttvar"
 }
 
@@ -37,7 +37,7 @@ fn_append_recents(){	# Append Relative path to Recents file
 fn_relative(){	# get relative path by env variables like realpath
 
 	local thedir
-	arg="$2"
+	arg="${!#}"
 	real=$(realpath "$arg")
 
 	if [ -f "$arg" ]; then
