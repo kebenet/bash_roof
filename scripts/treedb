@@ -69,24 +69,23 @@ show(){
 next(){
 
 	count=$(wc -w <<<$topindex)
-
-	index=$(( active_index % count + 1 ))
-
-	save_var "$index" "$tabcount"
-	show $index
+	inc_index
+	show $active_index
 }
 
 show_by_tab(){
 
 	color --faint "$item"
-
-	index=$((active_index+1))
-	# tabcount=$((tabcount+1))
-
-	# show by title and tab index
-	showchild $index
-	# save_var "$index" "$tabcount"
+	inc_index
+	showchild $active_index
 }
+
+inc_index(){
+	count=$(wc -w <<<$topindex)
+	active_index=$(( active_index % count + 1 ))
+	# echo "$active_index"
+}
+
 
 
 save_var(){
@@ -116,5 +115,11 @@ app(){
 	show 
 
 }
+
+on_exit(){
+	save_var "$active_index" "$tabcount"	
+}
+
+trap on_exit EXIT
 
 "$1" "$@"
