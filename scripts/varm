@@ -72,6 +72,63 @@ _loop_parent(){
 
 }
 
+
+fn_set_var(){
+
+	if [ "${2}" ]; then
+		echo "${3}" > "${TT_VAR}/${2}.ttvar"
+	fi
+
+}
+
+fn_get_var(){
+	read -r input < "${TT_VAR}/${2}.ttvar"; echo "$input"
+}
+
+fn_get_var_file(){
+	echo "${TT_VAR}/${2}.ttvar"
+}
+
+
+fn_set_recents(){
+	append_head "$3" "${TT_VAR}/${2}.ttvar"
+}
+
+
+fn_append_head(){
+	{
+		echo "$1"
+		cat "$3"
+	} > ${TT_TEMP}
+
+	cat "${TT_TEMP}" | awk '!seen[$0]++ && NF' > "$3"
+}
+
+
+fn_append_clean(){	
+	{
+		cat "$3"
+		echo "$2"
+	} > ${TT_TEMP}
+	
+	cat "${TT_TEMP}" | awk '!seen[$0]++ && NF' > "$3"
+}
+
+fn_append_recents(){
+	echo "$2" >> "${TT_VAR}/${2}.ttvar"
+}
+
+
+fn_list_var(){
+
+	if [[ $2 == "-n" ]]; then
+		rg '^' -n "${TT_VAR}/${3}.ttvar"
+	else
+		cat "${TT_VAR}/${2}.ttvar"
+	fi
+}
+
+
 #=========== private ======================
 _find_env(){
 	regex='^(TT|Tt|XDG|HOME)'
