@@ -16,12 +16,12 @@ fn_upper(){	# Convert stdin to uppercase.
 
 fn_title(){	# Convert stdin to titlecase.
 
-    .lower | sed 's/\<./\u&/g' | sed "s/'[[:upper:]]/\L&\l/g"
+    fn_lower | sed 's/\<./\u&/g' | sed "s/'[[:upper:]]/\L&\l/g"
 }
 
 fn_detox(){	# Make text from stdin slightly less insane
 
-    sed 's/[^A-Za-z0-9 ]/ /g' | squeeze | sed 's/ /_/g' | .lower
+    sed 's/[^A-Za-z0-9 ]/ /g' | squeeze | sed 's/ /_/g' | fn_lower
 }
 
 fn_camel(){	# Make text from stdin camel case.
@@ -31,13 +31,13 @@ fn_camel(){	# Make text from stdin camel case.
 
 fn_snake(){	# Make text from stdin snake case
 
-    sed 's/\([[:upper:]]\)/ \1/g' | .detox
+    sed 's/\([[:upper:]]\)/ \1/g' | fn_detox
 }
 
 fn_squeeze(){	# Removes leading/trailing whitespace and condenses
 
     local char=${1:-[[:space:]]}
-    sed "s%\(${char//%/\\%}\)\+%\1%g" | .trim "$char"
+    sed "s%\(${char//%/\\%}\)\+%\1%g" | fn_trim "$char"
 }
 
 # ==================================== TERABOTERABA
