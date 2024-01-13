@@ -135,14 +135,10 @@ fn_store(){	# Store to temp then print result
 }
 
 
-fn_eval(){	# Eval all lines
-		rargs eval "${line}"
-}
-
-fn_arg(){	# Take args as command and Eval all Lines
+fn_eval(){	# Take args as command and Eval all Lines
 	
 	while read -r line; do
-		eval "$2 ${line}"
+		eval "$line"
 	done
 }
 
