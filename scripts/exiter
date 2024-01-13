@@ -9,12 +9,14 @@ _cleanup(){
 
 	cat "$recent_file" > "$TT_TEMP"
 	cat "$TT_TEMP" | awk '!seen[$0]++ && NF' > "$recent_file"
+	_last_run
 }
 
 _last_run(){
 	time=$(date)
 	item="# Last run at: $time"
-	sed -i '3c'"$item" "${0}"
+	# sed -i '3c'"$item" "${0}"
+	echo "last exiter run at: $time" >> ~/terabo
 }
 
 _cleanup
