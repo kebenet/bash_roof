@@ -29,9 +29,21 @@ fn_regex(){
 }
 
 
-fn_run(){
-	true
+fn_option(){
+	item="$2"
+	full='[-]\w,\s(--)\w+'
+	simple='^\s*[-]+\w*'
+
+	# check if $1 is -s, cmd =simple else full
+	[[ $1 == "-s" ]] && regex="$simple" || regex="$full"
+
+    data=$("${@: -1}" --help)
+
+    echo "$data"  | rg --trim "$regex" --color=never |
+    sd -F '.' ''
+
 }
+
 
 
 "fn_$1" "$@"
