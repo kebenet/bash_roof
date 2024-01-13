@@ -3,11 +3,12 @@
 
 
 where(){
+	item=$(which "${1}")
 	if [[ $2 == "." ]]; then
-		item="$(which ${1})"
 		symbol "${item}"
 	else
-		st open "$(which ${1})"	
+		st open "$item"
+		varm append_recents "${item}" 'sub_recent_files' 
 	fi
 }
 
