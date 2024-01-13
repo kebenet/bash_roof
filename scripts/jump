@@ -1,12 +1,12 @@
 #!/bin/bash
 # Jump with toogle behaviour
 
-_jumpfile="${TT_PATTERN}/jump_files.ttpath"
-_jumpdir="${TT_PATTERN}/jump_folders.ttpath"
+_jumpfile="${TT_VAR}/jump_files.ttpath"
+_jumpdir="${TT_VAR}/jump_folders.ttpath"
 
 fn_db(){	# open jump [file | folder] in editor
 
-	item=$( { echo '$TT_PATTERN/jump_files.ttpath'; echo '$TT_PATTERN/jump_folders.ttpath'; } | fzy )
+	item=$( { echo '$TT_VAR/jump_files.ttpath'; echo '$TT_VAR/jump_folders.ttpath'; } | fzy )
 	item=$(eval "echo \"${item}\"")
 	st open "$item"
 

@@ -29,7 +29,7 @@ find_bash_path(){
 
 find_var_path(){
 
-	cd "$TT_PATTERN" || return 7
+	cd "$TT_VAR" || return 7
 	items=$(fd . -H -x echo |cut -d. -f1)
 
 	for item in $items; do

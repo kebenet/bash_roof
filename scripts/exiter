@@ -3,7 +3,7 @@
 
 
 
-recent_file="$TT_PATTERN/sub_recent_files.ttvar"
+recent_file="$TT_VAR/sub_recent_files.ttvar"
 
 _cleanup(){
 

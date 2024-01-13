@@ -125,7 +125,7 @@ fn_undo(){	# Undo All replacement
 
 fn_rename(){	# Rename Variable file name with in Code: TODO: not complete
 
-	item=$(fd . "$TT_PATTERN" -x basename |cut -d. -f1|fzy)
+	item=$(fd . "$TT_VAR" -x basename |cut -d. -f1|fzy)
 
 	# echo "${item}"
 	[ ! "${item}" ] && echo "cancelling.." && exit 7

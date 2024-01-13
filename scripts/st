@@ -51,7 +51,7 @@ send_get(){
 
 get_symbol(){
 	shift
-	cat "${TT_PATTERN}/subl_active_symbol.ttvar"
+	cat "${TT_VAR}/subl_active_symbol.ttvar"
 }
 
 set_active_symbol(){

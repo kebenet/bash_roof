@@ -81,7 +81,7 @@ aa(){
 
 expand_name(){
 	
-	jumpdir="${TT_PATTERN}/jump_folders.ttpath"
+	jumpdir="${TT_VAR}/jump_folders.ttpath"
 
 	data=""
 	for item in "$@"
@@ -103,7 +103,7 @@ j(){
 
 	# support multiple words?
 
-	jumpfile="${TT_PATTERN}/fd_exclude_folders.pattern"
+	jumpfile="${TT_VAR}/fd_exclude_folders.pattern"
 
 	#CODE! the exclude folder make fd more fast. less travel ops
 	exclude="$(cat "$jumpfile" | tr '\n' ' ')"
@@ -131,7 +131,7 @@ j(){
 
 zz(){
 
-	jumpdir="${TT_PATTERN}/jump_folders.ttpath"
+	jumpdir="${TT_VAR}/jump_folders.ttpath"
 
 	if [[ "$1" =~ ^[0-9]+$ ]]; then
     	item=$(sed -n "${1}p" "$jumpdir")

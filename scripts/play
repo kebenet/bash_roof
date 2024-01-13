@@ -2,7 +2,7 @@
 #FILE! Player for testing scripts
 
 # save into scripts db
-dbfile="$TT_PATTERN/scripts.ttdb"
+dbfile="$TT_VAR/scripts.ttdb"
 play_file="$TT_BASH/scripts/_play_runner"
 saperator="#::=>PLAY!"
 PLAY_TITLE="#TITLE!"

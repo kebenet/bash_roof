@@ -84,7 +84,7 @@ _to_jsonlist(){
 fn_open(){
 
 	show_msg2 "OPEN"  "JUMP File"
-	jumpfile="${TT_PATTERN}/jump_files.ttpath"
+	jumpfile="${TT_VAR}/jump_files.ttpath"
 
     item="$(_select_file ${jumpfile})"
 	

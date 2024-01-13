@@ -1,15 +1,15 @@
 #!/bin/bash
 #FILE! Completion generator 
 
-completion_file="${TT_PATTERN}/completions.ttpath"
+completion_file="${TT_VAR}/completions.ttpath"
 shared="${TT_TEMP}"
 
-#CODE! Generate completion to ${TT_PATTERN}/completions.ttpath
+#CODE! Generate completion to ${TT_VAR}/completions.ttpath
 fn_gen(){
 
 	_find_export "$TT_BASH/VARIABLE" > "$completion_file"
 
-	# cd "$TT_PATTERN"
+	# cd "$TT_VAR"
 	# fd . -H -t f -d 1 -E '*.pattern'  >> $completion_file 
 	# cat $completion_file
 
@@ -17,8 +17,8 @@ fn_gen(){
 
 fn_item(){
 
-	dirs="${PWD/$TT_PATTERN/$TT_PATTERN}"
-	cd "$TT_PATTERN"
+	dirs="${PWD/$TT_VAR/$TT_VAR}"
+	cd "$TT_VAR"
 	fd . -H -t f -d 1 -E '*.pattern'
 
 }

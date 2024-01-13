@@ -63,19 +63,19 @@ fzy_select_one(){
 set_var(){
 
 	if [ "${1}" ]; then
-		echo "${2}" > "${TT_PATTERN}/${1}.ttvar"
+		echo "${2}" > "${TT_VAR}/${1}.ttvar"
 	fi
 
 }
 
 
 get_var_file(){
-	echo "${TT_PATTERN}/${1}.ttvar"
+	echo "${TT_VAR}/${1}.ttvar"
 }
 
 
 set_recents(){
-	append_head "${2}" "${TT_PATTERN}/${1}.ttvar"
+	append_head "${2}" "${TT_VAR}/${1}.ttvar"
 }
 
 
@@ -99,18 +99,18 @@ append_clean(){
 }
 
 append_recents(){
-	echo "$1" >> "${TT_PATTERN}/${2}.ttvar"
+	echo "$1" >> "${TT_VAR}/${2}.ttvar"
 }
 
 get_var(){
-	read -r input < "${TT_PATTERN}/${1}.ttvar"; echo "$input"
+	read -r input < "${TT_VAR}/${1}.ttvar"; echo "$input"
 }
 
 list_var(){
 
 	if [[ $1 == "-n" ]]; then
-		rg '^' -n "${TT_PATTERN}/${2}.ttvar"
+		rg '^' -n "${TT_VAR}/${2}.ttvar"
 	else
-		cat "${TT_PATTERN}/${1}.ttvar"
+		cat "${TT_VAR}/${1}.ttvar"
 	fi
 }
