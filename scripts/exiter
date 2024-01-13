@@ -1,13 +1,20 @@
 #!/bin/sh
 
 
+
+
 recent_file="$TT_PATTERN/sub_recent_files.ttvar"
 
 _cleanup(){
 
 	cat "$recent_file" > "$TT_TEMP"
 	cat "$TT_TEMP" | awk '!seen[$0]++ && NF' > "$recent_file"
+}
 
+_last_run(){
+	time=$(date)
+	item="# Last run at: $time"
+	sed -i '3c'"$item" "${0}"
 }
 
 _cleanup
