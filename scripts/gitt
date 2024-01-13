@@ -43,6 +43,11 @@ fn_ls(){	# list uncommit files
 	git diff --name-only
 }
 
+fn_branch(){	# get current branch
+	git branch
+	git branch --show-current
+}
+
 _first_uncommit_file(){
 	git diff --name-only | sed -n '1p'
 }
