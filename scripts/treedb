@@ -47,8 +47,11 @@ show(){
 
 	last=${!#}
 	[[ ! $last =~ ^[0-9]+$ ]] && last=1
+	
 
 	index=$(echo "$topindex" | cut -d ' ' -f"$last")
+	echo "line index" "$index"
+	echo "last index" "$last"
 
 	# title
 	item=$(sed -n "${index}p" "$thefile")
@@ -62,7 +65,18 @@ show(){
 
 	# show by title and tab nindex
 	showchild $nindex
+	# save_var "$index" "$tabcount"
+}
+
+
+next(){
+
+	count=$(wc -w <<<$topindex)
+
+	index=$(( active_index % count + 1 ))
+
 	save_var "$index" "$tabcount"
+	show $index
 }
 
 show_by_tab(){
@@ -74,16 +88,9 @@ show_by_tab(){
 
 	# show by title and tab index
 	showchild $index
-	save_var "$index" "$tabcount"
+	# save_var "$index" "$tabcount"
 }
 
-
-next(){
-	count=$(wc -w <<<$topindex)
-
-	index=$(((1 + active_index) % count))
-	show $index
-}
 
 save_var(){
 	item="$1:$2"
