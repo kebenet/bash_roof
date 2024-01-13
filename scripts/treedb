@@ -1,1 +1,80 @@
-#!/bin/sh
+#!/bin/bash
+#TITLE! read tab as tree for editing
+
+thefile="$TT_VAR/tree_structure.ttdb"
+topindex=$(rg -n "^#\s\w+" "$thefile" | cut -d: -f1| tr '\n' ' '| warp trim)
+
+tabcount=0
+tabchar=
+
+says(){
+
+	# printf "%*s- %s\n" $tabcount '' "$1"
+	[ $tabcount -eq 0 ] && echo "- $1" && return
+	thetab=$(printf '\t%.0s' $(seq 1 $tabcount))
+	printf "%s- %s\n" "$thetab" "$1"
+}
+
+inctab(){
+	tabcount=$((tabcount+1))
+}
+
+reset_tab(){
+	tabcount=0
+}
+
+gettab(){
+
+	[ $tabcount -eq 0 ] && printf '' && return
+
+	printf '\t%.0s' $(seq 1 $tabcount)
+}
+
+start(){
+	rg -N "^#\s\w+" "$thefile"
+}
+
+
+goin_all(){
+	range print "$1" '$' "$thefile" | 
+	awk -v count=$tabcount -F'\t' '{if(NF<count+1) exit; print $0}'
+}
+
+
+gochild(){
+	range print "$1" '$' "$thefile" | 
+	awk -v count=$tabcount -F'\t' '{if(NF!=count+1) exit; print $0}'
+}
+
+view(){
+	cat "$thefile"
+}
+
+db(){
+	st open "$thefile"
+}
+
+toplevel(){
+	rg -n "^#\s\w+" "$thefile" | cut -d: -f1| tr '\n' ' '| warp trim
+}
+
+app(){
+
+	start
+
+	read -erp 'choose item ❯ ' digit
+	index=$(echo "$topindex" | cut -d ' ' -f"$digit")
+
+	item=$(sed -n "${index}p" "$thefile")
+
+	echo "$item"
+	index=$(rg -n "^$item" "$thefile" | cut -d: -f1)
+
+	index=$((index+1))
+	tabcount=$((tabcount+1))
+
+	# goin_all $index
+	gochild $index
+}
+
+"$1" "$@"

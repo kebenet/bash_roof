@@ -13,7 +13,7 @@ fn_until(){
 }
 
 fn_print(){	# print given range 1,2 file
-	sed -n "$2,$3p;q" "$4"
+	sed -n "${2},${3}p" "$4"
 }
 
 fn_delete_tail(){
