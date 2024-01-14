@@ -15,7 +15,7 @@ show(){
 	[[ ! $last =~ ^[0-9]+$ ]] && active_index=1
 	
 	inc_selected
-	
+
 	# title
 	item=$(sed -n "${selected_top}p" "$thefile")
 	color --faint "$item"
@@ -62,6 +62,7 @@ showby_tab(){
 selected(){
 	inc_index
 	inc_selected
+	# get main level title 
 	sed -n "${selected_top}p" "$thefile"
 }
 
@@ -69,7 +70,9 @@ child(){
 	# goto child element then print child only
 	# get next line by activetop from topindex
 	# get active topindex
-	inc_tab
+	# selected_top as top level index
+	# inc_tab
+	showby_tab "$selected_top"
 }
 
 parent(){
@@ -142,8 +145,10 @@ dbvar(){
 
 
 
-app(){
-	show 
+reset(){
+	active_index=1
+	selected_top=1
+	tabcount=1
 }
 
 save_var(){
