@@ -44,6 +44,17 @@ fn_option(){
 
 }
 
-
+custom_color(){
+	# https://github.com/BurntSushi/ripgrep/blob/master/FAQ.md#colors
+	rg --colors line:fg:yellow      \
+	   --colors line:style:bold     \
+	   --colors path:fg:green       \
+	   --colors path:style:bold     \
+	   --colors match:fg:black      \
+	   --colors column:bg:yellow     \
+	   --colors column:fg:black      \
+	   --colors match:bg:yellow     \
+	   --colors match:style:nobold  \
+}
 
 "fn_$1" "$@"
