@@ -7,23 +7,34 @@ tree_varname='tree_info'
 tree_info=$(varm get_var "$tree_varname")
 # tabchar=
 
-IFS=: read -r active_index tabcount <<< "$tree_info"
+IFS=: read -r active_index selected_top tabcount <<< "$tree_info"
 
+show(){
 
-inctab(){
-	tabcount=$((tabcount+1))
+	last=${!#}
+	[[ ! $last =~ ^[0-9]+$ ]] && active_index=1
+	
+	index=$(echo "$topindex" | cut -d ' ' -f"$active_index")
+	selected_top="$index"
+	# title
+	item=$(sed -n "${index}p" "$thefile")
+	color --faint "$item"
+
+	nindex=$(rg -n "^$item" "$thefile" | cut -d: -f1)
+
+	nindex=$((nindex+1))
+
+	# show by title and tab nindex
+	showby_index $nindex
 }
 
-reset_tab(){
-	tabcount=0
+info(){
+	echo "active_index	" "$active_index"
+	echo "selected_top	" "$selected_top"
+	echo "tabcount	" "$tabcount"
 }
 
-gettab(){
 
-	[ "$tabcount" -eq 0 ] && printf '' && return
-	printf '\t%.0s' $(seq 1 "$tabcount")
-
-}
 
 start(){
 	rg -N --color=never "^#\s\w+.*" "$thefile" |
@@ -38,31 +49,32 @@ goin_all(){
 }
 
 
-showchild(){
+showby_index(){
 	range print "$1" '$' "$thefile" | 
 	awk -v count="$tabcount" -F'\t' '{if(NF!=count+1) exit; print $0}'
 }
 
-show(){
-
-	last=${!#}
-	[[ ! $last =~ ^[0-9]+$ ]] && active_index=1
-	
-	index=$(echo "$topindex" | cut -d ' ' -f"$active_index")
-
-	# title
-	item=$(sed -n "${index}p" "$thefile")
-	color --faint "$item"
-
-	nindex=$(rg -n "^$item" "$thefile" | cut -d: -f1)
-
-	nindex=$((nindex+1))
-
-	# show by title and tab nindex
-	showchild $nindex
-	# save_var "$index" "$tabcount"
+showby_tab(){
+	range print "$1" '$' "$thefile" | 
+	awk -v count="$tabcount" -F'\t' '{if(NF!=count+1) exit; print $0}'
 }
 
+selected(){
+	inc_index
+	inc_selected
+	sed -n "${selected_top}p" "$thefile"
+}
+
+child(){
+	# goto child element then print child only
+	# get next line by activetop from topindex
+	# get active topindex
+	inc_tab
+}
+
+parent(){
+	dec_tab
+}
 
 next(){
 	inc_index
@@ -75,9 +87,8 @@ prev(){
 	show $active_index
 }
 
-show_by_tab(){
-	inc_index
-	showchild $active_index
+inc_selected(){
+	selected_top=$(echo "$topindex" | cut -d ' ' -f"$active_index")
 }
 
 inc_index(){
@@ -92,10 +103,26 @@ dec_index(){
 	# echo "$active_index"
 }
 
-save_var(){
-	item="$1:$2"
-	varm set_var "$tree_varname" "$item"
+inc_tab(){
+	tabcount=$((tabcount+1))
 }
+
+dec_tab(){
+	tabcount=$((tabcount-1))
+}
+
+reset_tab(){
+	tabcount=0
+}
+
+gettab(){
+
+	[ "$tabcount" -eq 0 ] && printf '' && return
+	printf '\t%.0s' $(seq 1 "$tabcount")
+
+}
+
+
 
 new_node(){
 	index="$2"
@@ -119,8 +146,13 @@ app(){
 	show 
 }
 
+save_var(){
+	item="${active_index:-1}:${selected_top:-1}:${tabcount:-1}"
+	varm set_var "$tree_varname" "$item"
+}
+
 on_exit(){
-	save_var "$active_index" "$tabcount"	
+	save_var	
 }
 
 trap on_exit EXIT
