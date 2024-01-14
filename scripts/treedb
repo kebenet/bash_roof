@@ -14,18 +14,18 @@ show(){
 	last=${!#}
 	[[ ! $last =~ ^[0-9]+$ ]] && active_index=1
 	
-	index=$(echo "$topindex" | cut -d ' ' -f"$active_index")
-	selected_top="$index"
+	inc_selected
+	
 	# title
-	item=$(sed -n "${index}p" "$thefile")
+	item=$(sed -n "${selected_top}p" "$thefile")
 	color --faint "$item"
 
-	nindex=$(rg -n "^$item" "$thefile" | cut -d: -f1)
+	index=$(rg -n "^$item" "$thefile" | cut -d: -f1)
 
-	nindex=$((nindex+1))
+	index=$((index+1))
 
-	# show by title and tab nindex
-	showby_index $nindex
+	# show by title and tab index
+	showby_index $index
 }
 
 info(){
