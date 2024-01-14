@@ -5,7 +5,7 @@ thefile="$TT_VAR/tree_structure.ttdb"
 topindex=$(rg -n "^#\s\w+" "$thefile" | cut -d: -f1| tr '\n' ' '| warp trim)
 tree_varname='tree_info'
 tree_info=$(varm get_var "$tree_varname")
-tabchar=
+# tabchar=
 
 IFS=: read -r active_index tabcount <<< "$tree_info"
 
@@ -20,8 +20,8 @@ reset_tab(){
 
 gettab(){
 
-	[ $tabcount -eq 0 ] && printf '' && return
-	printf '\t%.0s' $(seq 1 $tabcount)
+	[ "$tabcount" -eq 0 ] && printf '' && return
+	printf '\t%.0s' $(seq 1 "$tabcount")
 
 }
 
@@ -34,21 +34,21 @@ start(){
 
 goin_all(){
 	range print "$1" '$' "$thefile" | 
-	awk -v count=$tabcount -F'\t' '{if(NF<count+1) exit; print $0}'
+	awk -v count="$tabcount" -F'\t' '{if(NF<count+1) exit; print $0}'
 }
 
 
 showchild(){
 	range print "$1" '$' "$thefile" | 
-	awk -v count=$tabcount -F'\t' '{if(NF!=count+1) exit; print $0}'
+	awk -v count="$tabcount" -F'\t' '{if(NF!=count+1) exit; print $0}'
 }
 
 show(){
 
 	last=${!#}
-	[[ ! $last =~ ^[0-9]+$ ]] && last=1
+	[[ ! $last =~ ^[0-9]+$ ]] && active_index=1
 	
-	index=$(echo "$topindex" | cut -d ' ' -f"$last")
+	index=$(echo "$topindex" | cut -d ' ' -f"$active_index")
 
 	# title
 	item=$(sed -n "${index}p" "$thefile")
@@ -57,8 +57,6 @@ show(){
 	nindex=$(rg -n "^$item" "$thefile" | cut -d: -f1)
 
 	nindex=$((nindex+1))
-	# tab count base on current active line
-	# tabcount=$((tabcount+1))
 
 	# show by title and tab nindex
 	showchild $nindex
@@ -83,15 +81,15 @@ show_by_tab(){
 }
 
 inc_index(){
-	count=$(wc -w <<<$topindex)
+	count=$(wc -w <<<"$topindex")
 	active_index=$(( active_index % count + 1 ))
-	echo "$active_index"
+	# echo "$active_index"
 }
 
 dec_index(){
-	count=$(wc -w <<<$topindex)
-	active_index=$(( active_index % count - 1 ))
-	echo "$active_index"
+	count=$(wc -w <<<"$topindex")
+	active_index=$(( (active_index + count - 2) % count + 1 ))
+	# echo "$active_index"
 }
 
 save_var(){
@@ -112,7 +110,7 @@ db(){
 }
 
 dbvar(){
-	st open $(varm get_var_file "$tree_varname")
+	st open "$(varm get_var_file $tree_varname)"
 }
 
 
