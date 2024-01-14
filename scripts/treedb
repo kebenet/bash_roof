@@ -67,15 +67,17 @@ show(){
 
 
 next(){
-
-	count=$(wc -w <<<$topindex)
 	inc_index
 	show $active_index
 }
 
-show_by_tab(){
 
-	color --faint "$item"
+prev(){
+	dec_index
+	show $active_index
+}
+
+show_by_tab(){
 	inc_index
 	showchild $active_index
 }
@@ -83,10 +85,14 @@ show_by_tab(){
 inc_index(){
 	count=$(wc -w <<<$topindex)
 	active_index=$(( active_index % count + 1 ))
-	# echo "$active_index"
+	echo "$active_index"
 }
 
-
+dec_index(){
+	count=$(wc -w <<<$topindex)
+	active_index=$(( active_index % count - 1 ))
+	echo "$active_index"
+}
 
 save_var(){
 	item="$1:$2"
@@ -104,6 +110,7 @@ moveto(){
 db(){
 	st open "$thefile"
 }
+
 dbvar(){
 	st open $(varm get_var_file "$tree_varname")
 }
@@ -111,9 +118,7 @@ dbvar(){
 
 
 app(){
-
 	show 
-
 }
 
 on_exit(){
