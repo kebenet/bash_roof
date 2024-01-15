@@ -1,14 +1,14 @@
 #!/bin/bash
 
-if [[ ! $PATH == */workspace/bash/scripts* ]]; then
-	PATH="/home/teraboteraba/workspace/bash/scripts:/usr/local/bin:/usr/bin:/bin"
+if [[ ! $PATH == */workspace/bash_roof/scripts* ]]; then
+	PATH="/home/teraboteraba/workspace/bash_roof/scripts:/usr/local/bin:/usr/bin:/bin"
 fi
 export XDG_CONFIG_HOME="~/.config"
 export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship/starship.toml"
 export TT_SUBLIME="${HOME}/.config/sublime-text"
 export TT_PACKAGES="${TT_SUBLIME}/Packages"
 export TT_WORKSPACE="${HOME}/workspace"
-export TT_BASH="${TT_WORKSPACE}/bash"
+export TT_BASH="${TT_WORKSPACE}/bash_roof"
 export TT_CONFIG="${TT_WORKSPACE}/TtConfig"
 export TT_Editor="${TT_PACKAGES}/TtEditor"
 export TT_SUBLIME_CMD="${TT_Editor}/sublime_cmd"
