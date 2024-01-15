@@ -115,7 +115,7 @@ fn_append_clean(){
 }
 
 fn_append_recents(){
-	echo "$2" >> "${TT_VAR}/${2}.ttvar"
+	echo "$2" >> "${TT_VAR}/${3}.ttvar"
 }
 
 
