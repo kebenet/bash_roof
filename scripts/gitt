@@ -38,6 +38,9 @@ fn_commit(){	# Add  commit msg only
 
 
 fn_ls(){	# list uncommit files
+
+	# set -e
+	_is_gitdir
 	git diff --name-only
 }
 
@@ -46,7 +49,10 @@ fn_branch(){	# get current branch
 	git branch --show-current
 }
 
-
+_is_gitdir(){
+	item=$(git status)
+	[[ "$item" == fatal* ]]&& echo "Not in Git dir.. Exit.." && exit 7
+}
 
 _first_uncommit_file(){
 	git diff --name-only | sed -n '1p'
