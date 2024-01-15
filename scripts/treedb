@@ -56,8 +56,9 @@ showby_index(){
 
 showby_tab(){
 	range print "$1" '$' "$thefile" | 
-	awk -v count="$tabcount" -F'\t' '{if(NF!=count+1) exit; print $0}'
+	awk -v count="$2" -F'\t' '{if(NF!=count+1) exit; print $0}'
 }
+
 
 selected(){
 	inc_index
@@ -66,13 +67,15 @@ selected(){
 	sed -n "${selected_top}p" "$thefile"
 }
 
+
 child(){
 	# goto child element then print child only
 	# get next line by activetop from topindex
 	# get active topindex
 	# selected_top as top level index
-	# inc_tab
-	showby_tab "$selected_top"
+	# get tabcount by current parent
+	tcount=$(get_tab)
+	showby_tab "$selected_top" $tcount
 }
 
 parent(){
@@ -107,6 +110,9 @@ dec_index(){
 }
 
 inc_tab(){
+
+	count=$(echo -n "$string" )
+	parent=$(selected_top)
 	tabcount=$((tabcount+1))
 }
 
@@ -115,14 +121,18 @@ dec_tab(){
 }
 
 reset_tab(){
-	tabcount=0
+	tabcount=1
 }
 
-gettab(){
+get_tab(){
+	index=$((selected_top+1))
+	count=$(sed -n "${index}p" "$thefile" | awk 'BEGIN{FS="\t"} /^[\t]+/{print NF-1}')
+	[ -z "$count" ] && echo 0 || echo "$count"
+}
 
+gen_tab(){
 	[ "$tabcount" -eq 0 ] && printf '' && return
 	printf '\t%.0s' $(seq 1 "$tabcount")
-
 }
 
 
