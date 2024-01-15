@@ -2,21 +2,20 @@
 
 fn_add(){	# Add multiple files and commit msg
 
-	item=$(_first_uncommit_file)
+	# item=$(_first_uncommit_file)
 	desc=$(_read-desc)
 	shift
 	git add "$@"
-	git commit -m "$item - $desc"
+	git commit -m "$desc"
 
 }
 
 fn_all(){	# Auto Add files and commit msg
 
-	item=$(_first_uncommit_file)
 	fn_ls
 	
 	desc=$(_read-desc)
-	git commit -a -m "$item - $desc"
+	git commit -a -m "$desc"
 
 }
 
@@ -29,13 +28,12 @@ fn_single(){	# Add single file and commit
 
 	desc=$(_read-desc)
 	git add "$thefile"
-	git commit -m "$item - $desc"
+	git commit -m "$desc"
 }
 
 fn_commit(){	# Add  commit msg only
-	item=$(_first_uncommit_file)
 	desc=$(_read-desc)
-	git commit -m "$item - $desc"
+	git commit -m "$desc"
 }
 
 
@@ -47,6 +45,8 @@ fn_branch(){	# get current branch
 	git branch
 	git branch --show-current
 }
+
+
 
 _first_uncommit_file(){
 	git diff --name-only | sed -n '1p'
