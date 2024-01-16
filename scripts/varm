@@ -4,6 +4,7 @@
 
 var_file="$TT_BASH/VARIABLE"
 temp_file="$TT_TEMP"
+shared_file="$TT_BASH/shared"
 
 fn_dir(){	# Append current dir to VARIABLE as Env Path
 
@@ -75,9 +76,14 @@ _loop_parent(){
 
 fn_set_var(){
 
-	if [ "${2}" ]; then
-		echo "${3}" > "${TT_VAR}/${2}.ttvar"
-	fi
+	echo "${3}" > "${TT_VAR}/${2}.ttvar"
+}
+
+fn_set_shared(){
+
+	echo "export ${2}=$3" >> "${shared_file}"
+	app=$(pgrep -o bash)
+	kill -SIGUSR1 $app
 
 }
 
