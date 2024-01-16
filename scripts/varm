@@ -81,9 +81,12 @@ fn_set_var(){
 
 fn_set_shared(){
 
-	echo "export ${2}=$3" >> "${shared_file}"
-	app=$(pgrep -o bash)
-	kill -SIGUSR1 $app
+	# maybe: append insert at index using sed
+	if rg -qF "$2" "$shared_file"; then
+		exit 7
+	fi
+	echo "export ${2}=$3" >> "$shared_file"
+	kill -SIGUSR1 $(pgrep -o bash)
 
 }
 
