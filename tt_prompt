@@ -13,9 +13,9 @@ right_prompt() {
 
 	item="($item)"
 	# Calculate the width of the terminal:
-	local term_size=$(tput cols)
-	local all=$(( ${#item} + ${#pitem} ))
-	local start_col=$((term_size - all - 6))
+	term_size=$(tput cols)
+	all=$(( ${#item} + ${#pitem} ))
+	start_col=$((term_size - all - 6))
 
 	printf "%s%${start_col}s "
 	printf "${BWHITE}\ue0b6${BG_WHITE}${BYELLOW} ${pitem} ${END}${BWHITE}\uE0B0 ${BWHITE}${item}${END}"
@@ -39,13 +39,9 @@ __cd_last_PWD(){
 
 	ifile=$(get_var_file 'LastPWD')
 	dir=$(sed -n '2p' "$ifile")
-	cd "$dir"
-	sed -i '1d' "$ifile"
-}
 
-#CODE! set on off show PWD
-_ps1one(){
-	ONEPS1="${WHITE}⬢ ${MAGENTA}$(basename $PWD)${END}"
+	[ -d "$dir" ] && cd "$dir" || return
+	sed -i '1d' "$ifile"
 }
 
 
