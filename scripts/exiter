@@ -27,7 +27,9 @@ _last_run(){
 	time=$(date)
 	item="# Last run at: $time"
 	# sed -i '3c'"$item" "${0}"
-	echo "sublime on_exit: last exiter run at: $time" > $(tty)
+	term=$(tty)
+	echo "sublime on_exit: last exiter run at: $time" > $term
+	echo "sublime on_exit: last exiter run at: $time" >> ~/terabo
 }
 
 _cleanup
