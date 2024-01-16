@@ -8,8 +8,19 @@ __on_exit() {
     set_var "RG_options" "${RG_options}"
 }
 
+my_function() {
+  echo "Function executed."
+  VART=$((VART+1))
+  # echo $VART
+}
+
+# Set up trap to execute my_function on receiving SIGUSR1
+trap 'my_function' SIGUSR1
+
 # Export function Area
 
+
+export VART=1
 export -f set_var
 export -f get_var
 export -f list_var
