@@ -58,13 +58,16 @@ symbol(){
 apt_search_list(){
 
 	item="$@"
-	apt search "$item" |cut -d '/' -f1 | 
+	echo "Loading search for :$item" | clrf ':'
+
+	alls=$(apt search "$item")
+	echo "$alls" |cut -d '/' -f1 | 
 	awk '{ORS = (NR%3 ? ":" : "\n")} 1' |
 	awk -F':' '{temp = $1; $1 = $3; $3 = temp; print}' OFS=":" |
 	warp trim | awk -F ':' -v varcolor1="\\033[0;31m" -v varcolor2="\\033[0;32m" -v reset="\\033[0m" '{
     printf "%s%s%s ", varcolor1, $1, reset;
     printf "%s%s%s\n", varcolor2, $3, reset;
-}'
+	}'
 
 }
 
