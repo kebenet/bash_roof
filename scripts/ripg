@@ -51,8 +51,8 @@ custom_color(){
 	   --colors path:fg:green       \
 	   --colors path:style:bold     \
 	   --colors match:fg:black      \
-	   --colors column:bg:yellow     \
-	   --colors column:fg:black      \
+	   --colors column:bg:yellow    \
+	   --colors column:fg:black     \
 	   --colors match:bg:yellow     \
 	   --colors match:style:nobold  \
 }
