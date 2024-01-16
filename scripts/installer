@@ -30,7 +30,7 @@ fn_move(){    # move the Latest files to HOME directories
     cut -d ' ' -f7- | sort | tail -n 1)
 
     item=$(echo "$item" | cut -d' ' -f2 )
-    echo "item"
+    echo "$item"
 
     . $TT_BASH/show
     show_confirm
