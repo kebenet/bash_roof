@@ -20,7 +20,6 @@ __auto(){
 
 }
 
-
 onoff() {
     if [ $terabomap -eq 0 ]; then
         terabomap=1
@@ -30,10 +29,29 @@ onoff() {
 }
 
 
+_get_active_fn(){
+
+	if [ $terabomap -eq 0 ]; then
+		READLINE_LINE="${READLINE_LINE}?"
+		READLINE_POINT=${#READLINE_LINE}
+		return
+	fi
+
+	old="${READLINE_LINE}"
+	second=$(echo "$old" | cut -d' ' -f2)
+	old=$(echo "$old" | cut -d' ' -f1)
+	view="$(get_var 'subl_active_view')"
+	item=$(rg "^(\w+)" -o "${view}" |fuzzy one "$second")
+
+	READLINE_LINE="${old} ${item}"
+	READLINE_POINT=${#READLINE_LINE}
+}
+
+
 _get_script_fn(){
 	fd . -t f --base-directory "$TT_BASH/scripts" -X \
 	rg '^fn_\w+' --no-heading -No --color=never |
-	sd '[.]/|fn_' '' | sd -F ':' ' ' | rg ' \w+'
+	sd 'fn_' '' | sd -F ':' ' ' | rg ' \w+'
 }
 
 _get_script_file(){
