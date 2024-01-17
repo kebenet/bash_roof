@@ -17,7 +17,7 @@ show(){
 	inc_selected
 
 	# title
-	item=$(sed -n "${selected_top}p" "$thefile")
+	item=$(sed -n "${selected_top}p;${selected_top}q" "$thefile")
 	color --faint "$item"
 
 	index=$(rg -n "^$item" "$thefile" | cut -d: -f1)
@@ -125,6 +125,14 @@ get_tab(){
 	count=$(sed -n "${index}p" "$thefile" | 
 		awk 'BEGIN{FS="\t"} /^[\t]+/{print NF-1}')
 	[ -z "$count" ] && echo 0 || echo "$count"
+}
+
+print_level_innode(){	# print level, then sub node 
+	index=$((selected_top))
+	color --faint "$item"
+	awk -v idx=$index -v tab=$tabcount \
+	'NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
+	print; else exit }' "$thefile"
 }
 
 printin_node(){	# move in, then get same level
