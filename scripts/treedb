@@ -28,20 +28,6 @@ show(){
 	showby_index $index
 }
 
-info(){
-	echo "active_index	" "$active_index"
-	echo "selected_top	" "$selected_top"
-	echo "tabcount	" "$tabcount"
-}
-
-
-
-start(){
-	rg -N --color=never "^#\s\w+.*" "$thefile" |
-	sd '(#)' "$(color --red '$1')" |
-	sd '(Task|Wish|Done|Cancel)' "$(color --faint '$1')"
-}
-
 
 goin_all(){
 	range print "$1" '$' "$thefile" | 
@@ -68,27 +54,6 @@ selected(){
 }
 
 
-child(){
-
-	tcount=$(get_tab)
-	showby_tab "$selected_top" $tcount
-}
-
-parent(){
-	dec_tab
-}
-
-next(){
-	inc_index
-	show $active_index
-}
-
-
-prev(){
-	dec_index
-	show $active_index
-}
-
 inc_selected(){
 	selected_top=$(echo "$topindex" | cut -d ' ' -f"$active_index")
 }
@@ -113,8 +78,11 @@ inc_tab(){
 }
 
 dec_tab(){
-	tabcount=$((tabcount-1))
+  if (( tabcount > 1 )); then
+    tabcount=$((tabcount-1))
+  fi
 }
+
 
 reset_tab(){
 	tabcount=1
@@ -172,16 +140,6 @@ gen_tab(){
 	printf '\t%.0s' $(seq 1 "$tabcount")
 }
 
-
-
-new_node(){
-	index="$2"
-}
-
-moveto(){
-	cat "$thefile"
-}
-
 db(){
 	st open "$thefile"
 }
@@ -190,7 +148,11 @@ dbvar(){
 	st open "$(varmem get_file $tree_varname)"
 }
 
-
+info(){
+	echo "active_index	" "$active_index"
+	echo "selected_top	" "$selected_top"
+	echo "tabcount	" "$tabcount"
+}
 
 reset(){
 	active_index=1
