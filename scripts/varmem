@@ -11,7 +11,12 @@ fn_set(){
 }
 
 fn_get(){
-	tail -n 1 "$mem_file/${2}.ttvar"
+	item="$mem_file/${2}.ttvar"
+	[ -f "$item" ] && tail -n 1 "$item"
+}
+
+fn_get_file(){
+	echo "$mem_file/${2}.ttvar"
 }
 
 fn_ls(){
