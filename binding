@@ -51,7 +51,7 @@ _get_active_fn(){
 _get_script_fn(){
 	fd . -t f --base-directory "$TT_BASH/scripts" -X \
 	rg '^fn_\w+' --no-heading -No --color=never |
-	sd 'fn_' '' | sd -F ':' ' ' | rg ' \w+'
+	sd '[.]/|fn_' '' | sd -F ':' ' ' | rg ' \w+'
 }
 
 _get_script_file(){
