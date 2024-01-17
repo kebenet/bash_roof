@@ -1,7 +1,0 @@
-#!/bin/bash
-#FILE! Generate path completions 
-
-files=$TT_VAR/jump_files.ttpath
-fd . -H -t d -d 5 ~ \
-| fzf --height=80% --reverse --margin 0,0,0,3% \
--1 -q "$1" -d '/' --with-nth=-2..-1
