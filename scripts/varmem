@@ -1,0 +1,22 @@
+#!/bin/sh
+
+mem_file='/dev/shm/TtMemory'
+
+fn_init(){
+	[ ! -d "$mem_file" ] && mkdir "$mem_file"
+}
+
+fn_set(){
+	printf "$3" > "$mem_file/${2}.ttvar"
+}
+
+fn_get(){
+	tail -n 1 "$mem_file/${2}.ttvar"
+}
+
+fn_ls(){
+	fd . -t f -d 2 --base-directory "$mem_file"
+}
+
+
+"fn_$1" "$@"
