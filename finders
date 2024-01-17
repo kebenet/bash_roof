@@ -47,7 +47,7 @@ symbol(){
 		view="${1}"
 	fi
 
-	item=$(rg "^([.]?\w+|\w+)" -n "${view}" |fzy)
+	item=$(rg "^(\w+)" -n "${view}" |fzy)
 	echo ${item}
 	index="$(echo $item | cut -d ':' -f 1)"
 	st open_line "$view" "$index"
