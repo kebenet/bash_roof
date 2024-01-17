@@ -129,9 +129,9 @@ get_tab(){
 
 print_level_innode(){	# print level, then sub node 
 	index=$((selected_top))
-	color --faint "$item"
+	# color --faint $(awk -v idx=$index 'NR==idx {print $0; exit}' "$item")
 	awk -v idx=$index -v tab=$tabcount \
-	'NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
 	print; else exit }' "$thefile"
 }
 
@@ -144,9 +144,26 @@ printin_node(){	# move in, then get same level
 
 print_level(){	# get same level, no exit
 	index=$((selected_top))
-	awk -v idx=$index -v tab=0 \
-	'{ n = gsub(/\t/, "&"); if (n == tab)
+	awk -v idx=$index -v tab=$tabcount \
+	'{ n = gsub(/\t/, "&"); if (n == tab-1)
 	print; }' "$thefile"
+}
+
+print_all_sub(){	# print main, then get all level, exit if tabcount less
+	index=$((selected_top))
+	awk -v idx=$index -v tab=$tabcount \
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n >= tab) 
+	 print; else exit }' "$thefile"
+}
+
+
+print_level_sub(){	# print main, then get same level, 
+	# only print equal tab but exit if less
+	index=$((selected_top))
+	awk -v idx=$index -v tab=$tabcount \
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n > tab) 
+	 next; else if (n == tab) print; else exit }' "$thefile"
+
 }
 
 
