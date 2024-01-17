@@ -7,7 +7,12 @@ tree_varname='tree_info'
 tree_info=$(varmem get "$tree_varname")
 # tabchar=
 
-IFS=: read -r active_index selected_top tabcount <<< "$tree_info"
+IFS=: read -r active_index selected_top tabcount tabline <<< "$tree_info"
+
+save_var(){
+	item="${active_index:-1}:${selected_top:-1}:${tabcount:-1}:${tabline:-1}"
+	varmem set "$tree_varname" "$item"
+}
 
 show(){
 
@@ -29,34 +34,102 @@ show(){
 }
 
 
-goin_all(){
-	range print "$1" '$' "$thefile" | 
-	awk -v count="$tabcount" -F'\t' '{if(NF<count+1) exit; print $0}'
-}
-
 
 showby_index(){
 	range print "$1" '$' "$thefile" | 
 	awk -v count="$tabcount" -F'\t' '{if(NF!=count+1) exit; print $0}'
 }
 
-showby_tab(){
-	range print "$1" '$' "$thefile" | 
-	awk -v count="$2" -F'\t' '{if(NF!=count+1) exit; print $0}'
+
+
+#=================print!=================
+
+print_level(){	# get same level, no exit
+	index=$((selected_top))
+	awk -v idx=$index -v tab=$tabcount \
+	'{ n = gsub(/\t/, "&"); if (n == tab-1)
+	print; }' "$thefile"
+}
+
+printin_node(){	# move in, then get same level
+	index=$((selected_top))
+	awk -v idx=$index -v tab=$tabcount \
+	'NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
+	{ sub(/^\t+/, ""); print } else exit }' "$thefile"
 }
 
 
-selected(){
+
+relative(){	# print main, then get all level, exit if tabcount less
+	
+	index=$((selected_top))
+	[ "$1" == '--tab' ] && index=$((tabline))
+
+	awk -v idx=$index -v tab=$tabcount \
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n >= tab) 
+	 print; else exit }' "$thefile"
+}
+
+
+sibling(){	# print main, then get same level, 
+	# only print equal tab but exit if less
+	index=$((selected_top))
+	[ "$1" == '--tab' ] && index=$((tabline))
+
+	awk -v idx=$index -v tab=$tabcount \
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n > tab) 
+	 next; else if (n == tab) print; else exit }' "$thefile"
+
+}
+
+
+print_level_innode(){	# print level, then sub node 
+	index=$((selected_top))
+	# color --faint $(awk -v idx=$index 'NR==idx {print $0; exit}' "$item")
+	awk -v idx=$index -v tab=$tabcount \
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
+	print; else exit }' "$thefile"
+}
+
+home(){
+	reset
+	show $active_index
+}
+
+right(){
+	# check if next right can increment
+	relative --tab
+}
+
+next_sibling(){
+	# if sibling return empty? restore tabline at active_index
+
+	index=$((selected_top))
+	[ "$1" == '--tab' ] && index=$((tabline))
+	inc=$(awk -v top=$selected_top -v tline=$tabline -v tab=$tabcount \
+		'NR > tline { n = gsub(/\t/, "&"); if (n > tab) 
+		 next; else if (n == tab) print {NR-tline; exit} else { print top+1;exit } }' "$thefile")
+	tabline=$((tabline + inc))
+	echo $inc
+	sibling --tab
+}
+
+next(){
 	inc_index
-	inc_selected
-	# get main level title 
-	sed -n "${selected_top}p" "$thefile"
+	show $active_index
+}
+
+
+prev(){
+	dec_index
+	show $active_index
 }
 
 
 inc_selected(){
 	selected_top=$(echo "$topindex" | cut -d ' ' -f"$active_index")
 }
+
 
 inc_index(){
 	count=$(wc -w <<<"$topindex")
@@ -71,16 +144,18 @@ dec_index(){
 }
 
 inc_tab(){
-
-	count=$(echo -n "$string" )
-	parent=$(selected_top)
 	tabcount=$((tabcount+1))
+	tabline=$((active_index + 1))
 }
 
 dec_tab(){
   if (( tabcount > 1 )); then
     tabcount=$((tabcount-1))
   fi
+  if (( tabline > 1 )); then
+    tabline=$((tabline-1))
+  fi
+
 }
 
 
@@ -88,57 +163,12 @@ reset_tab(){
 	tabcount=1
 }
 
-get_tab(){
-	index=$((selected_top+1))
-	count=$(sed -n "${index}p" "$thefile" | 
-		awk 'BEGIN{FS="\t"} /^[\t]+/{print NF-1}')
-	[ -z "$count" ] && echo 0 || echo "$count"
-}
-
-print_level_innode(){	# print level, then sub node 
-	index=$((selected_top))
-	# color --faint $(awk -v idx=$index 'NR==idx {print $0; exit}' "$item")
-	awk -v idx=$index -v tab=$tabcount \
-	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
-	print; else exit }' "$thefile"
-}
-
-printin_node(){	# move in, then get same level
-	index=$((selected_top))
-	awk -v idx=$index -v tab=$tabcount \
-	'NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
-	{ sub(/^\t+/, ""); print } else exit }' "$thefile"
-}
-
-print_level(){	# get same level, no exit
-	index=$((selected_top))
-	awk -v idx=$index -v tab=$tabcount \
-	'{ n = gsub(/\t/, "&"); if (n == tab-1)
-	print; }' "$thefile"
-}
-
-print_all_sub(){	# print main, then get all level, exit if tabcount less
-	index=$((selected_top))
-	awk -v idx=$index -v tab=$tabcount \
-	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n >= tab) 
-	 print; else exit }' "$thefile"
-}
-
-
-print_level_sub(){	# print main, then get same level, 
-	# only print equal tab but exit if less
-	index=$((selected_top))
-	awk -v idx=$index -v tab=$tabcount \
-	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n > tab) 
-	 next; else if (n == tab) print; else exit }' "$thefile"
-
-}
-
-
 gen_tab(){
 	[ "$tabcount" -eq 0 ] && printf '' && return
 	printf '\t%.0s' $(seq 1 "$tabcount")
 }
+
+
 
 db(){
 	st open "$thefile"
@@ -148,11 +178,14 @@ dbvar(){
 	st open "$(varmem get_file $tree_varname)"
 }
 
+
 info(){
 	echo "active_index	" "$active_index"
 	echo "selected_top	" "$selected_top"
 	echo "tabcount	" "$tabcount"
+	echo "tabline		" "$tabline"
 }
+
 
 reset(){
 	active_index=1
@@ -160,10 +193,6 @@ reset(){
 	tabcount=1
 }
 
-save_var(){
-	item="${active_index:-1}:${selected_top:-1}:${tabcount:-1}"
-	varmem set "$tree_varname" "$item"
-}
 
 on_exit(){
 	save_var	
