@@ -44,20 +44,27 @@ showby_index(){
 
 #=================print!=================
 
-print_level(){	# get same level, no exit
+print_main(){	# get same level, no exit
 	index=$((selected_top))
-	awk -v idx=$index -v tab=$tabcount \
-	'{ n = gsub(/\t/, "&"); if (n == tab-1)
-	print; }' "$thefile"
+	awk -v tab=$tabcount \
+	'{ n = gsub(/\t/, "&"); if (n == tab-1) print; }' "$thefile"
+
+}
+
+print_topindex(){	# print top index
+	awk -v indices="$topindex" 'BEGIN { split(indices, a); } { for (i in a) 
+	if (NR == a[i]) { print; if (length(a) == ++count) exit; } }' \
+	"$thefile"
 }
 
 printin_node(){	# move in, then get same level
+
 	index=$((selected_top))
 	awk -v idx=$index -v tab=$tabcount \
 	'NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
 	{ sub(/^\t+/, ""); print } else exit }' "$thefile"
-}
 
+}
 
 
 relative(){	# print main, then get all level, exit if tabcount less
@@ -65,11 +72,13 @@ relative(){	# print main, then get all level, exit if tabcount less
 	index=$((selected_top))
 	idxtab=$((tabcount))
 
-	[ "$1" == '--tab' ] && index=$((tabline+1)) && idxtab=$((idxtab+1))
+	[ "$1" == '--child' ] && index=$((tabline)) && idxtab=$((idxtab+1))
 
 	awk -v idx=$index -v tab=$idxtab \
 	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n >= tab) 
 	 print; else exit }' "$thefile"
+
+
 }
 
 
@@ -77,51 +86,105 @@ sibling(){	# print main, then get same level,
 	# only print equal tab but exit if less
 	index=$((selected_top))
 	idxtab=$((tabcount))
+	number=0
 
-	[ "$1" == '--tab' ] && index=$((tabline)) && idxtab=$((idxtab+1))
+	[ "$1" == '--child' ] && index=$((tabline)) && idxtab=$((idxtab+1))
+	[ "$1" == '-n' ] && number=$((1)) 
 
-	awk -v idx=$index -v tab=$idxtab \
-	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n > tab) 
-	 next; else if (n == tab) print; else exit }' "$thefile"
+	awk -v idx=$index -v tab=$idxtab -v num=$number \
+	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n > tab)
+	 next; else if (n == tab){ 
+	 	if (num) {print NR, $0} else print;
+	 } else exit }' "$thefile"
 
 }
 
 
 print_level_innode(){	# print level, then sub node 
+
 	index=$((selected_top))
 	# color --faint $(awk -v idx=$index 'NR==idx {print $0; exit}' "$item")
 	awk -v idx=$index -v tab=$tabcount \
 	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n == tab) 
 	print; else exit }' "$thefile"
+
+}
+
+
+append(){
+
+	thetab=$(sibling | awk -v ln="$2" 'NR==ln  {print; exit}')
+
+	echo "$thetab"
+
+	read -e -p "${BOLD}append ${ARROW} " -i "${old}" newdata
+
+	if [ ! "${newdata}" ]; then
+		echo "User Cancel operation.."
+		exit 7
+	fi
+	
+	newdata=$(echo "$thetab"| rg '\t+' -o| warp tail "- $newdata")
+	sed -i "/$thetab/s/$/${newdata}\n/" "$thefile"
+
+	# line=$(sed -n "${2}p;${2}q" <<<"$item")
+	# line=$(awk -v ln="$2" 'NR==ln {print; exit}' <<<"$item")
+
+
+	# sed -i "${index}a\\${newdata}" "$thefile"	
+
 }
 
 home(){
+
 	reset
-	show $active_index
+	print_topindex
+	# print_main
+	# show $active_index
+
 }
 
 
 right(){
 	# check if next right can increment
-	relative --tab
+	relative --child
 }
 
-next_sibling(){
-	# if sibling return empty? restore tabline at active_index
 
-	index=$((selected_top))
-	
-	inc=$(awk -v top=$index -v tline=$tabline -v tab=$tabcount \
-	'NR > tline { n = gsub(/\t/, "&"); if (n > tab) 
-	 next; else if (n == tab) { print NR; exit } 
-	else { print top+1;exit } }' "$thefile")
-	tabline=$((inc))
-	echo $inc
-	sibling --tab
+next_sibling(){
+
+	# if sibling return empty? restore tabline at active_index
+	if [ ! "$1" == '--' ];then
+		inc_all
+	fi
+
+	#--child 
+	sibling |rg '-' -n  --passthru  --colors 'match:fg:cyan' --color=ansi | 
+	rg '# \w+' --passthru --colors 'match:fg:green'  --color=ansi |
+	rg ':\s[a-zA-Z]+' --passthru --colors 'match:fg:white'
+
+}
+
+next_top(){	# print top then print selected child
+
+	if [ ! "$1" == '--' ];then
+		inc_all
+	fi
+
+	item1=$(awk \
+	 	'{ n = gsub(/\t/, "&"); if (n == 0) {print NR, $0} }' "$thefile")
+
+	item2=$(awk -v idx=$selected_top -v tab=$tabcount \
+		'NR > idx { n = gsub(/\t/, "&"); if (n > tab)
+		 next; else if (n == tab) {print NR, $0} else exit }' "$thefile")
+
+	echo -e "${item1}\n" | awk -v idx=$((active_index+1)) -v items="$item2" \
+	'NR == idx {print items}1' 
 
 }
 
 next(){
+
 	inc_index
 	set_selected
 	tabline=$((selected_top))
@@ -139,6 +202,14 @@ prev(){
 	relative
 }
 
+
+inc_all(){
+
+	inc_index
+	set_selected
+	tabline=$((selected_top))
+
+}
 
 set_selected(){
 	selected_top=$(echo "$topindex" | cut -d ' ' -f"$active_index")
@@ -171,6 +242,13 @@ dec_tab(){
     tabline=$((tabline-1))
   fi
 
+}
+
+inc_tabline(){
+	awk -v top=$((selected_top)) -v tline=$((tabline)) -v tab=$((tabcount)) \
+	'NR > tline { n = gsub(/\t/, "&"); if (n > tab) 
+	 next; else if (n == tab) { print NR; exit } 
+	else { print top+1;exit } }' "$thefile"
 }
 
 
