@@ -19,7 +19,7 @@ show(){
 	last=${!#}
 	[[ ! $last =~ ^[0-9]+$ ]] && active_index=1
 	
-	inc_selected
+	set_selected
 
 	# title
 	item=$(sed -n "${selected_top}p;${selected_top}q" "$thefile")
@@ -63,9 +63,11 @@ printin_node(){	# move in, then get same level
 relative(){	# print main, then get all level, exit if tabcount less
 	
 	index=$((selected_top))
-	[ "$1" == '--tab' ] && index=$((tabline))
+	idxtab=$((tabcount))
 
-	awk -v idx=$index -v tab=$tabcount \
+	[ "$1" == '--tab' ] && index=$((tabline+1)) && idxtab=$((idxtab+1))
+
+	awk -v idx=$index -v tab=$idxtab \
 	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n >= tab) 
 	 print; else exit }' "$thefile"
 }
@@ -74,9 +76,11 @@ relative(){	# print main, then get all level, exit if tabcount less
 sibling(){	# print main, then get same level, 
 	# only print equal tab but exit if less
 	index=$((selected_top))
-	[ "$1" == '--tab' ] && index=$((tabline))
+	idxtab=$((tabcount))
 
-	awk -v idx=$index -v tab=$tabcount \
+	[ "$1" == '--tab' ] && index=$((tabline)) && idxtab=$((idxtab+1))
+
+	awk -v idx=$index -v tab=$idxtab \
 	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n > tab) 
 	 next; else if (n == tab) print; else exit }' "$thefile"
 
@@ -96,6 +100,7 @@ home(){
 	show $active_index
 }
 
+
 right(){
 	# check if next right can increment
 	relative --tab
@@ -105,28 +110,37 @@ next_sibling(){
 	# if sibling return empty? restore tabline at active_index
 
 	index=$((selected_top))
-	[ "$1" == '--tab' ] && index=$((tabline))
-	inc=$(awk -v top=$selected_top -v tline=$tabline -v tab=$tabcount \
-		'NR > tline { n = gsub(/\t/, "&"); if (n > tab) 
-		 next; else if (n == tab) print {NR-tline; exit} else { print top+1;exit } }' "$thefile")
-	tabline=$((tabline + inc))
+	
+	inc=$(awk -v top=$index -v tline=$tabline -v tab=$tabcount \
+	'NR > tline { n = gsub(/\t/, "&"); if (n > tab) 
+	 next; else if (n == tab) { print NR; exit } 
+	else { print top+1;exit } }' "$thefile")
+	tabline=$((inc))
 	echo $inc
 	sibling --tab
+
 }
 
 next(){
 	inc_index
-	show $active_index
+	set_selected
+	tabline=$((selected_top))
+	# show $active_index
+	relative
+
 }
 
 
 prev(){
 	dec_index
-	show $active_index
+	set_selected
+	tabline=$((selected_top))
+	# show $active_index
+	relative
 }
 
 
-inc_selected(){
+set_selected(){
 	selected_top=$(echo "$topindex" | cut -d ' ' -f"$active_index")
 }
 
@@ -134,6 +148,7 @@ inc_selected(){
 inc_index(){
 	count=$(wc -w <<<"$topindex")
 	active_index=$(( active_index % count + 1 ))
+
 	# echo "$active_index"
 }
 
@@ -191,6 +206,7 @@ reset(){
 	active_index=1
 	selected_top=1
 	tabcount=1
+	tabline=1
 }
 
 
