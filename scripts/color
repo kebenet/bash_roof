@@ -1,51 +1,6 @@
 #!/bin/bash
 
 
-RESETBG="\033[49m"
-RESETCOLOR="\033[0m"
-RESETFG="\033[39m"
-
-WHITE="\033[37m"
-WHITE2="\033[97m"
-YELLOW="\033[33m"
-YELLOW2="\033[93m"
-BLACK="\033[30m"
-BLACK2="\033[90m"
-BLUE="\033[34m"
-BLUE2="\033[94m"
-CYAN="\033[36m"
-CYAN2="\033[96m"
-MAGENTA="\033[35m"
-MAGENTA2="\033[95m"
-RED="\033[31m"
-RED2="\033[91m"
-GREEN="\033[32m"
-GREEN2="\033[92m"
-BGBLACK="\033[40m"
-BGBLACK2="\033[100m"
-BGBLUE="\033[44m"
-BGBLUE2="\033[104m"
-BGCYAN="\033[46m"
-BGCYAN2="\033[106m"
-BGGREEN="\033[42m"
-BGGREEN2="\033[102m"
-BGMAGENTA="\033[45m"
-BGMAGENTA2="\033[105m"
-BGRED="\033[41m"
-BGRED2="\033[101m"
-BGWHITE="\033[47m"
-BGWHITE2="\033[107m"
-BGYELLOW="\033[43m"
-BGYELLOW2="\033[103m"
-BOLD="\033[1m"
-FRAKTUR="\033[20m"
-FRAME="\033[51m"
-FAINT="\033[2m"
-UNDERLINE="\033[4m"
-BLINK="\033[5m"
-BELL=$'\007'
-
-
 __rgb() {
     printf '%s38;2;%s;%s;%sm' "$ANSI_CSI" "$1" "$2" "$3"
 }
@@ -66,74 +21,62 @@ __color() {
 # ============================ Color
 
 
-# Function to print text in specified color using ANSI escape codes
 clr() {
-    local color
-    # local result=""
+    awk -v clr="$1" 'BEGIN {
 
-    while [ $# -gt 0 ]; do
-        case "$1" in
-        --bell)         shift; color="$BELL$1"; ;;
-        --bgblack2)     shift; color="$BGBLACK2$1"; ;;
-        --bgblack)      shift; color="$BGBLACK$1"; ;;
-        --bgblue2)      shift; color="$BGBLUE2$1"; ;;
-        --bgblue)       shift; color="$BGBLUE$1"; ;;
-        --bgcolor)      shift; color="$BGCOLOR$1"; ;;
-        --bgcyan2)      shift; color="$BGCYAN2$1"; ;;
-        --bgcyan)       shift; color="$BGCYAN$1"; ;;
-        --bggreen2)     shift; color="$BGGREEN2$1"; ;;
-        --bggreen)      shift; color="$BGGREEN$1"; ;;
-        --bgmagenta2)   shift; color="$BGMAGENTA2$1"; ;;
-        --bgmagenta)    shift; color="$BGMAGENTA$1"; ;;
-        --bgred2)       shift; color="$BGRED2$1"; ;;
-        --bgred)        shift; color="$BGRED$1"; ;;
-        --bgrgb)        shift; color="$BGRGB$1"; ;;
-        --bgwhite2)     shift; color="$BGWHITE2$1"; ;;
-        --bgwhite)      shift; color="$BGWHITE$1"; ;;
-        --bgyellow2)    shift; color="$BGYELLOW2$1"; ;;
-        --bgyellow)     shift; color="$BGYELLOW$1"; ;;
-        --black2)       shift; color="$BLACK2$1"; ;;
-        --black)        shift; color="$BLACK$1"; ;;
-        --blink)        shift; color="$BLINK$1"; ;;
-        --blue2)        shift; color="$BLUE2$1"; ;;
-        --blue)         shift; color="$BLUE$1"; ;;
-        --bold)         shift; color="$BOLD$1"; ;;
-        --color)        shift; color="$COLOR$1"; ;;
-        --cyan2)        shift; color="$CYAN2$1"; ;;
-        --cyan)         shift; color="$CYAN$1"; ;;
-        --faint)        shift; color="$FAINT$1"; ;;
-        --fraktur)      shift; color="$FRAKTUR$1"; ;;
-        --frame)        shift; color="$FRAME$1"; ;;
-        --green2)       shift; color="$GREEN2$1"; ;;
-        --green)        shift; color="$GREEN$1"; ;;
-        --magenta2)     shift; color="$MAGENTA2$1"; ;;
-        --magenta)      shift; color="$MAGENTA$1"; ;;
-        --red2)         shift; color="$RED2$1"; ;;
-        --red)          shift; color="$RED$1"; ;;
-        --resetbg)      shift; color="$RESETBG$1"; ;;
-        --resetcolor)   shift; color="$RESETCOLOR$1"; ;;
-        --resetfg)      shift; color="$RESETFG$1"; ;;
-        --rgb)          shift; color="$RGB$1"; ;;
-        --underline)    shift; color="$UNDERLINE$1"; ;;
-        --white2)       shift; color="$WHITE2$1"; ;;
-        --white)        shift; color="$WHITE$1"; ;;
-        --yellow2)      shift; color="$YELLOW2$1"; ;;
-        --yellow)       shift; color="$YELLOW$1"; ;;
+    color["resetbg"]="\033[49m"
+    color["resetcolor"]="\033[0m"
+    color["resetfg"]="\033[39m"
+    color["white"]="\033[37m"
+    color["white2"]="\033[97m"
+    color["yellow"]="\033[33m"
+    color["yellow2"]="\033[93m"
+    color["black"]="\033[30m"
+    color["black2"]="\033[90m"
+    color["blue"]="\033[34m"
+    color["blue2"]="\033[94m"
+    color["cyan"]="\033[36m"
+    color["cyan2"]="\033[96m"
+    color["magenta"]="\033[35m"
+    color["magenta2"]="\033[95m"
+    color["red"]="\033[31m"
+    color["red2"]="\033[91m"
+    color["green"]="\033[32m"
+    color["green2"]="\033[92m"
+    color["bgblack"]="\033[40m"
+    color["bgblack2"]="\033[100m"
+    color["bgblue"]="\033[44m"
+    color["bgblue2"]="\033[104m"
+    color["bgcyan"]="\033[46m"
+    color["bgcyan2"]="\033[106m"
+    color["bggreen"]="\033[42m"
+    color["bggreen2"]="\033[102m"
+    color["bgmagenta"]="\033[45m"
+    color["bgmagenta2"]="\033[105m"
+    color["bgred"]="\033[41m"
+    color["bgred2"]="\033[101m"
+    color["bgwhite"]="\033[47m"
+    color["bgwhite2"]="\033[107m"
+    color["bgyellow"]="\033[43m"
+    color["bgyellow2"]="\033[103m"
+    color["bold"]="\033[1m"
+    color["fraktur"]="\033[20m"
+    color["frame"]="\033[51m"
+    color["faint"]="\033[2m"
+    color["underline"]="\033[4m"
+    color["blink"]="\033[5m"
 
-            *) shift ;;
-        esac
+    }{
+        # Access and print the value for the given color
+        if (clr in color) {
+            print color[clr], $0, color["resetcolor"]
+        } else {
+            print 
+        }
+    }'
 
-        if [ -n "$color" ]; then
-            # result+="$(echo -e "${color}${text}\033[0m")\n"
-            printf "${color}\033[0m"
-        fi
-        color=""
-        shift
-    done
-
-    # echo -e "$result"
 }
 
 clr "$@"
-echo
+
 
