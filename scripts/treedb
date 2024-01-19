@@ -46,8 +46,11 @@ showby_index(){
 
 print_main(){	# get same level, no exit
 	index=$((selected_top))
-	awk -v tab=$tabcount \
-	'{ n = gsub(/\t/, "&"); if (n == tab-1) print; }' "$thefile"
+	index=1
+
+
+
+	# how to manage awk script
 
 }
 
@@ -123,15 +126,31 @@ append(){
 		echo "User Cancel operation.."
 		exit 7
 	fi
-	
+
 	newdata=$(echo "$thetab"| rg '\t+' -o| warp tail "- $newdata")
 	sed -i "/$thetab/s/$/${newdata}\n/" "$thefile"
 
-	# line=$(sed -n "${2}p;${2}q" <<<"$item")
-	# line=$(awk -v ln="$2" 'NR==ln {print; exit}' <<<"$item")
 
+}
 
-	# sed -i "${index}a\\${newdata}" "$thefile"	
+append2(){
+
+	# item=$(next_top -- | awk -v ln="$2" 'NR==ln  {print; exit}')
+	item=$(next_top --)
+	index=$(echo "$item" | rg "^$2" -o)
+
+	echo "$index"
+
+	# read -e -p "${BOLD}append ${ARROW} " -i "${old}" newdata
+
+	# if [ ! "${newdata}" ]; then
+	# 	echo "User Cancel operation.."
+	# 	exit 7
+	# fi
+
+	# newdata=$(echo "$item"| rg '\t+' -o| warp tail "- $newdata")
+	# sed -i "/$item/s/$/${newdata}\n/" "$thefile"
+
 
 }
 
@@ -185,9 +204,7 @@ next_top(){	# print top then print selected child
 
 next(){
 
-	inc_index
-	set_selected
-	tabline=$((selected_top))
+	inc_all
 	# show $active_index
 	relative
 
@@ -273,6 +290,7 @@ dbvar(){
 
 
 info(){
+	echo "topindex	" "$topindex"
 	echo "active_index	" "$active_index"
 	echo "selected_top	" "$selected_top"
 	echo "tabcount	" "$tabcount"
