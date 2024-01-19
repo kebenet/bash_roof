@@ -59,6 +59,7 @@ _first_uncommit_file(){
 }
 
 _read-desc(){
+	set -x
 	read -erp "Descriptions $ARROW " _desc
 	[ -z "$_desc" ] && echo 'empty description..' && exit 7
 	echo "$_desc"
