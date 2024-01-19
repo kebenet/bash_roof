@@ -48,9 +48,8 @@ print_main(){	# get same level, no exit
 	index=$((selected_top))
 	index=1
 
-
-
 	# how to manage awk script
+	awk_begin='BEGIN { split(indices, a); }'
 
 }
 
@@ -80,7 +79,6 @@ relative(){	# print main, then get all level, exit if tabcount less
 	awk -v idx=$index -v tab=$idxtab \
 	'NR==idx { print } NR > idx { n = gsub(/\t/, "&"); if (n >= tab) 
 	 print; else exit }' "$thefile"
-
 
 }
 
