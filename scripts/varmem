@@ -12,7 +12,7 @@ fn_set(){
 
 fn_get(){
 	item="$mem_file/${2}.ttvar"
-	[ -f "$item" ] && tail -n 1 "$item"
+	[ -f "$item" ] && awk 'NR==1 {print}' "$item"
 }
 
 fn_get_file(){
