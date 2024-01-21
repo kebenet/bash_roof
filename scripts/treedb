@@ -5,7 +5,6 @@ thefile="$TT_VAR/tree_structure.ttdb"
 topindex=$(rg -n "^#\s\w+" "$thefile" | cut -d: -f1| tr '\n' ' '| warp trim)
 tree_varname='tree_info'
 tree_info=$(varmem get "$tree_varname")
-# tabchar=
 
 IFS=: read -r active_index selected_top tabcount tabline <<< "$tree_info"
 
@@ -189,7 +188,7 @@ next_top(){	# print top then print selected child
 	fi
 
 	item1=$(awk \
-	 	'{ n = gsub(/\t/, "&"); if (n == 0) {print NR, $0} }' "$thefile")
+		'{ n = gsub(/\t/, "&"); if (n == 0) {print NR, $0} }' "$thefile")
 
 	item2=$(awk -v idx=$selected_top -v tab=$tabcount \
 		'NR > idx { n = gsub(/\t/, "&"); if (n > tab)
