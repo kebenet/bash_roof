@@ -16,7 +16,8 @@ clr(){
         }
         {
             for(i=1;i<=NF;i++){
-                printf "%s%s%s ", colors[(i-1)%8+1], $i, "\033[0m"
+                # $i=$i;
+                printf "%s%s%s", colors[(i-1)%8+1], $i, "\033[0m";
             }
             printf "\n"
         }'
