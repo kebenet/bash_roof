@@ -26,13 +26,12 @@ fn_untar(){   # Untar the tar files
 fn_move(){    # move the Latest files to HOME directories
 
     cd "$MYFILES"
-    item=$(fd . -t f -d 1 -x ls -la --time-style=long-iso |
-    cut -d ' ' -f7- | sort | tail -n 1)
 
-    item=$(echo "$item" | cut -d' ' -f2 )
+    item=$(ls -ltu $(fd -H -I -t f -d 1 . $MYFILES) |
+     head -n 1| awk '{print $NF}')
+
     echo "$item"
 
-    . $TT_BASH/show
     show_confirm
 
     [ $? -ne 0 ] && exit 7
