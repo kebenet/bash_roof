@@ -2,14 +2,6 @@
 #FILE! show messaging echo
 
 
-clrf(){  # color by 2 field
-  field="$1"
-
-  awk -F "$1" -v varcolor1="\\033[0;32m" -v varcolor2="\\033[0;31m" -v reset="\\033[0m" '{
-    printf "%s%s%s", varcolor1, $1, reset;
-    printf "%s%s%s\n", varcolor2, $2, reset;
-}'
-}
 show_input(){
   read  -erp "${BOLD}${1}${ARROW} " -i "${2}" new
   echo "$new"
