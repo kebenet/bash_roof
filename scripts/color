@@ -22,6 +22,18 @@ clr(){
         }'
 }
 
-clr "$@"
 
+#CODE! pipe is coming bro..
+if [ -t 0 ]; then
+ 
+    if [ ${#1} -eq 1 ]; then
+        sep="$1"
+        shift
+    fi
+    echo "$@" | clr "$sep"
+
+else
+    clr "$@"
+    # echo 'pipe true'
+fi
 
