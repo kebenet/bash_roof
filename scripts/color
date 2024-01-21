@@ -1,80 +1,23 @@
-#!/bin/bash
+#!/bin/sh
 
-
-__rgb() {
-    printf '%s38;2;%s;%s;%sm' "$ANSI_CSI" "$1" "$2" "$3"
-}
-
-__bgRgb() {
-    printf '%s48;2;%s;%s;%sm' "$ANSI_CSI" "$1" "$2" "$3"
-}
-
-__bgColor() {
-    printf '%s48;5;%sm' "$ANSI_CSI" "$1"
-}
-
-__color() {
-    printf '%s38;5;%sm' "$ANSI_CSI" "$1"
-}
-
-
-# ============================ Color
-
-
-clr() {
-    awk -v clr="$1" 'BEGIN {
-
-    color["resetbg"]="\033[49m"
-    color["resetcolor"]="\033[0m"
-    color["resetfg"]="\033[39m"
-    color["white"]="\033[37m"
-    color["white2"]="\033[97m"
-    color["yellow"]="\033[33m"
-    color["yellow2"]="\033[93m"
-    color["black"]="\033[30m"
-    color["black2"]="\033[90m"
-    color["blue"]="\033[34m"
-    color["blue2"]="\033[94m"
-    color["cyan"]="\033[36m"
-    color["cyan2"]="\033[96m"
-    color["magenta"]="\033[35m"
-    color["magenta2"]="\033[95m"
-    color["red"]="\033[31m"
-    color["red2"]="\033[91m"
-    color["green"]="\033[32m"
-    color["green2"]="\033[92m"
-    color["bgblack"]="\033[40m"
-    color["bgblack2"]="\033[100m"
-    color["bgblue"]="\033[44m"
-    color["bgblue2"]="\033[104m"
-    color["bgcyan"]="\033[46m"
-    color["bgcyan2"]="\033[106m"
-    color["bggreen"]="\033[42m"
-    color["bggreen2"]="\033[102m"
-    color["bgmagenta"]="\033[45m"
-    color["bgmagenta2"]="\033[105m"
-    color["bgred"]="\033[41m"
-    color["bgred2"]="\033[101m"
-    color["bgwhite"]="\033[47m"
-    color["bgwhite2"]="\033[107m"
-    color["bgyellow"]="\033[43m"
-    color["bgyellow2"]="\033[103m"
-    color["bold"]="\033[1m"
-    color["fraktur"]="\033[20m"
-    color["frame"]="\033[51m"
-    color["faint"]="\033[2m"
-    color["underline"]="\033[4m"
-    color["blink"]="\033[5m"
-
-    }{
-        # Access and print the value for the given color
-        if (clr in color) {
-            print color[clr], $0, color["resetcolor"]
-        } else {
-            print 
+clr(){
+    awk -F "$1" \
+    'BEGIN {
+        colors[1] = "\033[38;2;163;177;198m";
+        colors[8] = "\033[38;2;180;142;173m";
+        colors[7] = "\033[38;2;143;188;187m";
+        colors[6] = "\033[38;2;136;192;208m";
+        colors[5] = "\033[38;2;129;161;193m";
+        colors[3] = "\033[38;2;94;129;172m";
+        colors[4] = "\033[38;2;191;97;106m";
+        colors[2] = "\033[38;2;208;135;112m";
         }
-    }'
-
+        {
+            for(i=1;i<=NF;i++){
+                printf "%s%s%s ", colors[(i-1)%8+1], $i, "\033[0m"
+            }
+            printf "\n"
+        }'
 }
 
 clr "$@"
