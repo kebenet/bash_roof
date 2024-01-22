@@ -30,6 +30,7 @@ fn_save() {	# save PLAY item into db with title
 	local title
 
 	if [ -z "$1" ]; then
+		color 'No title provide.. save with in file title'
 		# get title at line 2 in Play file
 		_title=$(awk 'NR==2 {print}' "$play_file")
 
