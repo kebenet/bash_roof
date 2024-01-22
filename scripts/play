@@ -61,9 +61,12 @@ fn_search() {
 
 
 fn_select() {	# search & select Play item
+	item=$(fn_search)
+	[ -z "$item" ] && color 'User: Canceling...' && exit 7
+
 	{
 		echo "#!/bin/bash"
-		fn_search 
+		echo "$item" 
 	} > "$play_file"
 	st reload "$play_file"
 }
