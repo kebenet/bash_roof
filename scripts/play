@@ -97,8 +97,9 @@ fn_cat() {	# search & view Play item at terminal
 }
 
 fn_ls() {	# list all Play items
-	rg "^${saperator}" "$dbfile"| sd ".*${saperator}" "" \
-	|awk -F ':' '{ printf "%s\t%s\n", $1, $2 }'
+	rg "^${saperator}" "$dbfile"| sd ".*${saperator}" "" |
+	awk -F ':' '{ printf "- %s:\t%s\n", $1, $2 }' |
+	column -t -s $'\t' | color
 }
 
 
