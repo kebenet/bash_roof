@@ -52,7 +52,7 @@ fn_save() {	# save PLAY item into db with title
 }
 
 
-fn_search() {
+_search() {
 
 	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
 	| cut -d: -f 1,2| fzy)
@@ -61,7 +61,7 @@ fn_search() {
 
 
 fn_select() {	# search & select Play item
-	item=$(fn_search)
+	item=$(_search)
 	[ -z "$item" ] && color 'User: Canceling...' && exit 7
 
 	{
@@ -96,7 +96,7 @@ fn_update() {	# Update Last Play item
 }
 
 fn_cat() {	# search & view Play item at terminal
-	fn_search
+	_search
 }
 
 fn_ls() {	# list all Play items
