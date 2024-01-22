@@ -61,11 +61,15 @@ set_active_symbol(){
 }
 
 insert(){
-
 	shift
 	cmd="${def}insert('${1}')"
 	_fire_cmd "${cmd}"
+}
 
+printerm(){
+	shift
+	cmd="${def}printerm('${1}')"
+	_fire_cmd "${cmd}"
 }
 
 open_line(){
@@ -128,6 +132,7 @@ __project_action() {
 change_project() {
 
   item=$(__project_action "$2" "False")
+  # get path info from sublime-project file
   rg 'path' -m 1 "$item" | cut -d: -f2 | tr -d '"'
   # cd $result
 
