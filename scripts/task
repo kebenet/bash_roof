@@ -1,47 +1,55 @@
-#!/bin/sh
+#!/bin/bash
 
 dbfile="$BARTIB_FILE"
 yaml_file="$TT_VAR/tree_structure.ttdb"
-play_file="$TT_BASH/scripts/.task.yaml"
+play_file="$TT_BASH/scripts/._task_terabo.yaml"
 SAPERATOR="- TASK-RECORD"
 
 fn_new(){	# starts a new activity
 	if [ ${!#} == '-s' ]; then
-		fn_save
+		_save
 	fi
 
 	{
-		echo '- WELCOME :'
-		echo -e '\t- Title : '
-		echo -e "- Project : $(basename $PWD)"
-		echo -e '\t- Task : '
+		echo "- WELCOME : TERABO Task .Inc "
+		echo -e "# Title : "
+		echo -e "+ Project : $(_get_git_dir)"
+		echo -e "\t- Task : "
 	} > "$play_file"
 
 	st reload "$play_file"
+
 }
 
 fn_save() {	# save task item into db with title
+	shift
+	arg="$@"
+	_save "$arg" 
+}
+
+_save() {	# save task item into db with title
 	local title
 
-	if [ -z "$1" ]; then
-		color 'No title provide.. save with in file title'
-		# get title at line 2 in Play file
-		_title=$(awk 'NR==2 {print}' "$play_file")
+	# get title at line 2 in Play file
+	_title=$(awk 'NR==2 {print}' "$play_file")
 
-		if [[ $_title == '\t- Title'* ]]; then
+	if [[ $_title == '# Title'* ]]; then
 
-			title=`echo $_title | cut -d' ' -f2-`
+		_title=`echo $_title | cut -d':' -f2- |  awk '{$1=$1};1'`
+		
+		if [ -z "$_title" ]; then
+			read -rp "SAVE last Title ❯ " title	
+			[ -z "$title" ]&& color 'Cancel: Operation.' && exit 7
 		else
-			read -rp "SAVE last Title ❯ " title
+			title="$_title"
 		fi
-	else
-		title="$1"
+
 	fi
 
 	newdate=$(date +%Y-%m-%d)
 	{
-		echo "${SAPERATOR}$title:$newdate"
-		awk 'NR>1 {print}' "$play_file"
+		echo "${SAPERATOR} : $title : $newdate"
+		awk 'NR>2 {print}' "$play_file"
 	} >> "$yaml_file"
 
 }
@@ -111,9 +119,21 @@ fn_report(){	# reports duration of tracked activities
 }
 
 
+fn_db() {	# Open Play Database file
+	st open "$yaml_file"
+}
+
+fn_sub() {	# Open Play file
+	st open "$play_file"
+}
+
 
 # private ______
 
+_get_git_dir(){
+	git rev-parse --git-dir | awk -F '/' '{print $(NF-1)}' ||
+	echo $(basename $PWD)
+}
 
 _search() {
 

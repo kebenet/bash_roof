@@ -29,19 +29,18 @@ fn_new() {	# create new PLAY item [-s] for save
 fn_save() {	# save PLAY item into db with title
 	local title
 
-	if [ -z "$1" ]; then
-		color 'No title provide.. save with in file title'
-		# get title at line 2 in Play file
-		_title=$(awk 'NR==2 {print}' "$play_file")
+	_title=$(awk 'NR==2 {print}' "$play_file")
 
-		if [[ $_title == $PLAY_TITLE* ]]; then
+	if [[ $_title == '# Title'* ]]; then
 
-			title=`echo $_title | cut -d' ' -f2-`
+		_title=`echo $_title | cut -d':' -f2- |  awk '{$1=$1};1'`
+		if [ -z "$_title" ]; then
+			read -rp "SAVE last Title ❯ " title	
+			[ -z "$title" ]&& color 'Cancel: Operation.' && exit 7
 		else
-			read -rp "SAVE last Title ❯ " title
+			title="$_title"
 		fi
-	else
-		title="$1"
+
 	fi
 
 	newdate=$(date +%Y-%m-%d)
