@@ -52,14 +52,6 @@ fn_save() {	# save PLAY item into db with title
 }
 
 
-_search() {
-
-	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
-	| cut -d: -f 1,2| fzy)
-	_get_code "$item"
-}
-
-
 fn_select() {	# search & select Play item
 	item=$(_search)
 	[ -z "$item" ] && color 'User: Canceling...' && exit 7
@@ -106,12 +98,6 @@ fn_ls() {	# list all Play items
 }
 
 
-_run() {
-	shift
-	_play_runner "$@"
-}
-
-
 fn_db() {	# Open Play Database file
 	st open "$dbfile"
 }
@@ -123,6 +109,20 @@ fn_sub() {	# Open Play file
 
 
 # ================================================= Private functions
+
+
+_run() {
+	shift
+	_play_runner "$@"
+}
+
+
+_search() {
+
+	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
+	| cut -d: -f 1,2| fzy)
+	_get_code "$item"
+}
 
 
 _get_code() {

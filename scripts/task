@@ -3,7 +3,8 @@
 dbfile="$BARTIB_FILE"
 yaml_file="$TT_VAR/tree_structure.ttdb"
 play_file="$TT_BASH/scripts/._task_terabo.yaml"
-SAPERATOR="- TASK-RECORD"
+SAPERATOR="+ TASK-RECORD"
+PRJ_SEP='[+] Project'
 
 fn_new(){	# starts a new activity
 	if [ ${!#} == '-s' ]; then
@@ -22,12 +23,6 @@ fn_new(){	# starts a new activity
 }
 
 fn_save() {	# save task item into db with title
-	shift
-	arg="$@"
-	_save "$arg" 
-}
-
-_save() {	# save task item into db with title
 	local title
 
 	# get title at line 2 in Play file
@@ -46,10 +41,13 @@ _save() {	# save task item into db with title
 
 	fi
 
-	newdate=$(date +%Y-%m-%d)
+	newdate=$(date +%d-%m-%Y)
+	# get line at Project
+	line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | cut -d: -f1`
+
 	{
 		echo "${SAPERATOR} : $title : $newdate"
-		awk 'NR>2 {print}' "$play_file"
+		awk "NR>=$line {print}" "$play_file"
 	} >> "$yaml_file"
 
 }
