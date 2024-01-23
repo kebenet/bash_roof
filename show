@@ -22,11 +22,12 @@ show_input(){
 
 
 confirm() {
-
-  read -p "Confirmation: (y/n) ❯" confirm
+  promp=`color 'confirm : (y/n): ❯ '`
+  read -p "$promp" confirm
   if [ "$confirm" = "y" ]; then
     return 0
   else
+    color '   - Cancel : by : User'
     return 7
   fi
 }
