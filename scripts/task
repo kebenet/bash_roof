@@ -1,30 +1,29 @@
 #!/bin/bash
 
 dbfile="$BARTIB_FILE"
-yaml_file="$TT_VAR/tree_structure.ttdb"
+THEFILE="$TT_VAR/tree_structure.ttdb"
 play_file="$TT_BASH/scripts/._task_terabo.yaml"
 SAPERATOR="TASK-RECORD"
 PRJ_SEP='[+] Project'
-
+CANCEL=7
 
 fn_ls() {	# search & view LAST Play item
 
-	item=$(rg "^[+] ${SAPERATOR}" "$yaml_file")
-	# title=`echo "$item" | cut -d: -f3`
+	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE")
 
-	echo "$item" | cut -d: -f2- | color
-	# bartip start/stop
+	echo "$item" | tool cut 2- | warp head ' - :' | color
 
 }
 
 fn_last() {	# search & view LAST Play item
 
-	item=$(rg "^[+] ${SAPERATOR}" -n  "$yaml_file" | tail -n 1)
-	line=`echo "$item"  | cut -d: -f1`
-	title=`echo "$item" | cut -d: -f3`
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE" | tail -n 1)
 
-	echo "$title"
-	_write_head "$title"
+	line=`echo "$item"  | tool cut 1`
+	title=`echo "$item" | tool cut 3`
+	id=`echo "$item" | tool cut 4 | tool trim`
+
+	_write_head "$title" "$id"
 	_get_record "$line" >> "$play_file"
 
 	st reload "$play_file"
@@ -35,9 +34,10 @@ fn_last() {	# search & view LAST Play item
 
 fn_new(){	# starts a new activity
 
-	if [ ${!#} == '-s' ]; then
-		fn_save
-	fi
+	color 'Save Current: File ?'
+	if confirm ;then fn_save; fi
+
+	[ "$CANCEL" -eq 0 ] && exit 7
 
 	_write_head
 	echo -e "\t- Task : " >> "$play_file"
@@ -50,8 +50,11 @@ fn_new(){	# starts a new activity
 _write_head(){
 
 	title="$1"
+	thedate="$2"
+	[ -z "$thedate" ] && thedate=$(date +%s)
+
 	{
-		echo "- WELCOME : TERABO Task .Inc "
+		echo "- WELCOME : TERABO Task .Inc : $thedate"
 		echo -e "# Title : $title"
 	} > "$play_file"
 
@@ -75,37 +78,68 @@ _write_info(){
 
 
 fn_update() {	# updates task item into db
-	ls
+
+	id=`tool line 1 "$play_file" | tool cut 3 | tool trim`
+	num=`rg "$id" -nF "$THEFILE" | tool cut 1`
+
+	end=$(range delete_until "$num" "^[+] $SAPERATOR" "$THEFILE" | wc -l)
+	end=$((num+end))
+	# echo $num $end
+	# exit
+	range delete $num $end "$THEFILE"
+
+	title=`tool line 2 "$play_file" | tool cut 2- | tool trim`
+	play_line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | tool cut 1`
+
+	newdata=$(
+		echo "+ ${SAPERATOR} : $title : $id"
+		awk "NR>=$play_line {print}" "$play_file" | awk 'NF'
+	)
+
+	range insert "$num" "$newdata" "$THEFILE" > "$TT_TEMP"
+	mv "$TT_TEMP" "$THEFILE"
+
 }
 
 fn_save() {	# save task item into db with title
-	local title
+	local title=$(_ensure_title)
 
-	# get title at line 2 in Play file
-	_title=$(awk 'NR==2 {print}' "$play_file")
+	id=`_get_date_id`
+
+	line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | tool cut 1`
+	{
+		echo "+ ${SAPERATOR} : $title : $id"
+		awk "NR>=$line {print}" "$play_file" | awk 'NF'
+	} >> "$THEFILE"
+
+}
+
+_get_date_id(){
+	id=$(tool line 1 "$play_file" |  tool cut 3 | tool trim)
+	if [ -z "$id" ]; then
+		color 'ERROR : date ID not found! : play_file'
+	fi
+	echo "$id"
+}
+
+_ensure_title(){
+	# local title
+	_title=$(tool line 2 "$play_file")
 
 	if [[ $_title == '# Title'* ]]; then
 
-		_title=`echo $_title | cut -d':' -f2- |  awk '{$1=$1};1'`
-		
+		_title=`echo $_title | tool cut 2- | tool triml`
+
 		if [ -z "$_title" ]; then
-			read -rp "SAVE last Title ❯ " title	
-			[ -z "$title" ]&& color 'Cancel: Operation.' && exit 7
+			read -rp "title ❯ " title
+			[ -z "$title" ] && CANCEL=0 && exit 7
+
 		else
 			title="$_title"
 		fi
 
 	fi
-
-	newdate=$(date +%s)
-	# get line at Project
-	line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | cut -d: -f1`
-
-	{
-		echo "+ ${SAPERATOR} : $title : $newdate"
-		awk "NR>=$line {print}" "$play_file" | awk 'NF'
-	} >> "$yaml_file"
-
+	echo "$title"
 }
 
 
@@ -174,7 +208,7 @@ fn_report(){	# reports duration of tracked activities
 
 
 fn_db() {	# Open Play Database file
-	st open "$yaml_file"
+	st open "$THEFILE"
 }
 
 fn_sub() {	# Open Play file
@@ -185,13 +219,14 @@ fn_sub() {	# Open Play file
 # private ______
 
 _get_git_dir(){
-	git rev-parse --git-dir | awk -F '/' '{print $(NF-1)}' ||
+	realpath $(git rev-parse --git-dir) | tool lastf '/' ||
 	echo $(basename $PWD)
 }
 
+
 _search() {
 
-	item=$(rg "^[+] ${SAPERATOR}" -n  "$yaml_file"| sd "[+] ${SAPERATOR}" "" \
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE"| sd "[+] ${SAPERATOR}" "" \
 	| cut -d: -f 1,2| fzy)
 	_get_record "$item"
 }
@@ -199,9 +234,9 @@ _search() {
 _get_record() {
 
 	line="$1"
-	[ -z "$line" ] && color "Canceling..." && exit 7
+	[ -z "$line" ] && color "Error: empty line: Range" && exit 7
 	line=$((line+1))
-	range until $line "^[+] $SAPERATOR" "$yaml_file"
+	range until $line "^[+] $SAPERATOR" "$THEFILE"
 
 }
 
