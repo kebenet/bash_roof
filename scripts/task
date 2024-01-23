@@ -3,38 +3,76 @@
 dbfile="$BARTIB_FILE"
 yaml_file="$TT_VAR/tree_structure.ttdb"
 play_file="$TT_BASH/scripts/._task_terabo.yaml"
-SAPERATOR="+ TASK-RECORD"
+SAPERATOR="TASK-RECORD"
 PRJ_SEP='[+] Project'
 
 
+fn_ls() {	# search & view LAST Play item
+
+	item=$(rg "^[+] ${SAPERATOR}" "$yaml_file")
+	# title=`echo "$item" | cut -d: -f3`
+
+	echo "$item"
+	# bartip start/stop
+
+}
+
 fn_last() {	# search & view LAST Play item
 
-	item=$(rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" \
-	| cut -d: -f 1,2| tail -n 1)
-	{
-		echo "#!/bin/bash"
-		_get_code "$item"
-	} > "$play_file"
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$yaml_file" | tail -n 1)
+	line=`echo "$item"  | cut -d: -f1`
+	title=`echo "$item" | cut -d: -f3`
+
+	echo "$title"
+	_write_head "$title"
+	_get_record "$line" >> "$play_file"
 
 	st reload "$play_file"
+
+	# bartip start/stop
 
 }
 
 fn_new(){	# starts a new activity
+
 	if [ ${!#} == '-s' ]; then
 		_save
 	fi
 
-	{
-		echo "- WELCOME : TERABO Task .Inc "
-		echo -e "# Title : "
-		echo -e "+ Project : $(_get_git_dir)"
-		echo -e "\t- Task : "
-	} > "$play_file"
+	_write_head
+	echo -e "\t- Task : " >> "$play_file"
+	echo
 
 	st reload "$play_file"
 
 }
+
+_write_head(){
+
+	title="$1"
+	{
+		echo "- WELCOME : TERABO Task .Inc "
+		echo -e "# Title : $title"
+	} > "$play_file"
+
+	# information write
+	_write_info
+
+	echo "+ Project : $(_get_git_dir)" >> "$play_file"
+
+}
+
+
+_write_info(){
+
+	title="$1"
+	{
+		echo
+		echo "+ Info : coming soon.."
+		echo
+	} >> "$play_file"
+}
+
 
 fn_save() {	# save task item into db with title
 	local title
@@ -55,13 +93,13 @@ fn_save() {	# save task item into db with title
 
 	fi
 
-	newdate=$(date +%d-%m-%Y)
+	newdate=$(date +%Y-%m-%d)
 	# get line at Project
 	line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | cut -d: -f1`
 
 	{
-		echo "${SAPERATOR} : $title : $newdate"
-		awk "NR>=$line {print}" "$play_file"
+		echo "+ ${SAPERATOR} : $title : $newdate"
+		awk "NR>=$line {print}" "$play_file" | awk 'NF'
 	} >> "$yaml_file"
 
 }
@@ -102,11 +140,11 @@ fn_resume(){	# continues a previous activity
 	bartib continue "${2:-0}"
 }
 
-fn_last(){	# displays the descriptions and projects of recent activities
+_last(){	# displays the descriptions and projects of recent activities
 	bartib last
 }
 
-fn_ls(){	# list recent activities by Date | Name Date
+_ls(){	# list recent activities by Date | Name Date
 	bartib list --today
 }
 
@@ -149,20 +187,18 @@ _get_git_dir(){
 
 _search() {
 
-	item=$(rg "^${SAPERATOR}" -n  "$yaml_file"| sd "${SAPERATOR}" "" \
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$yaml_file"| sd "[+] ${SAPERATOR}" "" \
 	| cut -d: -f 1,2| fzy)
-	_get_code "$item"
+	_get_record "$item"
 }
 
-_get_code() {
+_get_record() {
 
-	item="$1"
-	[ -z "$item" ] && echo "Canceling..." && exit 7
-	
-	line=$(echo "$item" | cut -d: -f1)
+	line="$1"
+	[ -z "$line" ] && color "Canceling..." && exit 7
 	line=$((line+1))
+	range until $line "^[+] $SAPERATOR" "$yaml_file"
 
-	range until $line "^$SAPERATOR" "$yaml_file"
 }
 
 

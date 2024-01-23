@@ -55,7 +55,6 @@ fn_save() {	# save PLAY item into db with title
 fn_select() {	# search & select Play item
 	item=$(_search)
 	[ -z "$item" ] && color 'User: Canceling...' && exit 7
-
 	{
 		echo "#!/bin/bash"
 		echo "$item" 
