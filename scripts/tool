@@ -19,7 +19,7 @@ fn_lastf(){
 }
 
 fn_line(){
-	awk "NR==$2 {print; exit}"
+	awk "NR==$2 {print; exit}" "$3"
 }
 
 
