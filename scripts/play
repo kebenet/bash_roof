@@ -4,7 +4,7 @@
 # save into scripts db
 dbfile="$TT_VAR/bash_script_play.ttdb"
 play_file="$TT_BASH/scripts/_play_runner"
-saperator="#::=>PLAY!"
+SAPERATOR="#::=>PLAY!"
 PLAY_TITLE="#TITLE!"
 
 
@@ -45,7 +45,7 @@ fn_save() {	# save PLAY item into db with title
 
 	newdate=$(date +%Y-%m-%d)
 	{
-		echo "${saperator}$title:$newdate"
+		echo "${SAPERATOR}$title:$newdate"
 		awk 'NR>1 {print}' "$play_file"
 	} >> "$dbfile"
 
@@ -66,7 +66,7 @@ fn_select() {	# search & select Play item
 
 fn_last() {	# search & view LAST Play item
 
-	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
+	item=$(rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" \
 	| cut -d: -f 1,2| tail -n 1)
 	{
 		echo "#!/bin/bash"
@@ -79,8 +79,8 @@ fn_last() {	# search & view LAST Play item
 
 fn_update() {	# Update Last Play item
 
-	index=$(rg "^${saperator}" -n  "$dbfile" | 
-		sd "${saperator}" ""|tail -n 1| cut -d: -f1)
+	index=$(rg "^${SAPERATOR}" -n  "$dbfile" | 
+		sd "${SAPERATOR}" ""|tail -n 1| cut -d: -f1)
 
 	range delete_tail $index "$dbfile"
 	fn_save
@@ -92,7 +92,7 @@ fn_cat() {	# search & view Play item at terminal
 }
 
 fn_ls() {	# list all Play items
-	rg "^${saperator}" "$dbfile"| sd ".*${saperator}" "" |
+	rg "^${SAPERATOR}" "$dbfile"| sd ".*${SAPERATOR}" "" |
 	awk -F ':' '{ printf "- %s:\t%s\n", $1, $2 }' |
 	column -t -s $'\t' | color
 }
@@ -119,7 +119,7 @@ _run() {
 
 _search() {
 
-	item=$(rg "^${saperator}" -n  "$dbfile"| sd "${saperator}" "" \
+	item=$(rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" \
 	| cut -d: -f 1,2| fzy)
 	_get_code "$item"
 }
@@ -133,7 +133,7 @@ _get_code() {
 	line=$(echo "$item" | cut -d: -f1)
 	line=$((line+1))
 
-	range until $line "^$saperator" "$dbfile"
+	range until $line "^$SAPERATOR" "$dbfile"
 }
 
 

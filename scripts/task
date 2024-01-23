@@ -6,6 +6,20 @@ play_file="$TT_BASH/scripts/._task_terabo.yaml"
 SAPERATOR="+ TASK-RECORD"
 PRJ_SEP='[+] Project'
 
+
+fn_last() {	# search & view LAST Play item
+
+	item=$(rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" \
+	| cut -d: -f 1,2| tail -n 1)
+	{
+		echo "#!/bin/bash"
+		_get_code "$item"
+	} > "$play_file"
+
+	st reload "$play_file"
+
+}
+
 fn_new(){	# starts a new activity
 	if [ ${!#} == '-s' ]; then
 		_save
