@@ -27,7 +27,6 @@ confirm() {
   if [ "$confirm" = "y" ]; then
     return 0
   else
-    color '   - Cancel : by : User'
     return 7
   fi
 }
