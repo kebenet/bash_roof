@@ -7,11 +7,24 @@ SAPERATOR="TASK-RECORD"
 PRJ_SEP='[+] Project'
 CANCEL=7
 
+
+fn_load() {	# search & view LAST Play item
+
+	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE" | tool cut 2 | warp num |fzy)
+	idx=`echo $item | tool cut 1`
+
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE" | tool line "$idx")
+
+	_load_record "$item"
+
+}
+
+
 fn_ls() {	# search & view LAST Play item
 
 	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE")
 
-	echo "$item" | tool cut 2- | warp head ' - :' | color
+	_list_task | column -t -s ':' | warp head ' -:' | color
 
 }
 
@@ -19,6 +32,15 @@ fn_last() {	# search & view LAST Play item
 
 	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE" | tail -n 1)
 
+	_load_record "$item"
+
+	# bartip start/stop
+
+}
+
+
+_load_record(){
+	item="$1"
 	line=`echo "$item"  | tool cut 1`
 	title=`echo "$item" | tool cut 3`
 	id=`echo "$item" | tool cut 4 | tool trim`
@@ -27,10 +49,8 @@ fn_last() {	# search & view LAST Play item
 	_get_record "$line" >> "$play_file"
 
 	st reload "$play_file"
-
-	# bartip start/stop
-
 }
+
 
 fn_new(){	# starts a new activity
 
@@ -239,7 +259,10 @@ _get_record() {
 	range until $line "^[+] $SAPERATOR" "$THEFILE"
 
 }
-
+_list_task(){
+	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE")
+	echo "$item" | tool cut 2-
+}
 
 
 "fn_$1" "$@" 
