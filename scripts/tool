@@ -1,0 +1,24 @@
+#!/bin/sh
+
+fn_field(){
+	cut -d "$2" -f "$3"
+}
+
+fn_triml(){
+	awk 'NF'
+}
+
+
+fn_trim(){
+	awk '{$1=$1};1'
+}
+
+
+
+#CODE! pipe is coming bro..
+if [ ! -t 0 ]; then
+	"fn_$1" "$@"
+	exit
+fi
+
+"fn_$1" "$@"
