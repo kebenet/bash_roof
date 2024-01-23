@@ -5,22 +5,22 @@ clr(){
     awk -v var="$1" \
     'BEGIN {
         FS = (var == "" ? ":" : var);
-        colors[1] = "\033[38;2;163;177;198m";
-        colors[8] = "\033[38;2;180;142;173m";
-        colors[7] = "\033[38;2;143;188;187m";
-        colors[6] = "\033[38;2;136;192;208m";
-        colors[5] = "\033[38;2;129;161;193m";
-        colors[3] = "\033[38;2;94;129;172m";
-        colors[4] = "\033[38;2;191;97;106m";
-        colors[2] = "\033[38;2;208;135;112m";
+        colors[1] = "\033[1m";
+        colors[3] = "\033[2m";
+        colors[2] = "\033[32m";
+        colors[4] = "\033[30m";
+        colors[5] = "\033[36m";
+        colors[6] = "\033[35m";
+        colors[7] = "\033[33m";
         }
         {
+            str = ""
             for(i=1;i<=NF;i++){
-                # $i=$i;
-                printf "%s%s%s", colors[(i-1)%8+1], $i, "\033[0m";
+                str = sprintf("%s%s%s\033[0m", str, colors[(i - 1) % 7 + 1], $i);
             }
-            printf "\n"
+            printf "%s\n", str;
         }'
+
 }
 
 
