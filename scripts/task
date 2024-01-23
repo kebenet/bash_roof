@@ -1,13 +1,59 @@
 #!/bin/sh
 
-db_file="$BARTIB_FILE"
+dbfile="$BARTIB_FILE"
+yaml_file="$TT_VAR/tree_structure.ttdb"
+play_file="$TT_BASH/scripts/.task.yaml"
+SAPERATOR="- TASK-RECORD"
 
 fn_new(){	# starts a new activity
+	if [ ${!#} == '-s' ]; then
+		fn_save
+	fi
+
+	{
+		echo '- WELCOME :'
+		echo -e '\t- Title : '
+		echo -e "- Project : $(basename $PWD)"
+		echo -e '\t- Task : '
+	} > "$play_file"
+
+	st reload "$play_file"
+}
+
+fn_save() {	# save task item into db with title
+	local title
+
+	if [ -z "$1" ]; then
+		color 'No title provide.. save with in file title'
+		# get title at line 2 in Play file
+		_title=$(awk 'NR==2 {print}' "$play_file")
+
+		if [[ $_title == '\t- Title'* ]]; then
+
+			title=`echo $_title | cut -d' ' -f2-`
+		else
+			read -rp "SAVE last Title ❯ " title
+		fi
+	else
+		title="$1"
+	fi
+
+	newdate=$(date +%Y-%m-%d)
+	{
+		echo "${SAPERATOR}$title:$newdate"
+		awk 'NR>1 {print}' "$play_file"
+	} >> "$yaml_file"
+
+}
+
+
+_new(){	# starts a new activity
 
 	[ -z "$2" ] && echo "On must defind Description" && exit 7
 	[ -z "$3" ] && echo "On must defind project Name" && exit 7
 
 	bartib start -d "$2" -p "$3"
+
 }
 
 fn_on(){	# starts a new activity
@@ -63,5 +109,30 @@ fn_lsp(){	# list all projects
 fn_report(){	# reports duration of tracked activities
 	bartib report
 }
+
+
+
+# private ______
+
+
+_search() {
+
+	item=$(rg "^${SAPERATOR}" -n  "$yaml_file"| sd "${SAPERATOR}" "" \
+	| cut -d: -f 1,2| fzy)
+	_get_code "$item"
+}
+
+_get_code() {
+
+	item="$1"
+	[ -z "$item" ] && echo "Canceling..." && exit 7
+	
+	line=$(echo "$item" | cut -d: -f1)
+	line=$((line+1))
+
+	range until $line "^$SAPERATOR" "$yaml_file"
+}
+
+
 
 "fn_$1" "$@" 
