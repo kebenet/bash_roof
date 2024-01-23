@@ -1,7 +1,8 @@
 #!/bin/sh
 
-fn_field(){
-	cut -d "$2" -f "$3"
+fn_cut(){
+
+	cut -d: -f "$2"
 }
 
 fn_triml(){
@@ -11,6 +12,14 @@ fn_triml(){
 
 fn_trim(){
 	awk '{$1=$1};1'
+}
+
+fn_lastf(){
+	awk -F "$2" '{print $(NF-1)}'
+}
+
+fn_line(){
+	awk "NR==$2 {print; exit}"
 }
 
 
