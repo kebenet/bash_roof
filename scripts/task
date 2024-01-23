@@ -12,7 +12,7 @@ fn_ls() {	# search & view LAST Play item
 	item=$(rg "^[+] ${SAPERATOR}" "$yaml_file")
 	# title=`echo "$item" | cut -d: -f3`
 
-	echo "$item"
+	echo "$item" | cut -d: -f2- | color
 	# bartip start/stop
 
 }
@@ -36,7 +36,7 @@ fn_last() {	# search & view LAST Play item
 fn_new(){	# starts a new activity
 
 	if [ ${!#} == '-s' ]; then
-		_save
+		fn_save
 	fi
 
 	_write_head
@@ -74,6 +74,10 @@ _write_info(){
 }
 
 
+fn_update() {	# updates task item into db
+	ls
+}
+
 fn_save() {	# save task item into db with title
 	local title
 
@@ -93,7 +97,7 @@ fn_save() {	# save task item into db with title
 
 	fi
 
-	newdate=$(date +%Y-%m-%d)
+	newdate=$(date +%s)
 	# get line at Project
 	line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | cut -d: -f1`
 
