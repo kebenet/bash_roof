@@ -21,20 +21,21 @@ show_input(){
 }
 
 
-show_confirm() {
+confirm() {
 
   read -p "Confirmation: (y/n) ❯" confirm
   if [ "$confirm" = "y" ]; then
-    "$@"
+    return 0
   else
-    echo "User canceled the Operations..."
+    return 7
   fi
 }
 
-show_msg2(){
-  echo -e "${BMAGENTA}${1}${END} ${BOLD}${2}${END}"
+message(){
+  all="$@"
+  color "$all"
 }
 
-export -f show_confirm
-export -f show_msg2
+export -f confirm
+export -f message
 export -f show_input
