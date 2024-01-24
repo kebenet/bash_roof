@@ -32,7 +32,7 @@ fn_move(){    # move the Latest files to HOME directories
 
     echo "$item"
 
-    show_confirm
+    if ! confirm; then color 'User: CANCEL'; exit 7; fi
 
     [ $? -ne 0 ] && exit 7
 
