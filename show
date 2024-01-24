@@ -1,9 +1,6 @@
 #!/bin/bash
 #FILE! show messaging echo
 
-
-#!/bin/bash
-
 toansi() {
     hex_color="$1"
     r=$((16#$(echo $hex_color | cut -c2-3)))
@@ -11,8 +8,9 @@ toansi() {
     b=$((16#$(echo $hex_color | cut -c6-7)))
 
     ansi_color=$(printf "\033[38;2;%d;%d;%dm" $r $g $b)
-    echo -e "$r$g$b" 
+    echo "$r$g$b" 
     echo -e "$ansi_color" "terabo"
+    printf "\033[38;2;%d;%d;%dm" $r $g $b >> ~/terabo
 }
 
 show_input(){

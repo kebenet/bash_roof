@@ -1,22 +1,48 @@
 #!/bin/sh
 
+index=0
+sep=':'
+
+while getopts "f:i:" opt; do
+  case ${opt} in
+    f )
+      sep=${OPTARG}
+      shift 2
+      ;;
+    i )
+      index=${OPTARG}
+      shift 2
+      ;;
+    \? )
+      echo "Invalid option: $OPTARG" 1>&2
+      ;;
+    : )
+      echo "Invalid option: $OPTARG requires an argument" 1>&2
+      ;;
+  esac
+done
+
+
 clr(){
 
-    awk -v var="$1" \
+    awk -v sep="$sep" -v idx="$index" \
     'BEGIN {
-        FS = (var == "" ? ":" : var);
-        colors[1] = "\033[1m";
-        colors[3] = "\033[2m";
-        colors[2] = "\033[32m";
-        colors[4] = "\033[30m";
-        colors[5] = "\033[36m";
-        colors[6] = "\033[35m";
-        colors[7] = "\033[33m";
+        FS = (sep == "" ? ":" : sep);
+
+        colors[1] = "\033[2m";
+        colors[2] = "\033[1m";
+        colors[3] = "\033[1;38;2;0;0;0m"; # black
+        colors[4] = "\033[32m";
+        colors[5] = "\033[1;30m"; # cyam
+        colors[6] = "\033[36m";
+        colors[7] = "\033[35m";
+        colors[8] = "\033[33m";
+
         }
         {
             str = ""
             for(i=1;i<=NF;i++){
-                str = sprintf("%s%s%s\033[0m", str, colors[(i - 1) % 7 + 1], $i);
+                str = sprintf("%s%s%s\033[0m", str, colors[(i+idx) % 7 + 1], $i);
             }
             printf "%s\n", str;
         }'
@@ -24,13 +50,10 @@ clr(){
 }
 
 
+
 #CODE! pipe is coming bro..
 if [ -t 0 ]; then
- 
-    if [ ${#1} -eq 1 ]; then
-        sep="$1"
-        shift
-    fi
+
     echo "$@" | clr "$sep"
 
 else
