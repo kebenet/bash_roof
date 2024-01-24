@@ -237,13 +237,13 @@ find_elv_help(){
 cheat(){
 
     export LANG="bash"
-    message "FIND_CODE"  "search anyting"
-    message "Options -l"  "change language"
+    message "FIND_CODE: search anyting"
+    message "Options -l: change language"
 
     if [[ ${1} == "-l" ]]; then
     	export LANG="$2"
-      	message "Set lang" "to $2"
-      return
+      	message "Set lang: to $2"
+      	shift 2
     fi
     
     item=$(echo "${@}" | tr ' ' '+')
