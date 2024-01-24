@@ -97,7 +97,7 @@ expand_name(){
 j(){
 
 	if [ "$#" -eq 0 ]; then
-	    show_msg2 "EMPTY Arg" "provide string to search.."
+	    message "EMPTY Arg" "provide string to search.."
 	    return 7
 	fi
 
@@ -133,15 +133,20 @@ zz(){
 
 	jumpdir="${TT_VAR}/jump_folders.ttpath"
 
-	if [[ "$1" =~ ^[0-9]+$ ]]; then
+	if [ -z "$1" ];then
+	    cat "$jumpdir" | tool lastf '/' | rg '^' -n| pr -t -3
+	elif [[ "$1" =~ ^[0-9]+$ ]]; then
     	item=$(sed -n "${1}p" "$jumpdir")
-    	echo ${BOLD}${item}${END}
-    	item=$(eval "echo \"$item\"")
+    	item=`eval "echo $item"`
+    	color ${item}
     	cd "$item"
     	ls
-	else
-	    cat "$jumpdir" | tool lastf '/' | rg '^' -n| pr -t -3
-
+    else
+	    item=`cat "$jumpdir" | fzf --filter="$1" | head -n 1`
+    	item=`eval "echo $item"`
+    	color ${item}
+    	cd "$item"
+    	ls
 	fi
 	
 }
