@@ -44,6 +44,8 @@ clr(){
             str = ""
             for(i=1;i<=NF;i++){
                 str = sprintf("%s%s%s\033[0m", str, colors[(i+idx) % 7 + 1], $i);
+                
+                if( i!=NF ){str = sprintf("%s%s%s\033[0m", str, colors[2], sep);}
             }
             printf "%s\n", str;
         }'
