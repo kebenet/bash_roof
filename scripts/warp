@@ -129,6 +129,10 @@ fn_lines(){	# Convert Spaces to Lines
 	tr ' ' '\n'
 }
 
+fn_join(){	# Convert Spaces to Lines
+	sd '\n$' '' | sd '\n' "$2"
+}
+
 
 fn_store(){	# Store to temp then print result
 	tee - "$tempf"
