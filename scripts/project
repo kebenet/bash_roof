@@ -21,4 +21,4 @@ fn_python(){
 
 "fn_$1" "$@"
 
-show_msg2 "Usage"  "python, pyinit"
+message "Usage: python, pyinit"

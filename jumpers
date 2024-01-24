@@ -23,8 +23,8 @@ cdp(){
 		fi
 	else
 		set_recents "$var_name" "${PWD}"
-	    show_msg2 "DONE add CDP: " "${PWD}"
-	    show_msg2 "Aviable CMD: " "ls cd cdir ."
+	    message "DONE add CDP: ${PWD}"
+	    message "Aviable CMD: ls cd cdir ."
 	fi
 	
 }

@@ -26,7 +26,7 @@ fn_symbols(){
 	    } | fzy)
 
 	if [ ! "${item}" ]; then
-		show_msg2 "CANCEL" "Operation..."
+		message "CANCEL: Operation..."
 		return 7
 	fi
 
@@ -83,7 +83,7 @@ _to_jsonlist(){
 
 fn_open(){
 
-	show_msg2 "OPEN"  "JUMP File"
+	message "OPEN: JUMP File"
 	jumpfile="${TT_VAR}/jump_files.ttpath"
 
     item="$(_select_file ${jumpfile})"
@@ -100,18 +100,18 @@ _select_file(){
      if [ ! "${item}" ]; then
     	awk "NR==${index}" "${1}"
     else
-    	show_msg2 "USER" "Cancel Operations"
+    	message "USER: Cancel Operations"
     	exit 7
     fi
 
 }
 
 fn_thelp(){
-	show_msg2 "open"  "JUMP File"
-	show_msg2 "adds"  "files session to list"
-	show_msg2 "OPEN"  "JUMP File"
-	show_msg2 "OPEN"  "JUMP File"
-	show_msg2 "OPEN"  "JUMP File"
+	message "open:JUMP File"
+	message "adds: files session to list"
+	message "OPEN: JUMP File"
+	message "OPEN: JUMP File"
+	message "OPEN: JUMP File"
 }
 
 "fn_$1" "$@"

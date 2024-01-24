@@ -14,7 +14,7 @@ _check_file_size(){
 	filesize=$(stat -c%s "$1")
 
 	if (( filesize > maxsize )); then
-	    show_msg2 "ERROR" "File size is over the limit. 100kb"
+	    message "ERROR: File size is over the limit. 100kb"
 	    return 7
 	fi
 
@@ -42,7 +42,7 @@ copy(){	# copy file path to clip
 
     if [ "$#" -eq 1 ]; then
 
-        show_msg2 "TTFCLIP" "name of fclip"
+        message "TTFCLIP: name of fclip"
         return
     fi
 
@@ -50,14 +50,14 @@ copy(){	# copy file path to clip
 
 	_fclip "$item"
 
-	show_msg2 "$item" "Copy to CLIP"
+	message "$item : Copy to CLIP"
 
 }
 
 paste(){	# paste file to clipboard
 
 	if [ ! -f "$TTFCLIP" ]; then
-		show_msg2 "FILE ERROR!" "not a file or empty"
+		message "FILE ERROR!: not a file or empty"
 		return 7
 	fi
 
@@ -66,8 +66,8 @@ paste(){	# paste file to clipboard
 	cp "$TTFCLIP" "$PWD"
 
 	base=$(basename "$TTFCLIP")
-	show_msg2 "${base}" "DONE Copy to"
-	show_msg2 "$PWD" "."
+	message "${base}: DONE Copy to"
+	message "$PWD : ."
 }
 
 _fclip() {
@@ -75,7 +75,7 @@ _fclip() {
 	
 	if [[ "$1" == "." ]]; then
 		unset TTFCLIP
-		show_msg2 "EMPTY" "the clipboard"
+		message "EMPTY: the clipboard"
 		return
 	fi
 
@@ -89,16 +89,16 @@ duplicate(){	# duplicate file
 
 	#CODE! check if not file. [-f file] [-d dir]
 	if [ ! -f "$1" ]; then
-		show_msg2 "FILE ERROR!" "file arg to duplicate"
+		message "FILE ERROR!: file arg to duplicate"
 		return 7
 	fi
 
-	show_msg2 "DUPLICATE" "provide new Name"
+	message "DUPLICATE: provide new Name"
 	#CODE! read single line user input
 	read -er -p "new name ${ARROW} " -i "${1}" new
 
 	cp "${1}" "${new}"
-	show_msg2 "DONE!" "duplicate : $new"
+	message "DONE!: duplicate : $new"
 
 }
 
@@ -109,7 +109,7 @@ remove(){	# remove file
 
 	rm "$item"
 
-	show_msg2 "$item" "Remove..."
+	message "$item: Remove..."
 
 }
 
@@ -118,10 +118,10 @@ stop() {	# stop at current folder
 
     if [ "$#" -eq 1 ]; then
         export SAVEPWD="$PWD"
-        show_msg2 "DONE save" "${PWD}"
+        message "DONE save: ${PWD}"
     else
         if [ -z "$SAVEPWD" ]; then
-            show_msg2 "press ." "to save current folder"
+            message "press: . to save current folder"
         else
             cd "$SAVEPWD" || return
         fi
@@ -142,7 +142,7 @@ creat_shortcut_to(){	# create shortcut to folder
 		echo "At ❯ ${BOLD}${dirname}"
     else
 
-		show_msg2 "ERROR!" "Argument must be file"
+		message "ERROR!: Argument must be file"
         echo "$file"
     fi
 }
@@ -200,7 +200,7 @@ rename(){
 
 	item="$(fdls | fzy -e "${1}" | fzy -q "${1}")"
 	if [ ! "${item}" ]; then
-		show_msg2 "CANCEL" "Operation..."
+		message "CANCEL: Operation..."
 		return 7
 	fi
 

@@ -67,6 +67,7 @@ fn_new(){	# starts a new activity
 
 }
 
+
 _write_head(){
 
 	title="$1"
@@ -239,7 +240,7 @@ fn_sub() {	# Open Play file
 # private ______
 
 _get_git_dir(){
-	realpath $(git rev-parse --git-dir) | tool lastf '/' ||
+	realpath $(git rev-parse --git-dir) | tool last2f '/' ||
 	echo $(basename $PWD)
 }
 

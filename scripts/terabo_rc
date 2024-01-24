@@ -23,7 +23,7 @@ __dynamic_alias(){
 
 fn_new(){	# create .ttrc file
 
-	show_msg2 "Creating"  ".ttrc file"
+	message "Creating: .ttrc file"
 	if [ ! -f '.ttrc' ]; then
 		echo '#!/bin/sh' > '.ttrc'
 	fi
@@ -37,7 +37,7 @@ fn_open(){	# open .ttrc file if aviable
 	if [ -f '.ttrc' ]; then
 		st open '.ttrc'
 	else
-		show_msg2 "ERROR"  ".ttrc file not aviable!"
+		message "ERROR: .ttrc file not aviable!"
 	fi
 
 }

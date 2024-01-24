@@ -116,9 +116,9 @@ run_pipe(){
 }
 
 thelp(){
-	show_msg2 "ARGS"  "[a,c,d]"
-	show_msg2 "Usage"  "[append|change|delete]"
-	show_msg2 "Script"  "$0"
+	message "ARGS: [a,c,d]"
+	message "Usage: [append|change|delete]"
+	message "Script: $0"
 }
 
 main

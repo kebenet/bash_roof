@@ -23,7 +23,7 @@ fn_gen(){	# generate code replacement file at current directory
 	[ ! $? -eq 0 ] && echo "ripgrep Error.." && exit 7
 	
 	cat "${UNDO_file}"
-	show_msg2 "DO SEARCH At"  "$(basename $PWD)"
+	message "DO SEARCH At: $(basename $PWD)"
 }
 
 fn_testing(){
@@ -42,7 +42,7 @@ fn_testing(){
 
 	dry
 	
-	show_msg2 "DONE Gen at: " "$(basename $PWD)"
+	message "DONE Gen at: $(basename $PWD)"
 }
 
 fn_dry(){	# Testing and preview the replacement Refactor Files

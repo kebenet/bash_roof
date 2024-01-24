@@ -12,7 +12,7 @@ if [ "$#" -gt 0 ]; then
 		list_var "$varname"
 
 	elif [[ "$1" == "done" ]]; then
-		show_msg2 "DONE delete Que: " "DONE append to done work que"
+		message "DONE delete Que: DONE append to done work que"
 	    
 	elif [[ "$1" == "rm" ]]; then
 		
@@ -46,7 +46,7 @@ else
 
 	set_recents "$varname" "${symbol}"
 
-	show_msg2 "DONE add to Que: " "$(get_var "$varname")"
-    show_msg2 "Aviable CMD: " "sub ls rm ."
+	message "DONE add to Que: $(get_var "$varname")"
+    message "Aviable CMD: sub ls rm ."
 fi
 

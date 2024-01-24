@@ -51,12 +51,12 @@ fn_file() {	# add to jump files
 
 	item=$(fd . -H -t f -d 2 | fuzzy one "${2}")
 
-	[ ! "${item}" ] && show_msg2 "CANCEL" "Operation..." && exit 7
+	[ ! "${item}" ] && message "CANCEL" "Operation..." && exit 7
 
 	filepath=$(varm relative "$item")
 
 	_append_uniq "${filepath}" "$_jumpfile"
-	show_msg2 "DONE add : " "$filepath"
+	message "DONE add : " "$filepath"
 
 }
 
@@ -65,7 +65,7 @@ fn_dir() {	# add folder to jump list
 	filepath=$(varm relative ".")
 	_append_uniq "${filepath}" "$_jumpdir"
 	echo $?
-	show_msg2 "DONE add : " "$filepath"
+	message "DONE add : " "$filepath"
 
 }
 

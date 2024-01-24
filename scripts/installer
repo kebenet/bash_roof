@@ -4,8 +4,8 @@ set -e
 fn_untar(){   # Untar the tar files
     item=`fd '.*tar.*?' -t f -d 2 | fzy`
 
-    [ $? -ne 0 ] && show_msg2 "CANCEL" "Operation..." && exit 7
-    [ -z "$item" ] && show_msg2 "ERROR" "Empty" && exit 7
+    [ $? -ne 0 ] && message "CANCEL: Operation..." && exit 7
+    [ -z "$item" ] && message "ERROR: Empty" && exit 7
 
     case "$item" in
 
