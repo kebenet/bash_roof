@@ -97,7 +97,7 @@ expand_name(){
 j(){
 
 	if [ "$#" -eq 0 ]; then
-	    message "EMPTY Arg" "provide string to search.."
+	    message "EMPTY Arg: provide string to search.."
 	    return 7
 	fi
 
@@ -108,7 +108,7 @@ j(){
 	#CODE! the exclude folder make fd more fast. less travel ops
 	exclude="$(cat "$jumpfile" | tr '\n' ' ')"
 
-	list=$(eval "fd ${1} -t d -H "$exclude" ~")
+	list=$(eval "fd ${1} -t d -H "$exclude" $TT_WORKSPACE")
 
 	items="$(echo ${list} | tr ' ' '\n' | fzy -e ${1})"
 	

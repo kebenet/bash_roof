@@ -31,14 +31,13 @@ clr(){
 
         colors[3] = "\033[1;2m"; # bold; grey
         colors[2] = "\033[1m"; # bold
+        colors[4] = "\033[0;38;5;34m"; # green hex
 
-        colors[4] = "\033[32m";
         colors[5] = "\033[1;30m"; # cyam
-        colors[1] = "\033[36m"; # to change or remove
         colors[6] = "\033[35m";
-        colors[7] = "\033[33m";
+        colors[7] = "\033[32m";
 
-        # colors[3] = "\033[1;38;2;0;0;0m"; # black
+        colors[1] = "\033[38;2;0;0;0m"; # black
         }
         {
             str = ""
