@@ -5,8 +5,8 @@ terabomap=1
 __auto(){
 
 	if [ $terabomap -eq 0 ]; then
-		READLINE_LINE="${READLINE_LINE}:"
-		READLINE_POINT=${#READLINE_LINE}
+
+		_insert_at ':'
 		return
 	fi
 
@@ -32,8 +32,7 @@ onoff() {
 _get_active_fn(){
 
 	if [ $terabomap -eq 0 ]; then
-		READLINE_LINE="${READLINE_LINE}?"
-		READLINE_POINT=${#READLINE_LINE}
+		_insert_at '?'
 		return
 	fi
 
@@ -45,6 +44,16 @@ _get_active_fn(){
 
 	READLINE_LINE="${old} ${item}"
 	READLINE_POINT=${#READLINE_LINE}
+}
+
+_insert_at(){
+	# item to insert
+	item="$1"
+	current_line="${READLINE_LINE:0:$READLINE_POINT}${item}${READLINE_LINE:$READLINE_POINT}"
+	READLINE_LINE="${current_line}"
+
+	# Move the cursor to the right
+	((READLINE_POINT++))
 }
 
 
