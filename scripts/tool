@@ -14,8 +14,12 @@ fn_trim(){
 	awk '{$1=$1};1'
 }
 
-fn_lastf(){
+fn_last2f(){
 	awk -F "$2" '{print $(NF-1)}'
+}
+
+fn_lastf(){
+	awk -F "$2" '{print $(NF)}'
 }
 
 fn_line(){

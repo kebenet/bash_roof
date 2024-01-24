@@ -140,8 +140,8 @@ zz(){
     	cd "$item"
     	ls
 	else
-	    items=$(cat "$jumpdir" | rargs basename {} | rg '^' -n)
-	    printf "%s\n" "${items[@]}" | pr -t -3
+	    cat "$jumpdir" | tool lastf '/' | rg '^' -n| pr -t -3
+
 	fi
 	
 }
