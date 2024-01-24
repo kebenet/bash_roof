@@ -29,15 +29,16 @@ clr(){
     'BEGIN {
         FS = (sep == "" ? ":" : sep);
 
-        colors[1] = "\033[2m";
+        colors[3] = "\033[1;2m";
         colors[2] = "\033[1m";
-        colors[3] = "\033[1;38;2;0;0;0m"; # black
+
         colors[4] = "\033[32m";
         colors[5] = "\033[1;30m"; # cyam
-        colors[6] = "\033[36m";
-        colors[7] = "\033[35m";
-        colors[8] = "\033[33m";
+        colors[1] = "\033[36m";
+        colors[6] = "\033[35m";
+        colors[7] = "\033[33m";
 
+        # colors[3] = "\033[1;38;2;0;0;0m"; # black
         }
         {
             str = ""
