@@ -5,6 +5,11 @@ fn_cut(){
 	cut -d: -f "$2"
 }
 
+fn_cutd(){
+	del=${2:-:}
+	cut -d"$del" -f "$3"
+}
+
 fn_triml(){
 	awk 'NF'
 }

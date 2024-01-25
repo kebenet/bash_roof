@@ -27,16 +27,20 @@ fn_new() {	# create new PLAY item [-s] for save
 
 
 fn_save() {	# save PLAY item into db with title
+
 	local title
 
-	_title=$(awk 'NR==2 {print}' "$play_file")
+	_title=$(tool line 2 "$play_file")
+	if [[ $_title == "$PLAY_TITLE"* ]]; then
 
-	if [[ $_title == '# Title'* ]]; then
-
-		_title=`echo $_title | cut -d':' -f2- |  awk '{$1=$1};1'`
+		_title=`echo $_title | tool cutd '!' 2- |  tool trim`
 		if [ -z "$_title" ]; then
-			read -rp "SAVE last Title ❯ " title	
-			[ -z "$title" ]&& color 'Cancel: Operation.' && exit 7
+
+			if ! title=$(show input 'Save it?'); then
+				color "Empty!: Cancel: Operations."
+				exit 7
+			fi
+
 		else
 			title="$_title"
 		fi
@@ -53,8 +57,10 @@ fn_save() {	# save PLAY item into db with title
 
 
 fn_select() {	# search & select Play item
+	set -e
 	item=$(_search)
 	[ -z "$item" ] && color 'User: Canceling...' && exit 7
+
 	{
 		echo "#!/bin/bash"
 		echo "$item" 

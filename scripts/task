@@ -152,9 +152,11 @@ _ensure_title(){
 		_title=`echo $_title | tool cut 2- | tool triml`
 
 		if [ -z "$_title" ]; then
-			read -rp "title ❯ " title
-			[ -z "$title" ] && CANCEL=0 && exit 7
 
+			if ! title=$(show input 'Title: name?'); then
+				color "Empty!: Cancel: Operations."
+				exit 7
+			fi
 		else
 			title="$_title"
 		fi

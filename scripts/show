@@ -1,24 +1,50 @@
-#!/bin/sh
+#!/bin/bash
 
 
-show_input(){
-  read  -erp "${BOLD}${2}${ARROW} " -i "$3" new
-  echo "$new"
+fn_success(){
+  if [ $? -eq 0 ]; then
+      return 0
+  else
+      return 7
+  fi
+
 }
 
-show_confirm() {
+fn_failed(){
+  if [ $? -ne 0 ]; then
+      exit 7
+  else
+      exit 0
+  fi
+}
 
-  read -p "Confirmation: (y/n) ❯" confirm
+fn_input(){
+
+  promp=`color -i 2 "${2}: ❯ "`
+
+  read  -erp "$promp" -i "$3" inputs
+
+  if [ -z "$inputs" ]; then
+    exit 7
+  else
+    echo "$inputs"
+  fi
+
+}
+
+fn_confirm() {
+
+  promp=`color 'confirm : (y/n): ❯ '`
+  read -p "$promp" confirm
   if [ "$confirm" = "y" ]; then
     exit 0
   else
-    echo "User canceled the Operations..."
     exit 7
   fi
 }
 
-show_msg(){
-  echo -e "${BMAGENTA}${2}${END} ${BOLD}${3}${END}"
+fn_msg(){
+  color "$@"
 }
 
-
+"fn_$1" "$@"

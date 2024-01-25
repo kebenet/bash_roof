@@ -1,27 +1,38 @@
 #!/bin/bash
 #FILE! show messaging echo
 
-toansi() {
-    hex_color="$1"
-    r=$((16#$(echo $hex_color | cut -c2-3)))
-    g=$((16#$(echo $hex_color | cut -c4-5)))
-    b=$((16#$(echo $hex_color | cut -c6-7)))
-
-    ansi_color=$(printf "\033[38;2;%d;%d;%dm" $r $g $b)
-    echo "$r$g$b" 
-    echo -e "$ansi_color" "terabo"
-    printf "\033[38;2;%d;%d;%dm" $r $g $b >> ~/terabo
+success(){
+  return $?
 }
 
-show_input(){
-  read  -erp "${BOLD}${1}${ARROW} " -i "${2}" new
-  echo "$new"
+failed(){
+
+  if [ $? -ne 0 ]; then
+      return 7
+  else
+      return 0
+  fi
+}
+
+inputs(){
+
+  promp=`color -i 2 "${2}: ❯ "`
+
+  read  -erp "$promp" -i "$3" inputs
+
+  if [ -z "$inputs" ]; then
+    echo 'empty'
+    exit 7
+  else
+    echo "$inputs"
+  fi
+
 }
 
 
 confirm() {
   promp=`color 'confirm : (y/n): ❯ '`
-  read -p "$promp" confirm
+  read -rp "$promp" confirm
   if [ "$confirm" = "y" ]; then
     return 0
   else
@@ -30,10 +41,12 @@ confirm() {
 }
 
 message(){
-  all="$@"
+  all="$*"
   color "$all"
 }
 
 export -f confirm
 export -f message
 export -f show_input
+export -f success
+export -f failed
