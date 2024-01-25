@@ -56,15 +56,25 @@ fn_save() {	# save PLAY item into db with title
 }
 
 
-fn_select() {	# search & select Play item
-	set -e
-	item=$(_search)
-	[ -z "$item" ] && color 'User: Canceling...' && exit 7
+fn_load() {	# search & select Play item
 
+	local title
+
+	if ! title=$(_search); then
+		color 'User: Canceling...' 
+		exit 7
+	fi
+
+	item=`_get_code "$title"`
+	echo "$title"
+
+	title=`echo "$title" | tool cut 2`
 	{
 		echo "#!/bin/bash"
+		echo "${PLAY_TITLE} $title"
 		echo "$item" 
 	} > "$play_file"
+
 	st reload "$play_file"
 }
 
@@ -123,10 +133,7 @@ _run() {
 
 
 _search() {
-
-	item=$(rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" \
-	| cut -d: -f 1,2| fzy)
-	_get_code "$item"
+	rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" | cut -d: -f 1,2| fzy
 }
 
 
@@ -139,6 +146,7 @@ _get_code() {
 	line=$((line+1))
 
 	range until $line "^$SAPERATOR" "$dbfile"
+
 }
 
 
