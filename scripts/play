@@ -66,7 +66,6 @@ fn_load() {	# search & select Play item
 	fi
 
 	item=`_get_code "$title"`
-	echo "$title"
 
 	title=`echo "$title" | tool cut 2`
 	{
@@ -98,6 +97,7 @@ fn_update() {	# Update Last Play item
 		sd "${SAPERATOR}" ""|tail -n 1| cut -d: -f1)
 
 	range delete_tail $index "$dbfile"
+	
 	fn_save
 
 }
