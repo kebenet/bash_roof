@@ -81,17 +81,17 @@ fn_swap_single(){	# swap by 2 given index
 
 }
 
-append(){
+fn_append(){
 	#CODE! Append below line using sed
 	sed -i "${2}a\\${3}" "$4"
 }
 
-change(){
+fn_change(){
 	#CODE! Change at line using sed
 	sed -i "${2}c\\${3}" "$4"
 }
 
-delete(){
+fn_delete(){
 	#CODE! Remove at line using sed
 	sed -i "${2}d" "$3"
 }
