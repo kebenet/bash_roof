@@ -91,7 +91,7 @@ fn_change(){
 	sed -i "${2}c\\${3}" "$4"
 }
 
-fn_delete(){
+fn_delete1(){
 	#CODE! Remove at line using sed
 	sed -i "${2}d" "$3"
 }

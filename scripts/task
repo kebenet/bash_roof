@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dbfile="$BARTIB_FILE"
-THEFILE="$TT_VAR/tree_structure.ttdb"
+bartip_db="$BARTIB_FILE"
+DB_FILE="$TT_VAR/tree_structure.ttdb"
 play_file="$TT_BASH/scripts/._task_terabo.yaml"
 SAPERATOR="TASK-RECORD"
 PRJ_SEP='[+] Project'
@@ -10,10 +10,10 @@ CANCEL=7
 
 fn_load() {	# search & view LAST Play item
 
-	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE" | tool cut 2 | warp num |fzy)
+	item=$(rg "^[+] ${SAPERATOR}" "$DB_FILE" | tool cut 2 | warp num |fzy)
 	idx=`echo $item | tool cut 1`
 
-	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE" | tool line "$idx")
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$DB_FILE" | tool line "$idx")
 
 	_load_record "$item"
 
@@ -22,7 +22,7 @@ fn_load() {	# search & view LAST Play item
 
 fn_ls() {	# search & view LAST Play item
 
-	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE")
+	item=$(rg "^[+] ${SAPERATOR}" "$DB_FILE")
 
 	_list_task | column -t -s ':' | warp head ' -:' | color
 
@@ -30,7 +30,7 @@ fn_ls() {	# search & view LAST Play item
 
 fn_last() {	# search & view LAST Play item
 
-	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE" | tail -n 1)
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$DB_FILE" | tail -n 1)
 
 	_load_record "$item"
 
@@ -101,13 +101,13 @@ _write_info(){
 fn_update() {	# updates task item into db
 
 	id=`tool line 1 "$play_file" | tool cut 3 | tool trim`
-	num=`rg "$id" -nF "$THEFILE" | tool cut 1`
+	num=`rg "$id" -nF "$DB_FILE" | tool cut 1`
 
-	end=$(range delete_until "$num" "^[+] $SAPERATOR" "$THEFILE" | wc -l)
+	end=$(range delete_until "$num" "^[+] $SAPERATOR" "$DB_FILE" | wc -l)
 	end=$((num+end))
 	# echo $num $end
 	# exit
-	range delete $num $end "$THEFILE"
+	range delete $num $end "$DB_FILE"
 
 	title=`tool line 2 "$play_file" | tool cut 2- | tool trim`
 	play_line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | tool cut 1`
@@ -117,8 +117,8 @@ fn_update() {	# updates task item into db
 		awk "NR>=$play_line {print}" "$play_file" | awk 'NF'
 	)
 
-	range insert "$num" "$newdata" "$THEFILE" > "$TT_TEMP"
-	mv "$TT_TEMP" "$THEFILE"
+	range insert "$num" "$newdata" "$DB_FILE" > "$TT_TEMP"
+	mv "$TT_TEMP" "$DB_FILE"
 
 }
 
@@ -131,7 +131,7 @@ fn_save() {	# save task item into db with title
 	{
 		echo "+ ${SAPERATOR} : $title : $id"
 		awk "NR>=$line {print}" "$play_file" | awk 'NF'
-	} >> "$THEFILE"
+	} >> "$DB_FILE"
 
 }
 
@@ -231,7 +231,7 @@ fn_report(){	# reports duration of tracked activities
 
 
 fn_db() {	# Open Play Database file
-	st open "$THEFILE"
+	st open "$DB_FILE"
 }
 
 fn_sub() {	# Open Play file
@@ -249,7 +249,7 @@ _get_git_dir(){
 
 _search() {
 
-	item=$(rg "^[+] ${SAPERATOR}" -n  "$THEFILE"| sd "[+] ${SAPERATOR}" "" \
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$DB_FILE"| sd "[+] ${SAPERATOR}" "" \
 	| cut -d: -f 1,2| fzy)
 	_get_record "$item"
 }
@@ -259,11 +259,11 @@ _get_record() {
 	line="$1"
 	[ -z "$line" ] && color "Error: empty line: Range" && exit 7
 	line=$((line+1))
-	range until $line "^[+] $SAPERATOR" "$THEFILE"
+	range until $line "^[+] $SAPERATOR" "$DB_FILE"
 
 }
 _list_task(){
-	item=$(rg "^[+] ${SAPERATOR}" "$THEFILE")
+	item=$(rg "^[+] ${SAPERATOR}" "$DB_FILE")
 	echo "$item" | tool cut 2-
 }
 
