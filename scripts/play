@@ -2,57 +2,44 @@
 #FILE! Player for testing scripts
 
 # save into scripts db
-dbfile="$TT_VAR/bash_script_play.ttdb"
-play_file="$TT_BASH/scripts/_play_runner"
-SAPERATOR="#::=>PLAY!"
+DB_FILE="$TT_VAR/bash_script_play.ttdb"
+PLAY_FILE="$TT_BASH/scripts/_play_runner"
+SAPERATOR="#@=>PLAY!"
 PLAY_TITLE="#TITLE!"
-
+_RECORD_NAME='PLAY_last_record'
+# LAST_RECORD=`varmem get "$_RECORD_NAME"`
 
 fn_new() {	# create new PLAY item [-s] for save
 
 	if [ ${!#} == '-s' ]; then
 		fn_save
 	fi
-
+	# index=`wc -l "$DB_FILE"`
 	{
 		echo "#!/bin/bash"
 		echo "${PLAY_TITLE} "
 		echo ""
 		echo "echo hello TERABO"
-	} > "$play_file"
+	} > "$PLAY_FILE"
 
-	st reload "$play_file"
+	st reload "$PLAY_FILE"
 
 }
 
 
 fn_save() {	# save PLAY item into db with title
 
-	local title
+	if title=$(_ensure_title); then
 
-	_title=$(tool line 2 "$play_file")
-	if [[ $_title == "$PLAY_TITLE"* ]]; then
+		newdate=$(date +%Y-%m-%d)
+		{
+			echo "${SAPERATOR}$title:$newdate"
+			awk 'NR>2 {print}' "$PLAY_FILE"
+		} >> "$DB_FILE"
 
-		_title=`echo $_title | tool cutd '!' 2- |  tool trim`
-		if [ -z "$_title" ]; then
-
-			if ! title=$(show input 'Save it?'); then
-				color "Empty!: Cancel: Operations."
-				exit 7
-			fi
-
-		else
-			title="$_title"
-		fi
-
+		_update_title_index "$title"
+		st reload "$PLAY_FILE"
 	fi
-
-	newdate=$(date +%Y-%m-%d)
-	{
-		echo "${SAPERATOR}$title:$newdate"
-		awk 'NR>1 {print}' "$play_file"
-	} >> "$dbfile"
-
 }
 
 
@@ -67,38 +54,96 @@ fn_load() {	# search & select Play item
 
 	item=`_get_code "$title"`
 
-	title=`echo "$title" | tool cut 2`
+	titleb=`echo "$title" | tool cut 2`
+	index=`echo "$title" | tool cut 1`
 	{
 		echo "#!/bin/bash"
-		echo "${PLAY_TITLE} $title"
+		echo "${PLAY_TITLE} ${titleb}:$index"
 		echo "$item" 
-	} > "$play_file"
+	} > "$PLAY_FILE"
 
-	st reload "$play_file"
+	st reload "$PLAY_FILE"
 }
 
 
 fn_last() {	# search & view LAST Play item
 
-	item=$(rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" \
+	item=$(rg "^${SAPERATOR}" -n  "$DB_FILE"| sd "${SAPERATOR}" "" \
 	| cut -d: -f 1,2| tail -n 1)
 	{
 		echo "#!/bin/bash"
 		_get_code "$item"
-	} > "$play_file"
+	} > "$PLAY_FILE"
 
-	st reload "$play_file"
+	st reload "$PLAY_FILE"
 
 }
 
-fn_update() {	# Update Last Play item
+fn_update_last() {	# Update Last Play item
 
-	index=$(rg "^${SAPERATOR}" -n  "$dbfile" | 
-		sd "${SAPERATOR}" ""|tail -n 1| cut -d: -f1)
+	index=`_get_last_record_index`
 
-	range delete_tail $index "$dbfile"
-	
+	range delete_tail $index "$DB_FILE"
+
 	fn_save
+
+}
+
+_update_title_index(){
+
+	title="$1"
+	index=`_get_last_record_index`
+
+	if [ -z "$title" ]; then
+		title=`tool line 2 "$PLAY_FILE" | tool cut 1`
+		title="${title}:${index}"
+	else
+		title="${PLAY_TITLE} ${title}:${index}"
+	fi
+
+	range change 2 "$title" "$PLAY_FILE"
+}
+
+fn_update() {	# Update Play item from original position
+	# set -x
+	title=`tool line 2 "$PLAY_FILE" | tool cutd ' ' 2-`
+	index=$(echo "$title" | tool cut 2)
+
+	#TODO: refactor saperator delimiter ':'
+	thedate=$(tool line "$index" "$DB_FILE" | tool cut 2)
+	
+	title=$(echo "$title" | tool cut 1)
+
+	count=$(range delete_until "$index" "^$SAPERATOR" "$DB_FILE" | wc -l)
+	end=$((index+count))
+
+	if range delete "$index" "$end" "$DB_FILE"; then
+
+		newdata=$(
+			echo "${SAPERATOR}$title:$thedate"
+			awk 'NR>2 {print}' "$PLAY_FILE"
+		)
+
+		range insert "$index" "$newdata" "$DB_FILE" > "$TT_TEMP"
+		mv "$TT_TEMP" "$DB_FILE"
+	fi
+	# get item position by? title!
+
+
+}
+
+fn_rename() {	# Rename Play title
+
+	# get item by title at DB_FILE
+	title=`tool line 2 "$PLAY_FILE" | tool cutd ' ' 2-`
+	index=$(echo "$title" | tool cut 2)
+	thedate=$(tool line "$index" "$DB_FILE" | tool cut 2)
+
+	title=$(echo "$title" | tool cut 1)
+
+
+	newtitle="$SAPERATOR${title}:$thedate"
+	range change "$index" "$newtitle" "$DB_FILE"
 
 }
 
@@ -107,35 +152,38 @@ fn_cat() {	# search & view Play item at terminal
 }
 
 fn_ls() {	# list all Play items
-	rg "^${SAPERATOR}" "$dbfile"| sd ".*${SAPERATOR}" "" |
+	rg "^${SAPERATOR}" "$DB_FILE"| sd ".*${SAPERATOR}" "" |
 	awk -F ':' '{ printf "- %s:\t%s\n", $1, $2 }' |
 	column -t -s $'\t' | color
 }
 
 
 fn_db() {	# Open Play Database file
-	st open "$dbfile"
+	st open "$DB_FILE"
 }
 
 
 fn_sub() {	# Open Play file
-	st open "$play_file"
+	st open "$PLAY_FILE"
 }
 
 
 # ================================================= Private functions
 
 
-_run() {
-	shift
-	_play_runner "$@"
-}
-
-
 _search() {
-	rg "^${SAPERATOR}" -n  "$dbfile"| sd "${SAPERATOR}" "" | cut -d: -f 1,2| fzy
+	_get_records | cut -d: -f 1,2 | fzy
 }
 
+_get_records(){
+	rg "^${SAPERATOR}" -n  "$DB_FILE" | sd "${SAPERATOR}" ''
+}
+
+_get_last_record_index(){
+	rg "^${SAPERATOR}" -n  "$DB_FILE" | 
+	sd "${SAPERATOR}" "" | 
+	tail -n 1| cut -d: -f1
+}
 
 _get_code() {
 
@@ -145,8 +193,36 @@ _get_code() {
 	line=$(echo "$item" | cut -d: -f1)
 	line=$((line+1))
 
-	range until $line "^$SAPERATOR" "$dbfile"
+	range until $line "^$SAPERATOR" "$DB_FILE"
 
+}
+
+_ensure_title(){
+
+	_title=$(tool line 2 "$PLAY_FILE")
+	if [[ $_title == "$PLAY_TITLE"* ]]; then
+
+		_title=`echo $_title | tool cutd '!' 2-`
+		_title=`echo $_title | tool cut 1 | tool trim`
+
+		if [ -z "$_title" ]; then
+
+			if ! title=$(show input 'Save title?'); then
+				color "Empty!: Cancel: Operations."
+				return 7
+			fi
+
+		else
+			title="$_title"
+		fi
+	fi
+
+	echo "$title"
+}
+
+_run() {
+	shift
+	_play_runner "$@"
 }
 
 
