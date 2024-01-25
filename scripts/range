@@ -81,13 +81,21 @@ fn_swap_single(){	# swap by 2 given index
 
 }
 
-
-fn_ls_bash(){	# Get all file with shebang
-
-	rg '#!/bin/(bash|sh)' --fixed-strings --files-with-matches
-	awk '/^/w+/,/^}/' "$1"
-
+append(){
+	#CODE! Append below line using sed
+	sed -i "${2}a\\${3}" "$4"
 }
+
+change(){
+	#CODE! Change at line using sed
+	sed -i "${2}c\\${3}" "$4"
+}
+
+delete(){
+	#CODE! Remove at line using sed
+	sed -i "${2}d" "$3"
+}
+
 
 
 "fn_$1" "$@"
