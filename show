@@ -47,6 +47,6 @@ message(){
 
 export -f confirm
 export -f message
-export -f show_input
+export -f inputs
 export -f success
 export -f failed
