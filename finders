@@ -6,7 +6,7 @@ opn(){
 		q="$@"
 		cd "$TT_BASH"
 
-		item=`fd . -t f -I | fuzzy onef "$q"`
+		item=`fd . -t f -IH | fuzzy onef "$q"`
 		
 		if item=`realpath "$item"`; then
 			color -f '/' $item
