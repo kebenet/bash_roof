@@ -8,14 +8,6 @@ __on_exit() {
     set_var "RG_options" "${RG_options}"
 }
 
-resource() {
-  . "$TT_BASH/shared"
-  echo 'source shared variable done...'
-}
-
-# Set up trap to execute resource on receiving SIGUSR1
-trap 'resource' SIGUSR1
-
 # Export function Area
 
 
