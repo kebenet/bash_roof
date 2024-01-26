@@ -72,10 +72,9 @@ fn_openat(){	# open file at choosen folder
 fn_openr() {	# open from recents list
 	recents="$TT_VAR/sub_recent_files.ttvar"
 
-	# need to remove duplicate
 	item=`awk '!seen[$0]++' < "$recents" | _fzfone "$2"`
 	item=$(expand_env "$item")
-	echo "$item" && exit
+
 	st open "$item"
 
 }
