@@ -11,6 +11,8 @@ opn(){
 		if item=`realpath "$item"`; then
 			echo $item
 			st open "$item"
+			varm append_recents "${item}" 'sub_recent_files' 
+
 		fi
 
 	)
@@ -33,7 +35,9 @@ where(){
 		symbol "${item}"
 	else
 		st open "$item"
-		varm append_recents "${item}" 'sub_recent_files' 
+		if item=`realpath "$item"`; then
+			varm append_recents "${item}" 'sub_recent_files' 
+		fi
 	fi
 }
 
