@@ -1,33 +1,33 @@
 #!/bin/sh
 
-fn_cut(){
+fn_cut(){	# cut with ':' delimiter
 
 	cut -d: -f "$2"
 }
 
-fn_cutd(){
+fn_cutd(){	# cut with delimiter. given field position
 	del=${2:-:}
 	cut -d"$del" -f "$3"
 }
 
-fn_triml(){
+fn_triml(){	# trim any empty line
 	awk 'NF'
 }
 
 
-fn_trim(){
+fn_trim(){	# trim any extra spaces
 	awk '{$1=$1};1'
 }
 
-fn_last2f(){
+fn_last2f(){	# awk print 2nd last field with delimiter '/' arg
 	awk -F "$2" '{print $(NF-1)}'
 }
 
-fn_lastf(){
+fn_lastf(){	# awk print last field with delimiter '/' arg
 	awk -F "$2" '{print $(NF)}'
 }
 
-fn_line(){
+fn_line(){	# awk get line at index
 	awk "NR==$2 {print; exit}" "$3"
 }
 
