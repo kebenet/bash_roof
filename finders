@@ -1,6 +1,22 @@
 #!/bin/bash
 #FILE! search functions
 
+opn(){
+	q="$@"
+
+	fd . -t f -I --base-directory "$TT_BASH" | fuzzy onef "$q"
+}
+
+erline(){	# get last execute error line number and show
+	error=`history | tail -n 2 | head -n 1 | tool cutd ' ' 4`
+
+	line=$(eval "$error" 2>&1 >/dev/null | rg '[0-9]+' -o --color=never)
+
+	item=`echo $line | fuzzy onef`
+	[ ! -z "$item" ] && color 'User: Cancel' && return
+
+	st line "$item"
+}
 
 where(){
 	item=$(which "${1}")
@@ -95,30 +111,6 @@ code_python(){
 find_shell_files(){
 	#TODO: just use after context 2 line
 	rg '#!/bin/(bash|sh)' --fixed-strings --files-with-matches --after-context 7 $TT_BASH 
-}
-
-
-code_comment(){
-
-	dirs="$2"
-	
-	message "FindAt" "PWD_PROJECT or 2nd args as dir to search"
-
-	if [ ! -d "$dirs" ]; then
-		dirs="$(get_var 'PWD_PROJECT')"
-	fi
-
-	reg="^\s*#([A-Z]+!)"
-
-	# echo "$dirs"
-
-	#CODE! rg find code with full option name + rargs
-	rg "${reg}" --no-filename --no-line-number --trim \
-		--max-depth 2 "$dirs" | fzy \
-		| rargs rg {0} \
-		--no-filename --no-line-number \
-		--fixed-strings --after-context 7 "$dirs"
-
 }
 
 
@@ -223,16 +215,6 @@ find_github_code() {
 
 }
 
-find_elv_help(){
-
-    elv="https://elv.sh"
-    base="$TT_ELVISH_DOC"
-    reff="$XDG_CONFIG_HOME/elvish/elvish-doc/elvish_docs.md"
-
-    url=$(cat "$reff" | fzy)
-    www-browser "${elv}/${url}"
-
-}
 
 cheat(){
 
@@ -253,81 +235,6 @@ cheat(){
 
 }
 
-find_python(){
-
-	dirs="$(get_var 'PWD_PROJECT')"
-	cd $dirs
-	ptn="^class"
-	item=$(rg "$ptn" --no-heading -Hn -t py  | fzy)
-
-	filename=$(echo "$item" | awk -F ':' '{print $1}')
-	line=$(echo "$item" | awk -F ':' '{print $2}')
-	match=$(echo "$item" | awk -F ':' '{print $3}')
-
-	echo "Filename: $filename"
-	echo ""
-	return
-	# must add 1 
-	line=$((line + 1))
-
-
-	#CODE! get second line after match using sed & rg
-	item2=$(sed -n "${line},\$p" "$filename" | \
-			rg -m 1  --no-heading -Hn "${ptn}")
-
-	echo "${item2}"
-
-
-	line2=$(echo "$item2" | awk -F ':' '{print $2}')
-
-	# adjust more
-	line=$((line -1))
-	line2=$((line + line2-1))
-
-
-	sed -n "${line},"${line2}"p" "$filename"
-	return
-	# data=$(sed -n "${line},"${line2}"p" "$filename")
-
-	#CODE! delete original lines
-	sed -i "${line},${line2}d" "$filename"
-
-	#CODE! Append new data At 1st line index
-	awk -v n=$line -v s="$data" 'NR == n {print s} {print}' \
-	"$filename" > "$TT_TEMP" && mv "$TT_TEMP" "$filename"
-
-	_line_opento_change "${data}"
-
-}
-
-open_bash_symbol(){
-
-	# dirs="$(get_var 'PWD_PROJECT')"
-	dirs="$PWD"
-
-	item=$({
-	        declare -F | awk '{print $3}'
-	        export | cut -d "=" -f 1 | awk '{print "@"$3}'
-	    } | fzy)
-
-	if [ ! "${item}" ]; then
-		message "CANCEL" "Operation..."
-		return 7
-	fi
-
-	reg="^${item}"
-
-	if [[ $item == "@"* ]]; then
-		# export
-		item=$(echo "$item" | cut -c 2-)
-		reg="^(export ${item})"
-	fi
-
-    found=$(rg "${reg}" -n --max-depth 3 --hidden --no-heading --max-count 1 "$dirs") 
-
-    echo "$found" | rargs -d: st open_line "{1}" "{2}"
-
-}
 
 _rgcode(){
 	rg "$1" --no-filename --no-line-number --trim -i
