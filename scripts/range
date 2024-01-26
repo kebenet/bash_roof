@@ -16,9 +16,8 @@ fn_print(){	# print given range 1,2 file
 	sed -n "${2},${3}p;${3}q" "$4"
 }
 
-fn_delete_until(){
+fn_lineto(){
 	sed -n "${2},/${3}/{/${3}/!p}" "$4"
-	# sed -n "1,${2}p; /${3}/{:a;N;/${3}/!ba;P;D}" "$4"
 }
 
 fn_delete_tail(){
@@ -32,16 +31,6 @@ fn_insert(){
 
 }
 
-fn_insertsed(){
-    sed "${2}i\\
-    ${3}
-    " "$4"
-}
-
-fn_delete(){
-
-	sed -i "$2,${3}d" "$4"
-}
 
 fn_swap(){	# swap by 2 given rangle
 
@@ -81,18 +70,19 @@ fn_swap_single(){	# swap by 2 given index
 
 }
 
-fn_append(){
-	#CODE! Append below line using sed
+fn_append(){	# Append below line using sed
 	sed -i "${2}a\\${3}" "$4"
 }
 
-fn_change(){
-	#CODE! Change at line using sed
+fn_change(){	# Change at line using sed
 	sed -i "${2}c\\${3}" "$4"
 }
 
-fn_delete1(){
-	#CODE! Remove at line using sed
+fn_delete(){	# delete range at line using sed
+	sed -i "$2,${3}d" "$4"
+}
+
+fn_linedel(){	# Remove at line using sed
 	sed -i "${2}d" "$3"
 }
 

@@ -113,7 +113,7 @@ fn_update() {	# Update Play item from original position
 	
 	title=$(echo "$title" | tool cut 1)
 
-	count=$(range delete_until "$index" "^$SAPERATOR" "$DB_FILE" | wc -l)
+	count=$(range lineto "$index" "^$SAPERATOR" "$DB_FILE" | wc -l)
 	end=$((index+count))
 
 	if range delete "$index" "$end" "$DB_FILE"; then

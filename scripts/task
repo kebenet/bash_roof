@@ -104,7 +104,7 @@ fn_update() {	# updates task item into db
 	id=`tool line 1 "$play_file" | tool cut 3 | tool trim`
 	num=`rg "$id" -nF "$DB_FILE" | tool cut 1`
 
-	end=$(range delete_until "$num" "^[+] $SAPERATOR" "$DB_FILE" | wc -l)
+	end=$(range lineto "$num" "^[+] $SAPERATOR" "$DB_FILE" | wc -l)
 	end=$((num+end))
 	# echo $num $end
 	# exit
