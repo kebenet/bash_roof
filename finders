@@ -12,8 +12,8 @@ erline(){	# get last execute error line number and show
 
 	line=$(eval "$error" 2>&1 >/dev/null | rg '[0-9]+' -o --color=never)
 
-	item=`echo $line | fuzzy onef`
-	[ ! -z "$item" ] && color 'User: Cancel' && return
+	item=`echo $line | warp lines | fuzzy one`
+	[ -z "$item" ] && color 'User: Cancel' && return
 
 	st line "$item"
 }
