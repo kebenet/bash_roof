@@ -21,9 +21,8 @@ sub(){
 	fi
 
 	st open "$item"
-	if item=`varm relative "$item"`; then
-		varm append_recents "${item}" 'sub_recent_files' 
-	fi
+	varm append_recents "${item}" 'sub_recent_files' 
+
 }
 
 
