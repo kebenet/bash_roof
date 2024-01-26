@@ -12,9 +12,6 @@ fn_db(){	# open jump [file | folder] in editor
 
 }
 
-fn_aline(){	# Append Line to choosen [Jump file]
-	eline a "$(fuzzy one < "$_jumpfile")"
-}
 
 fn_rmd(){	# Delete Line from choosen [Jump Directory]
 	eline d "$_jumpdir"
