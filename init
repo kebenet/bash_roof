@@ -26,15 +26,16 @@ sub(){
 	#TODO! create sub recent files- done
 	item=$(fdls | fuzzy one "${1}")
 
-	thefile=$(realpath "${item}")
+	item=$(realpath "${item}")
 
 	if ! _check_file_size "$item"; then
 		return 7
 	fi
 
-	st open "$thefile"
-	
-	varm append_recents "${item}" 'sub_recent_files' 
+	st open "$item"
+	if item=`varm relative "$item"`; then
+		varm append_recents "${item}" 'sub_recent_files' 
+	fi
 }
 
 

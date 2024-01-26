@@ -9,10 +9,12 @@ opn(){
 		item=`fd . -t f -I | fuzzy onef "$q"`
 		
 		if item=`realpath "$item"`; then
-			echo $item
+			color -f '/' $item
 			st open "$item"
-			varm append_recents "${item}" 'sub_recent_files' 
 
+			if item=`varm relative "$item"`; then
+				varm append_recents "${item}" 'sub_recent_files' 
+			fi
 		fi
 
 	)
@@ -35,7 +37,8 @@ where(){
 		symbol "${item}"
 	else
 		st open "$item"
-		if item=`realpath "$item"`; then
+
+		if item=`varm relative "$item"`; then
 			varm append_recents "${item}" 'sub_recent_files' 
 		fi
 	fi
@@ -44,27 +47,6 @@ where(){
 
 find_sublime_cmd(){
 	cat "$TT_SUBLIME_CMD" | fzy -q "$1" 
-}
-
-find_bash_path(){
-
-	prent="([{]([A-Za-z_\-]+)[}])"
-	subs='(/([a-zA-Z_0-9\-\.]+))+'
-
-	rg "($prent$subs)" --max-depth 3 --hidden
-	# "$TT_BASH/.bash_aliases"
-
-}
-
-find_var_path(){
-
-	cd "$TT_VAR" || return 7
-	items=$(fd . -H -x echo |cut -d. -f1)
-
-	for item in $items; do
-		rg "\b${item}\b" "$TT_BASH"
-	done
-
 }
 
 
@@ -98,32 +80,6 @@ apt_search_list(){
     printf "%s%s%s\n", varmessage2, $3, reset;
 	}'
 
-}
-
-
-
-code_python(){
-
-	[ ! "$1" ] && echo "Cannot Empty Query!" && return 7
-	cd $TT_PACKAGES
-	
-	var="$@"
-	item="${var// /.*?}"
-	nospace="$(tr -d ' '  <<< $@)"
-
-	echo 'Regexs: ' "$item"
-
-	_rgcode "$item" -t py\
-	| fzy -e "$nospace" | fzy -q "$nospace"
-
-	# item="$(tr -d ' ' <<< $@)"
-	# fd . -t f -H -e py -x cat | warp trim | fzy -e "$item" | fzy
-	
-}
-
-find_shell_files(){
-	#TODO: just use after context 2 line
-	rg '#!/bin/(bash|sh)' --fixed-strings --files-with-matches --after-context 7 $TT_BASH 
 }
 
 
@@ -251,27 +207,4 @@ cheat(){
 
 _rgcode(){
 	rg "$1" --no-filename --no-line-number --trim -i
-}
-
-setrg(){
-
-	# chose line by fzy
-	item="$(list_var 'RG_list' | fzy)"
-
-	export RG_options="$item"
-
-}
-
-runrg(){
-
-	[ ! "${1}" ] && echo "Cannot Empty Query!" && return 7
-	
-	var="$@"
-	item="${var// /.*?}"
-	nospace="$(tr -d ' '  <<< $@)"
-
-	echo ${item}
-	
-	rg "$item" $RG_options #| fzy -q "$nospace"
-
 }
