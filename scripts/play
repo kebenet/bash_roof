@@ -65,7 +65,6 @@ fn_load() {	# search & select Play item
 	st reload "$PLAY_FILE"
 }
 
-
 fn_last() {	# search & view LAST Play item
 
 	item=$(rg "^${SAPERATOR}" -n  "$DB_FILE"| sd "${SAPERATOR}" "" \

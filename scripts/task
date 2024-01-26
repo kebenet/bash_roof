@@ -2,6 +2,7 @@
 
 bartip_db="$BARTIB_FILE"
 DB_FILE="$TT_VAR/tree_structure.ttdb"
+MAIN_FILE="$TT_VAR/TERABO-TASK.yaml"
 play_file="$TT_BASH/scripts/._task_terabo.yaml"
 SAPERATOR="TASK-RECORD"
 PRJ_SEP='[+] Project'
@@ -232,6 +233,11 @@ fn_report(){	# reports duration of tracked activities
 
 fn_db() {	# Open Play Database file
 	st open "$DB_FILE"
+}
+
+fn_main() {	# Open Play Database file
+
+	st open "$MAIN_FILE"
 }
 
 fn_sub() {	# Open Play file
