@@ -7,7 +7,7 @@ _jumpdir="${TT_VAR}/jump_folders.ttpath"
 fn_db(){	# open jump [file | folder] in editor
 
 	item=$( { echo '$TT_VAR/jump_files.ttpath'; echo '$TT_VAR/jump_folders.ttpath'; } | fzy )
-	item=$(eval "echo \"${item}\"")
+	item=$(expand_env "$item")
 	st open "$item"
 
 }
@@ -40,7 +40,7 @@ fn_open(){	# open jump [file | folder]
 
 	item=`rg "$item" -F "$_jumpfile" | fzy -e "$item"`
 
-	item=`eval echo "${item}"`
+	item=$(expand_env "$item")
 	
 	st open "${item}"
 
@@ -54,7 +54,7 @@ fn_openat(){	# open file at choosen folder
 	argf="$2"
 
 	item=`fn_lsd  | fuzzy onef "$argd"`
-	todir=`eval echo "$item"`
+	todir=$(expand_env "$item")
 
 	(
 		cd "$todir"
