@@ -46,6 +46,41 @@ fn_open(){	# open jump [file | folder]
 
 }
 
+fn_openat(){	# open file at choosen folder
+
+	shift
+	argd="$1"
+	argf="$2"
+
+	item=`fn_lsd  | fuzzy onef "$argd"`
+	todir=`eval echo "$item"`
+
+	(
+		cd "$todir"
+		[ -z "$argf" ] && argf2='.' || argf2="${argf}*"
+		thefile=`fd "$argf2" -t f -d 2 | fuzzy onef "$argf"`
+
+		item="$todir/${thefile}"
+		st open "$item"
+		varm append_recents "$item" 'sub_recent_files'
+	)
+
+}
+
+fn_openr() {	# open from recents list
+	recents="$TT_VAR/sub_recent_files.ttvar"
+	item=`_fzfone "$2" < "$recents" `
+	item=$(eval "echo \"$item\"")
+
+	st open "$item"
+	varm append_recents "$item" 'sub_recent_files'
+}
+
+_fzfone(){
+	fzf -1 --height=40% --layout=reverse -q "${1}" \
+	-d '/' --with-nth=-2,-1
+}
+
 fn_file() {	# add to jump files
 
 	item=$(fd . -H -t f -d 2 | fuzzy one "${2}")
@@ -80,10 +115,10 @@ _append_uniq(){	# append at top of file and uniq then remove empty line
 
 fn_make(){	# reconstruct all jump lists
 
-	cat "$_jumpfile" | rargs varm relative {} > "$TT_TEMP"
+	rargs varm relative {} < "$_jumpfile" > "$TT_TEMP"
 	mv "$TT_TEMP" "$_jumpfile"
 
-	cat "$_jumpdir" | rargs varm relative {} > "$TT_TEMP"
+	rargs varm relative {} < "$_jumpdir" > "$TT_TEMP"
 	mv "$TT_TEMP" "$_jumpdir"
 	
 }
