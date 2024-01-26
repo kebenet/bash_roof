@@ -2,17 +2,17 @@
 set -e
 
 fn_one(){	# Select one from PIPE input
+	shift
+	data="$@"
+	item=`cat | fzy -e "$data"`
 
-	data="$2"
-	item=$(cat | fzy -e "$data")
-
-	count=$(echo "$item" | tr ' ' '\n' | wc -l)
+	count=`echo "$item" | tr ' ' '\n' | wc -l`
 
 	if [ "$count" -lt 3 ]; then
 
-		item="$(echo "$item" | fzy -e "$data" | tail -n 1)"
+		item=`echo "$item" | fzy -e "$data" | tail -n 1`
 	else
-		item="$(echo "$item" | fzy -q "$data")"
+		item=`echo "$item" | fzy -q "$data"`
 	fi
 
 	echo "$item"
@@ -21,7 +21,7 @@ fn_one(){	# Select one from PIPE input
 
 fn_one2(){	# Select one from PIPE input
 
-	data="$2"
+	data="$@"
 	item=$(cat | fzy -e "$data")
 
 	count=$(echo "$item" | tr ' ' '\n' | wc -l)

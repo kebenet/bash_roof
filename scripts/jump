@@ -36,12 +36,14 @@ fn_lsd(){	# Cat ls [Jump Directory]
 
 fn_open(){	# open jump [file | folder]
 	set -e
+	shift
+	arg="$@"
 
-	item="$( fn_lsf | awk -F'/' '{print $(NF)}' | fuzzy one "$2" )"
+	item=`fn_lsf | awk -F'/' '{print $(NF)}' | fuzzy one "$arg"`
 
-	item=`fn_lsf | fzy -e "$item"`
+	item=`rg "$item" -F "$_jumpfile" | fzy -e "$item"`
 
-	item=$(eval "echo \"${item}\"")
+	item=`eval echo "${item}"`
 	
 	st open "${item}"
 
