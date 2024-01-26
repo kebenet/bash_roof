@@ -2,9 +2,18 @@
 #FILE! search functions
 
 opn(){
-	q="$@"
+	(
+		q="$@"
+		cd "$TT_BASH"
 
-	fd . -t f -I --base-directory "$TT_BASH" | fuzzy onef "$q"
+		item=`fd . -t f -I | fuzzy onef "$q"`
+		
+		if item=`realpath "$item"`; then
+			echo $item
+			st open "$item"
+		fi
+
+	)
 }
 
 erline(){	# get last execute error line number and show
