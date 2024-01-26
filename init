@@ -8,18 +8,6 @@ hpp(){	# display help info
 	| sd '(\(\)\s*\{?)|(fn_)' '' | column -t -s $'\t'
 }
 
-_check_file_size(){
-
-	maxsize=300000 # 300kb limit
-	filesize=$(stat -c%s "$1")
-
-	if (( filesize > maxsize )); then
-	    message "ERROR: File size is over the limit. 100kb"
-	    return 7
-	fi
-
-}
-
 
 sub(){
 
@@ -185,18 +173,6 @@ hp(){
 
 }
 
-hp_opt(){
-
-	local full='[-]\w,\s(--)\w+'
-	local simple='^\s*[-]+\w*'
-
-	echo "-s for simple version"
-
-	[[ $1 == "-s" ]] && regex="$simple" || regex="$full"
-
-	"${@: -1}" --help | rg "$regex" --trim 
-}
-
 rename(){
 
 	item="$(fdls | fzy -e "${1}" | fzy -q "${1}")"
@@ -215,5 +191,24 @@ history_clean(){
 	item="$HOME/.bash_history"
 	awk '!seen[$0]++ && length($0) >= 3 && NF' "$item" > "$TT_TEMP"
 	sort -k 1,1 "$TT_TEMP" > "$item"
+}
+
+
+_check_file_size(){
+
+	maxsize=300000 # 300kb limit
+	item="$1"
+	filesize=$(stat -c%s "$item")
+	type=$(file -b --mime-type "$item")
+
+	if [[ ! "$type" == text/* ]]; then
+		return 7
+	fi
+
+	if (( filesize > maxsize )); then
+	    message "ERROR: File size is over the limit. 300kb"
+	    return 7
+	fi
+
 }
 
