@@ -19,18 +19,22 @@ fn_one(){	# Select one from PIPE input
 
 }
 
-fn_one2(){	# Select one from PIPE input
-
+fn_onef(){	# Select one from PIPE input
+	shift
 	data="$@"
-	item=$(cat | fzy -e "$data")
+	item=$(cat | fzf -1 -f "$data" -q "$data" )
 
 	count=$(echo "$item" | tr ' ' '\n' | wc -l)
 
-	if [ "$count" -ne 0 ]; then
-		item="$(echo "$item" | fzy -q "$data")"
+	if [ "$count" -eq 1 ]; then
+		echo "$item"
+	elif [ "$count" -eq 0 ]; then
+			echo 0
+	else
+		echo "$item" | fzy -q "$data"
+
 	fi
 
-	echo "$item"
 
 }
 
