@@ -11,7 +11,7 @@ opn(){
 		if item=`realpath "$item"`; then
 			color -f '/' $item
 			st open "$item"
-			varm append_recents "${item}" 'sub_recent_files' 
+			varm append_relative "${item}"
 
 		fi
 
@@ -35,7 +35,7 @@ where(){
 		symbol "${item}"
 	else
 		st open "$item"
-		varm append_recents "${item}" 'sub_recent_files' 
+		varm append_relative "${item}"
 
 	fi
 }

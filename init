@@ -21,7 +21,7 @@ sub(){
 	fi
 
 	st open "$item"
-	varm append_recents "${item}" 'sub_recent_files' 
+	varm append_relative "${item}"
 
 }
 

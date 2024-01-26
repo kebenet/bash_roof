@@ -44,6 +44,7 @@ fn_open(){	# open jump [file | folder]
 	
 	st open "${item}"
 
+
 }
 
 fn_openat(){	# open file at choosen folder
@@ -62,18 +63,21 @@ fn_openat(){	# open file at choosen folder
 
 		item="$todir/${thefile}"
 		st open "$item"
-		varm append_recents "$item" 'sub_recent_files'
+
+		varm append_relative "$item"
 	)
 
 }
 
 fn_openr() {	# open from recents list
 	recents="$TT_VAR/sub_recent_files.ttvar"
-	item=`_fzfone "$2" < "$recents" `
-	item=$(eval "echo \"$item\"")
 
+	# need to remove duplicate
+	item=`awk '!seen[$0]++' < "$recents" | _fzfone "$2"`
+	item=$(expand_env "$item")
+	echo "$item" && exit
 	st open "$item"
-	varm append_recents "$item" 'sub_recent_files'
+
 }
 
 _fzfone(){

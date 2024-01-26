@@ -30,6 +30,8 @@ fn_onef(){	# Select one from PIPE input
 		echo "$item"
 	elif [ "$count" -eq 0 ]; then
 			echo 0
+	elif [ "$count" -eq 2 ]; then
+		echo "$item" | head -n 1
 	else
 		echo "$item" | fzy -q "$data"
 

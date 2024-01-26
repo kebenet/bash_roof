@@ -29,9 +29,9 @@ fn_file(){	# Append Selected file to VARIABLE as Env Path
 }
 
 
-fn_append_recents(){	# Append Relative path to Recents file
-	filepath=$(fn_relative "$2")
-	echo "$filepath" >> "${TT_VAR}/${3}.ttvar"
+fn_append_relative(){	# Append Relative path to Recents file
+	item=$(fn_relative "$2")
+	echo "$item" >> "${TT_VAR}/sub_recent_files.ttvar"
 }
 
 
@@ -120,7 +120,7 @@ fn_append_clean(){
 		echo "$2"
 	} > ${TT_TEMP}
 	
-	cat "${TT_TEMP}" | awk '!seen[$0]++ && NF' > "$3"
+	cat "${TT_TEMP}" | awk '!seen[$0]++' > "$3"
 }
 
 fn_append_recents(){

@@ -2,6 +2,10 @@
 #FILE! Alias for most use cmd
 
 
+expand_env(){
+	eval "echo \"${1}\""
+}
+
 _ttrc_init(){
 
 	alias_file="$TT_BASH/dynamic_aliases"
@@ -94,3 +98,5 @@ list_var(){
 		cat "${TT_VAR}/${1}.ttvar"
 	fi
 }
+
+export -f expand_env
