@@ -31,6 +31,10 @@ fn_line(){	# awk get line at index
 	awk "NR==$2 {print; exit}" "$3"
 }
 
+fn_count(){	# awk get line at index
+	echo "$2" | wc -l
+}
+
 
 
 #CODE! pipe is coming bro..
