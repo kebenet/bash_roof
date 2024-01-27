@@ -3,25 +3,6 @@
 
 # ❯ ⬢ 
 
-right_prompt() {
-
-	project="$(get_var 'PWD_PROJECT')"
-	pitem=$(basename "${project}")
-
-	view="$(get_var_file 'subl_active_project')"
-	item=$(awk -F'/' '{print $(NF)}' "${view}")
-
-	item="($item)"
-	# Calculate the width of the terminal:
-	term_size=$(tput cols)
-	all=$(( ${#item} + ${#pitem} ))
-	start_col=$((term_size - all - 6))
-
-	printf "%s%${start_col}s "
-	printf "${BWHITE}\ue0b6${BG_WHITE}${BYELLOW} ${pitem} ${END}${BWHITE}\uE0B0 ${BWHITE}${item}${END}"
-
-}
-
 __track_pwd() {
 	# Get the current directory
 	last_pwd=$(get_var 'LastPWD')
@@ -65,8 +46,6 @@ _run_ads(){
 	fi
 }
 
-
-# PROMPT_COMMAND="right_prompt;_ps1one; $PROMPT_COMMAND"
 PROMPT_COMMAND="_run_ads;$PROMPT_COMMAND"
 PROMPT_COMMAND="__track_pwd;$PROMPT_COMMAND"
 
