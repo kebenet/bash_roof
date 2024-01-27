@@ -22,7 +22,7 @@ fn_input(){
 
   promp=`color -i 2 "${2}: ❯ "`
 
-  read  -erp "$promp" -i "$3" inputs
+  read  -rp "$promp" inputs
 
   if [ -z "$inputs" ]; then
     exit 7
