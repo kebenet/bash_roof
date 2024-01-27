@@ -56,7 +56,7 @@ fn_trim(){	# Trim stdin space.
 
 
 fn_pair(){	# surround 2 Pair from lines
-	awk -v one="$2" -v two="$3" '{ print one $0 two }'
+	awk -v one="$2" -v two="$3" '{ print one $0 two}'
 }
 
 fn_single(){	# surround stdin by Single quote
@@ -125,12 +125,22 @@ fn_str(){	# get substring from stdin by delimiter
 }
 
 
+fn_tolines(){	# Convert delimiter into Lines
+	tr "$2" '\n'
+}
+
 fn_lines(){	# Convert Spaces to Lines
 	tr ' ' '\n'
 }
 
-fn_join(){	# Convert Spaces to Lines
+fn_join(){	# join Lines to delimiter
 	sd '\n$' '' | sd '\n' "$2"
+}
+
+fn_concat(){	# join multiple Lines by % into single line
+	# awk 'NR%2{printf "%s ", $0; next}1'
+	# awk "{ORS = (NR % $2 ? " " : RS) } 1"
+	awk -v idx="$2" '{ORS = (NR % idx ? " " : RS)} 1'
 }
 
 
