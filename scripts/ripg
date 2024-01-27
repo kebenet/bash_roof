@@ -1,60 +1,32 @@
 #!/bin/bash
 #FILE! ripgrep commands
 
+# https://github.com/BurntSushi/ripgrep/blob/master/FAQ.md#colors
 
-. $TT_BASH/alias_cmd
 
+run_match(){
 
-fn_ls(){
+	run1(){
+		rg "$1" -n --color=always --colors match:fg:green
+	}
+	run2(){
+		run1 "$1" | 
+		rg "$2" --color=always --colors match:fg:cyan
+	}	
+	run3(){
+		run2 "$1" "$2" | 
+		rg "$3" --color=always --colors match:fg:yellow
+	}
+	run4(){
+		run3  "$1" "$2" "$3" | 
+		rg "$4" --color=always --colors match:fg:green
+	}
 
-	item="$(list_var 'RG_Regexs' | fzy)"
-	echo ${item} | awk -F':=>' '{print $2}'
-
+	"run$len" "$@"
 }
 
-
-fn_open(){
-
-	item="$(get_var_file 'RG_list')"
-	st open "$item"
-
-}
+len="$#"
+[ $len -eq 0 ]&& exit 7
 
 
-fn_regex(){
-
-	item="$(get_var_file 'RG_Regexs')"
-	st open "$item"
-
-}
-
-
-fn_option(){
-	item="$2"
-	full='[-]\w,\s(--)\w+'
-	simple='^\s*[-]+\w*'
-
-	# check if $1 is -s, cmd =simple else full
-	[[ $1 == "-s" ]] && regex="$simple" || regex="$full"
-
-    data=$("${@: -1}" --help)
-
-    echo "$data"  | rg --trim "$regex" --color=never |
-    sd -F '.' ''
-
-}
-
-custom_color(){
-	# https://github.com/BurntSushi/ripgrep/blob/master/FAQ.md#colors
-	rg --colors line:fg:yellow      \
-	   --colors line:style:bold     \
-	   --colors path:fg:green       \
-	   --colors path:style:bold     \
-	   --colors match:fg:black      \
-	   --colors column:bg:yellow    \
-	   --colors column:fg:black     \
-	   --colors match:bg:yellow     \
-	   --colors match:style:nobold  \
-}
-
-"fn_$1" "$@"
+run_match "$@"
