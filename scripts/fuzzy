@@ -36,8 +36,13 @@ fn_onef(){	# Select one from PIPE input
 		echo "$item" | fzy -q "$data"
 
 	fi
+}
 
-
+fn_two(){
+	shift
+	q="$@"
+	fzf -1 --height=40% --layout=reverse -q "${q}" \
+	-d '/' --with-nth=-2,-1
 }
 
 "fn_$1" "$@"

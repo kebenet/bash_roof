@@ -72,17 +72,13 @@ fn_openat(){	# open file at choosen folder
 fn_openr() {	# open from recents list
 	recents="$TT_VAR/sub_recent_files.ttvar"
 
-	item=`awk '!seen[$0]++' < "$recents" | _fzfone "$2"`
+	item=`awk '!seen[$0]++' < "$recents" | fuzzy two "$2"`
 	item=$(expand_env "$item")
 
 	st open "$item"
 
 }
 
-_fzfone(){
-	fzf -1 --height=40% --layout=reverse -q "${1}" \
-	-d '/' --with-nth=-2,-1
-}
 
 fn_file() {	# add to jump files
 
