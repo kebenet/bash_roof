@@ -41,8 +41,7 @@ fn_open(){	# open jump [file | folder]
 	item=`rg "$item" -F "$_jumpfile" | fzy -e "$item"`
 
 	item=$(expand_env "$item")
-	
-	st open "${item}"
+	[ -f "$item" ] && st open "${item}"
 
 
 }
@@ -62,9 +61,10 @@ fn_openat(){	# open file at choosen folder
 		thefile=`fd "$argf2" -t f -d 2 | fuzzy onef "$argf"`
 
 		item="$todir/${thefile}"
-		st open "$item"
-
-		varm append_relative "$item"
+		if [ -f "$item" ]; then
+			st open "${item}"
+			varm append_relative "$item"
+		fi
 	)
 
 }
@@ -75,7 +75,11 @@ fn_openr() {	# open from recents list
 	item=`awk '!seen[$0]++' < "$recents" | fuzzy two "$2"`
 	item=$(expand_env "$item")
 
-	st open "$item"
+	if [ -f "$item" ]; then
+		st open "${item}"
+		varm append_relative "$item"
+	fi
+
 
 }
 
@@ -112,7 +116,7 @@ _append_uniq(){	# append at top of file and uniq then remove empty line
 
 }
 
-fn_make(){	# reconstruct all jump lists
+_regenerate(){	# reconstruct all jump lists
 
 	rargs varm relative {} < "$_jumpfile" > "$TT_TEMP"
 	mv "$TT_TEMP" "$_jumpfile"
