@@ -1,0 +1,84 @@
+#!/bin/bash
+
+fn_sub_project(){
+
+	# open by big folder
+	# find top folder to start search
+	# create file to sign main folder
+	thedir="$PWD"
+	found=
+	count=0
+
+	while [[ $count -lt 5 ]]; do
+		if [ -f "$thedir/.gitignore" ]; then
+			found='found' && break
+		else
+			[ "$thedir" = '/' ] && break
+			thedir=$(dirname "$thedir")
+		fi
+		count=$((count+1))
+	done
+
+	if [ "$found" ];then
+		shift
+		item=$(fd "$@" -tf -H --base-directory "$thedir"| fuzzy one "$@")
+		item="$thedir/$item"
+
+		[ ! -f "$item" ] && color 'Not a: File' && exit 7
+		
+		st open "$item"
+		varm append_relative "${item}" &
+	else
+		echo not found '.gitignore'
+	fi
+}
+
+
+fn_sub_pwd(){
+
+	item=$(fd "$2" -H -tf -d 2 | fuzzy one "${2}")
+
+	item=$(realpath "${item}")
+	[ ! -f "$item" ] && color 'User: Cancel...' && exit 7
+
+	if ! _check_file_size "$item"; then exit 7; fi
+
+	st open "$item"
+	varm append_relative "${item}" &
+
+}
+
+fn_open_script(){
+
+	shift
+	q="$@"
+	cd "$TT_BASH"
+
+	item=`fd "$q" -t f -IH -E .reserve | fuzzy onef "$q"`
+	
+	if item=`realpath "$item"`; then
+		st open "$item"
+		varm append_relative "${item}" &
+
+	fi
+}
+
+_check_file_size(){
+
+	maxsize=300000 # 300kb limit
+	item="$1"
+	filesize=$(stat -c%s "$item")
+	type=$(file -b --mime-type "$item")
+
+	if [[ ! "$type" == text/* ]]; then
+		return 7
+	fi
+
+	if (( filesize > maxsize )); then
+	    message "ERROR: File size is over the limit. 300kb"
+	    return 7
+	fi
+
+}
+
+"fn_$1" "$@"
