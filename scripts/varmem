@@ -6,6 +6,16 @@ fn_init(){
 	[ ! -d "$mem_file" ] && mkdir "$mem_file"
 }
 
+setenv(){
+
+	key="$2"
+	val="$3"
+	pid=$(ps | rg '^[0-9]+' -o | head -n 1)
+
+	echo "$key=$val"  > ~/ipcvar &
+	kill -s SIGRTMIN "$pid"
+}
+
 fn_set(){
 	printf "$3" > "$mem_file/${2}.ttvar"
 }

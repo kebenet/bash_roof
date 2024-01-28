@@ -4,12 +4,19 @@
 
 __on_exit() {
     echo "TERABO Performing cleanup tasks..."
-
-    set_var "RG_options" "${RG_options}"
 }
 
-# Export function Area
+var_handle(){
+    
+    item=$(cat ~/ipcvar)
+    wait
+    export $item
 
+}
+
+trap 'var_handle' SIGRTMIN
+
+# Export function Area
 
 export -f set_var
 export -f get_var
