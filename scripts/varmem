@@ -7,14 +7,15 @@ fn_init(){
 	[ ! -f "$TT_IPC" ] && mkfifo "$TT_IPC"
 }
 
-setenv(){
+fn_setenv(){
 
 	key="$2"
 	val="$3"
-	pid=$(ps | rg '^[0-9]+' -o | head -n 1)
+	echo "$key='$val'"  > "$TT_IPC" &
 
-	echo "$key=$val"  > "$TT_IPC" &
-	kill -s SIGRTMIN "$pid"
+	pid=$(ps | rg '^[0-9]+' -o | head -n 1)
+	bash -c "kill -s SIGRTMIN $pid"
+
 }
 
 fn_set(){

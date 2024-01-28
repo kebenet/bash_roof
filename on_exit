@@ -10,7 +10,7 @@ var_handle(){
 
     item=$(cat "$TT_IPC")
     # wait
-    export $item
+    export "$item"
 
 }
 
