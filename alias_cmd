@@ -93,5 +93,3 @@ list_var(){
 		cat "${TT_VAR}/${1}.ttvar"
 	fi
 }
-
-export -f expand_env
