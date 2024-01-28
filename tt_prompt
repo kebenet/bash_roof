@@ -46,6 +46,6 @@ _run_ads(){
 	fi
 }
 
-PROMPT_COMMAND="_run_ads;$PROMPT_COMMAND"
+# PROMPT_COMMAND="_run_ads;$PROMPT_COMMAND"
 PROMPT_COMMAND="__track_pwd;$PROMPT_COMMAND"
 
