@@ -17,7 +17,8 @@ fn_lsc(){	# list command from default keymap
 }
 
 fn_list(){
-	jq -c "$JQLIST" "$THE_FILE"
+	# jq -c "$JQLIST" "$THE_FILE"
+	_list_compact
 }
 
 fn_sub(){
@@ -52,17 +53,6 @@ fn_chcmd(){
 		 '.[$idx-1].command = $item' "$THE_FILE")
 
 	_save "$item"
-}
-
-fn_copycmdto(){	# choose cmd to copy & select to paste
-	shift
-	[ "$#" -ne 1 ]&& color 'Usage arg: must be command : name ' && exit 7
-	# select commadn, then select item to change cmd
-	exit
-	cmd=$(select_cmd)
-	idx=$(_select)
-	fn_chcmd $idx
-
 }
 
 fn_test(){
@@ -142,7 +132,5 @@ _add_key(){
 
 }
 
-#TODO! custom format json 
-#TODO! get cmd from sublime command list. get all aviable cmd
 
 [ $# -eq 0 ] && fn_list || "fn_$1" "$@"
