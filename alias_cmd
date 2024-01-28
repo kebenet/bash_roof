@@ -1,11 +1,6 @@
 #!/bin/bash
 #FILE! Alias for most use cmd
 
-
-expand_env(){
-	eval "echo \"${1}\""
-}
-
 _ttrc_init(){
 
 	alias_file="$TT_BASH/dynamic_aliases"
