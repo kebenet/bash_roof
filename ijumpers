@@ -2,6 +2,21 @@
 #FILE! JUMP operations
 
 
+stop() {	# stop at current folder
+
+    if [ "$#" -eq 1 ]; then
+        export SAVEPWD="$PWD"
+        message "DONE save: ${PWD}"
+    else
+        if [ -z "$SAVEPWD" ]; then
+            message "press: . to save current folder"
+        else
+            cd "$SAVEPWD" || return
+        fi
+    fi
+}
+
+
 cdp(){
 
 	var_name="PWD_PROJECT"
