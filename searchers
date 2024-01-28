@@ -1,0 +1,206 @@
+#!/bin/bash
+#FILE! search functions
+
+opn(){
+	(
+		q="$@"
+		cd "$TT_BASH"
+
+		item=`fd "$q" -t f -IH -E .reserve | fuzzy onef "$q"`
+		
+		if item=`realpath "$item"`; then
+			color -f '/' $item
+			st open "$item"
+			varm append_relative "${item}"
+
+		fi
+
+	)
+}
+
+erline(){	# get last execute error line number and show
+	error=`history | tail -n 2 | head -n 1 | tool cutd ' ' 4`
+
+	line=$(eval "$error" 2>&1 >/dev/null | rg '[0-9]+' -o --color=never)
+
+	item=`echo $line | warp lines | fuzzy one`
+	[ -z "$item" ] && color 'User: Cancel' && return
+
+	st line "$item"
+}
+
+where(){
+	item=$(which "${1}")
+	if [[ $2 == "." ]]; then
+		symbol "${item}"
+	else
+		st open "$item"
+		varm append_relative "${item}"
+
+	fi
+}
+
+
+find_sublime_cmd(){
+	cat "$TT_SUBLIME_CMD" | fzy -q "$1" 
+}
+
+
+symbol(){
+
+	view="$(get_var 'subl_active_view')"
+	
+	if [ -f "$1" ]; then
+		view="${1}"
+	fi
+
+	item=$(rg "^(\w+)" -n "${view}" |fzy)
+	echo ${item}
+	index="$(echo $item | cut -d ':' -f 1)"
+	st open_line "$view" "$index"
+
+}
+
+
+apt_search_list(){
+
+	item="$@"
+	echo "Loading search for :$item" | clrf ':'
+
+	alls=$(apt search "$item")
+	echo "$alls" |cut -d '/' -f1 | 
+	awk '{ORS = (NR%3 ? ":" : "\n")} 1' |
+	awk -F':' '{temp = $1; $1 = $3; $3 = temp; print}' OFS=":" |
+	warp trim | awk -F ':' -v varmessage1="\\033[0;31m" -v varmessage2="\\033[0;32m" -v reset="\\033[0m" '{
+    printf "%s%s%s ", varmessage1, $1, reset;
+    printf "%s%s%s\n", varmessage2, $3, reset;
+	}'
+
+}
+
+
+symbols_bash(){
+
+	dirs="$(get_var 'PWD_PROJECT')"
+	
+	message "." "to search at Current PWD"
+
+	if [[ $1 == "." ]]; then
+		dirs="$PWD"	
+	fi
+
+	if [ ! "${number}" ]; then
+		message "Add Count" "to show matxh line count"
+		number=7
+	fi
+
+	item=$({
+	        declare -F | awk '{print $3}'
+	        export | cut -d "=" -f 1 | awk '{print "@"$3}'
+	    } | fzy)
+
+	if [ ! "${item}" ]; then
+		message "CANCEL" "Operation..."
+		return 7
+	fi
+
+	reg="^$item"
+
+	if [[ $item == "@"* ]]; then
+		# export
+		item=$(echo "$item" | cut -c 2-)
+		reg="^(export ${item})"
+	fi
+	
+
+    rg "$reg"  -N --follow --max-depth 3 --hidden \
+		--after-context 7 "$dirs"
+
+}
+
+
+
+find_code(){
+
+	folder="$PWD"
+
+	if [[ $1 == "." ]]; then
+		shift
+	else
+		folder="$TT_BASH"
+	fi
+
+	[ ! "${1}" ] && echo "Cannot Empty Query!" && return 7
+
+	arg="$@"
+	item="${arg// /.*?}"
+	echo ${item}
+
+	_rgcode "($item)" "$RGOPT" "$folder" | fzy -q "$1" 
+
+}
+
+find_code_rg(){
+
+	[ ! "$1" ] && echo "Cannot Empty Query!" && return 7
+	
+	cd $TT_BASH
+	var="$@"
+	item="${var// /.*?}"
+	nospace="$(tr -d ' '  <<< $@)"
+
+	echo ${item}
+	_rgcode "($item)" \
+	| fzy -e "$nospace" | fzy -q "$nospace"
+}
+
+view_code(){
+
+	[ ! "$1" ] && echo "Cannot Empty Query!" && return 7
+	
+	var="$@"
+	item="${var// /.*?}"
+	nospace="$(tr -d ' '  <<< $@)"
+
+	echo "$item"
+	_rgcode "($item)" \
+	| fzy -e "$nospace" | fzy -q "$nospace"
+}
+
+find_github_code() {
+
+    search_string=$1
+    language=$2
+
+    #CODE! Replace spaces in the search string with '+'
+    search_string=${search_string// /+}
+
+    # Open the search results in a web browser
+    open "https://github.com/search?q=$search_string+language:$language&type=code"
+
+}
+
+
+cheat(){
+
+    export LANG="bash"
+    message "FIND_CODE: search anyting"
+    message "Options -l: change language"
+
+    if [[ ${1} == "-l" ]]; then
+    	export LANG="$2"
+      	message "Set lang: to $2"
+      	shift 2
+    fi
+    
+    item=$(echo "${@}" | tr ' ' '+')
+    [ ! "${item}" ] && echo "empty string. cancels.." && return 7
+    
+    curl "cheat.sh/${LANG}/${item}"
+
+}
+
+
+_rgcode(){
+	rg "$1" --no-filename --no-line-number --trim -i
+}
