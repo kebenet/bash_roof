@@ -4,7 +4,7 @@ mem_file='/dev/shm/TtMemory'
 
 fn_init(){
 	[ ! -d "$mem_file" ] && mkdir "$mem_file"
-	[ ! -f "$TT_IPC" ] && mkfifo "$TT_IPC"
+	[ ! -p "$TT_IPC" ] && mkfifo "$TT_IPC"
 }
 
 fn_setenv(){
@@ -13,8 +13,8 @@ fn_setenv(){
 	val="$3"
 	echo "$key='$val'"  > "$TT_IPC" &
 
-	pid=$(ps | rg '^[0-9]+' -o | head -n 1)
-	bash -c "kill -s SIGRTMIN $pid"
+	# pid=$(ps | rg '^[0-9]+' -o | head -n 1)
+	bash -c "kill -s SIGRTMIN $BASHPID"
 
 }
 
