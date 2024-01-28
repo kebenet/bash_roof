@@ -1,0 +1,148 @@
+#!/bin/sh
+
+THE_FILE="$TT_PACKAGES/User/Default.sublime-keymap"
+DEFAULT_FILE="$TT_PACKAGES/User/Default (Linux).sublime-keymap"
+CMD_FILE="$TT_PACKAGES/TtEditor/sublime_cmd"
+
+KEY_ITEM='{ "keys": $keys, "command": $cmd }'
+CONTEXT='"context" :[{ "key": "TERABO_MODE", "operand": $msg }] '
+JQLIST='.[] | {k: .keys, cmd: .command, "operand": .context[0].operand}'
+
+
+fn_lsc(){	# list command from default keymap
+	{
+		jq -r ".[] | .command" "$DEFAULT_FILE"
+		rg 'command: \"(.*?)\"' -Nor '$1' "$CMD_FILE"
+	} | sort -u
+}
+
+fn_list(){
+	jq -c "$JQLIST" "$THE_FILE"
+}
+
+fn_sub(){
+	st open "$THE_FILE"
+}
+
+fn_delete(){
+	idx=$(_select)
+	item=$(jq "del(.[$idx-1])" "$THE_FILE")
+	_save "$item"
+}
+
+fn_chkey(){
+	shift
+	[ "$#" -ne 1 ]&& color 'Usage arg: must be keys : "ctrl+a,c" ' && exit 7
+
+	keys=$(_to_array "$1")
+	idx=$(_select)
+	item=$(jq --argjson item "$keys" --argjson idx "$idx" \
+		 '.[$idx-1].keys = $item' "$THE_FILE")
+
+	_save "$item"
+}
+
+fn_chcmd(){
+	shift
+	[ "$#" -ne 1 ]&& color 'Usage arg: must be command : name ' && exit 7
+
+	cmd="$1"
+	idx=$(_select)
+	item=$(jq --arg item "$cmd" --argjson idx "$idx" \
+		 '.[$idx-1].command = $item' "$THE_FILE")
+
+	_save "$item"
+}
+
+fn_copycmdto(){	# choose cmd to copy & select to paste
+	shift
+	[ "$#" -ne 1 ]&& color 'Usage arg: must be command : name ' && exit 7
+	# select commadn, then select item to change cmd
+	exit
+	cmd=$(select_cmd)
+	idx=$(_select)
+	fn_chcmd $idx
+
+}
+
+fn_test(){
+	shift
+	[ "$#" -ne 3 ]&& color 'Argument must: key: command: message' && exit 7
+	item=`_add_key "$@"`
+	_append "$item" | jq -c "$JQLIST"
+}
+
+fn_append(){
+	shift
+	[ "$#" -ne 3 ]&& color 'Argument must: key: command: message' && exit 7
+	new=`_add_key "$@"`
+	item=$(_append "$new") 
+
+	_save "$item"
+
+}
+
+fn_duplicate(){
+	shift
+	[ "$#" -ne 2 ]&& color 'Argument must 2: key & message:' && exit 7
+
+	keys=$(_to_array "$1")
+	msg="$2"
+	idx=$(_select)
+	item=$(_getby_index "$idx" | jq -c --argjson item "$keys" --arg msg "$msg" \
+		'.keys = $item| .context[0].operand = $msg')
+
+	item=$(_append "$item")
+	_save "$item"
+
+}
+
+_change(){
+	key="$1"
+	val="$2"
+	jq  --arg k "$key" --argjson v "$val" '$k = $v'
+}
+
+_getby_index(){
+	idx="$1"
+	jq -c --argjson idx "$idx" '.[$idx-1]' "$THE_FILE"
+}
+
+_list_compact(){
+	jq -cr '.[] | .keys,.command' "$THE_FILE" | 
+	warp concat 2 | rg '^' -n
+}
+
+_select(){
+	_list_compact | fzy | tool cut 1
+}
+
+_save(){
+	echo "$1" > "$THE_FILE"
+}
+
+_to_array(){
+	echo "$1" | jq -R 'split(",")'
+}
+
+_append(){
+	item="$1"
+	jq --argjson item "$item" '. + [$item] ' "$THE_FILE"
+}
+
+_add_key(){
+  
+	keys=$(_to_array "$1")
+	cmd="$2"
+	msg="$3"
+
+	jq --null-input --argjson keys "$keys" \
+	--arg cmd "$cmd" --arg msg "$msg" "$KEY_ITEM" | 
+	jq --arg msg "$msg" ". + { $CONTEXT }" 
+
+}
+
+#TODO! custom format json 
+#TODO! get cmd from sublime command list. get all aviable cmd
+
+[ $# -eq 0 ] && fn_list || "fn_$1" "$@"
