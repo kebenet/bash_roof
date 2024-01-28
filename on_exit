@@ -7,9 +7,9 @@ __on_exit() {
 }
 
 var_handle(){
-    
-    item=$(cat ~/ipcvar)
-    wait
+
+    item=$(cat "$TT_IPC")
+    # wait
     export $item
 
 }
