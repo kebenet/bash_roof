@@ -39,6 +39,10 @@ fn_count(){	# awk get line at index
 	echo "$2" | wc -l
 }
 
+fn_expand_env(){
+	eval "echo \"${1}\""
+}
+
 
 
 #CODE! pipe is coming bro..
