@@ -12,7 +12,7 @@ hpp(){	# display help info
 sub(){
 
 	#TODO! create sub recent files- done
-	item=$(fdls | fuzzy one "${1}")
+	item=$(fdone | fuzzy one "${1}")
 
 	item=$(realpath "${item}")
 
