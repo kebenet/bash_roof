@@ -9,23 +9,6 @@ hpp(){	# display help info
 }
 
 
-sub(){
-
-	#TODO! create sub recent files- done
-	item=$(fdone | fuzzy one "${1}")
-
-	item=$(realpath "${item}")
-
-	if ! _check_file_size "$item"; then
-		return 7
-	fi
-
-	st open "$item"
-	varm append_relative "${item}"
-
-}
-
-
 copy(){	# copy file path to clip
 
     if [ "$#" -eq 1 ]; then
@@ -156,22 +139,4 @@ history_clean(){
 	sort -k 1,1 "$TT_TEMP" > "$item"
 }
 
-
-_check_file_size(){
-
-	maxsize=300000 # 300kb limit
-	item="$1"
-	filesize=$(stat -c%s "$item")
-	type=$(file -b --mime-type "$item")
-
-	if [[ ! "$type" == text/* ]]; then
-		return 7
-	fi
-
-	if (( filesize > maxsize )); then
-	    message "ERROR: File size is over the limit. 300kb"
-	    return 7
-	fi
-
-}
 

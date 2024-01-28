@@ -1,22 +1,6 @@
 #!/bin/bash
 #FILE! search functions
 
-opn(){
-	(
-		q="$@"
-		cd "$TT_BASH"
-
-		item=`fd "$q" -t f -IH -E .reserve | fuzzy onef "$q"`
-		
-		if item=`realpath "$item"`; then
-			color -f '/' $item
-			st open "$item"
-			varm append_relative "${item}"
-
-		fi
-
-	)
-}
 
 erline(){	# get last execute error line number and show
 	error=`history | tail -n 2 | head -n 1 | tool cutd ' ' 4`
