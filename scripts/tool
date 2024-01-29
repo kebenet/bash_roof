@@ -35,6 +35,10 @@ fn_seen(){	# awk get line at index
 	awk '!seen[$0]++' "$3"
 }
 
+fn_seenspace(){	# awk get line at index
+	awk 'BEGIN {RS=" ";} !seen[$0]++ {printf("%s ", $0)}'
+}
+
 fn_count(){	# awk get line at index
 	echo "$2" | wc -l
 }
