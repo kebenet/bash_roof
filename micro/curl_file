@@ -3,11 +3,11 @@
 
 curl_file(){	# download by url git repo file to local 
 	# https://raw.githubusercontent.com/username/repo/master/file
-	item=$(echo "$2" |
+	item=$(echo "$1" |
 		sd 'github.com' 'raw.githubusercontent.com'|
 		sd 'blob/' '')
 
-	filename=$(awk -F'/' '{print $(NF)}' <<<"$item")
+	filename=$(echo "$item" |awk -F'/' '{print $(NF)}')
 	echo "$filename"
 	
 	curl -o "$filename" "$item"
