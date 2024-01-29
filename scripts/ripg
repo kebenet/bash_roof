@@ -62,6 +62,10 @@ do_nocolor(){
 
 do_replace(){
 	local allfile
+	# check git status
+	# if has to commit, stop
+	gitcount=$(gitt ls | wc -l)
+	[ $gitcount -gt 0 ] && echo 'Commit 1st: before replacement' && exit
 
 	while read -r line; do
 		item="$line"
@@ -69,11 +73,12 @@ do_replace(){
 		index=$(echo "$item" | tool cut 2)
 		value=$(echo "$item" | tool cut 3)
 
-		echo "$value : at $index"
+		echo "processing replacement: $value : at $index"
+		range change "$index" "$value" "$thefile"
 		allfile+="$thefile "
 
 	done
-	echo "$allfile"
+	echo "$allfile" | uniq -u | warp head 'gitt all '
 	# show confirm 'Confirm: to: Proceed'
 
 }
