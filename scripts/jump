@@ -101,7 +101,7 @@ fn_dir() {	# add folder to jump list
 
 	filepath=$(varm relative ".")
 	_append_uniq "${filepath}" "$_jumpdir"
-	echo $?
+
 	message "DONE add : " "$filepath"
 
 }
