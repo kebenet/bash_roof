@@ -8,94 +8,6 @@ hpp(){	# display help info
 	| sd '(\(\)\s*\{?)|(fn_)' '' | column -t -s $'\t'
 }
 
-
-copy(){	# copy file path to clip
-
-    if [ "$#" -eq 1 ]; then
-
-        message "TTFCLIP: name of fclip"
-        return
-    fi
-
-	item="$(fdls | fzy)"
-
-	_fclip "$item"
-
-	message "$item : Copy to CLIP"
-
-}
-
-paste(){	# paste file to clipboard
-
-	if [ ! -f "$TTFCLIP" ]; then
-		message "FILE ERROR!: not a file or empty"
-		return 7
-	fi
-
-	read -rp "Continue (y/n)? " answer; if [[ $answer = "" ]]; then return 7; fi
-
-	cp "$TTFCLIP" "$PWD"
-
-	base=$(basename "$TTFCLIP")
-	message "${base}: DONE Copy to"
-	message "$PWD : ."
-}
-
-_fclip() {
-	#CODE! press . to empty fclip
-	
-	if [[ "$1" == "." ]]; then
-		unset TTFCLIP
-		message "EMPTY: the clipboard"
-		return
-	fi
-
-	#CODE! store the directory path to TT fclip
-    TTFCLIP=$(realpath "${1}")
-    export TTFCLIP
-
-}
-
-duplicate(){	# duplicate file
-
-	#CODE! check if not file. [-f file] [-d dir]
-	if [ ! -f "$1" ]; then
-		message "FILE ERROR!: file arg to duplicate"
-		return 7
-	fi
-
-	message "DUPLICATE: provide new Name"
-	#CODE! read single line user input
-	read -er -p "new name ${ARROW} " -i "${1}" new
-
-	cp "${1}" "${new}"
-	message "DONE!: duplicate : $new"
-
-}
-
-
-remove(){	# remove file
-
-	item="$(fdls | fzy)"
-
-	rm "$item"
-
-	message "$item: Remove..."
-
-}
-
-
-newsh(){
-
-    item=$(show input 'new name')
-    [ -z "$item" ] && echo 'empty cancel' && return 7
-    
-    cp "$TT_BASH/scripts/template.sh" "$item"
-    chmod 700 "$item"
-    ls
-}
-
-
 hp(){
 
 	full='[-]\w,\s(--)\w+'
@@ -115,12 +27,6 @@ hp(){
 
     sed -n "${index},/^\s*-/{p}" <<< "$data"
 
-}
-
-history_clean(){
-	item="$HOME/.bash_history"
-	awk '!seen[$0]++ && length($0) >= 3 && NF' "$item" > "$TT_TEMP"
-	sort -k 1,1 "$TT_TEMP" > "$item"
 }
 
 

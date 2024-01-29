@@ -6,7 +6,7 @@ __on_exit() {
     echo "TERABO Performing cleanup tasks..."
 }
 
-var_handle(){
+VAR_HANDLER(){
 
     item=$(cat "$TT_IPC")
     # wait
@@ -14,7 +14,17 @@ var_handle(){
 
 }
 
-trap 'var_handle' SIGRTMIN
+trap 'VAR_HANDLER' SIGRTMIN
+
+CD_HANDLER(){
+
+    item=$(cat "$TT_IPC")
+    # wait
+    cd "$item" || return
+
+}
+
+trap 'CD_HANDLER' SIGUSR2
 
 # Export function Area
 

@@ -14,22 +14,6 @@ failed(){
   fi
 }
 
-inputs(){
-
-  promp=`color -i 2 "${2}: ❯ "`
-
-  read  -erp "$promp" -i "$3" inputs
-
-  if [ -z "$inputs" ]; then
-    echo 'empty'
-    exit 7
-  else
-    echo "$inputs"
-  fi
-
-}
-
-
 confirm() {
   promp=`color 'confirm : (y/n): ❯ '`
   read -rp "$promp" confirm
