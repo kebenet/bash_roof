@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+fn_history(){	# clean history & remove duplicate
+	item="$HOME/.bash_history"
+	awk '!seen[$0]++ && length($0) > 5 && NF' "$item" > "$TT_TEMP"
+	mv "$TT_TEMP" > "$item"
+}
+
+fn_cargo(){
+	cargo clean
+}
+
+
+"fn_$1" "$@"
