@@ -1,0 +1,5 @@
+#!/bin/sh
+
+item="$1"
+[ ! -t 0 ] && item=$(cat)
+eval "echo \"$item\""
