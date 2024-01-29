@@ -7,7 +7,7 @@ _jumpdir="${TT_VAR}/jump_folders.ttpath"
 fn_db(){	# open jump [file | folder] in editor
 
 	item=$( { echo '$TT_VAR/jump_files.ttpath'; echo '$TT_VAR/jump_folders.ttpath'; } | fzy )
-	item=$(tools/expand_env "$item")
+	item=$(./expand_env "$item")
 	st open "$item"
 
 }
@@ -40,7 +40,7 @@ fn_open(){	# open jump [file | folder]
 
 	item=`rg "$item" -F "$_jumpfile" | fzy -e "$item"`
 
-	item=$(tools/expand_env "$item")
+	item=$(./expand_env "$item")
 	[ -f "$item" ] && st open "${item}"
 
 
@@ -53,7 +53,7 @@ fn_openat(){	# open file at choosen folder
 	argf="$2"
 
 	item=`fn_lsd  | fuzzy onef "$argd"`
-	todir=$(tools/expand_env "$item")
+	todir=$(./expand_env "$item")
 
 	(
 		cd "$todir"
@@ -73,7 +73,7 @@ fn_openr() {	# open from recents list
 	recents="$TT_VAR/sub_recent_files.ttvar"
 
 	item=`awk '!seen[$0]++' < "$recents" | fuzzy two "$2"`
-	item=$(tools/expand_env "$item")
+	item=$(./expand_env "$item")
 
 	if [ -f "$item" ]; then
 		st open "${item}"

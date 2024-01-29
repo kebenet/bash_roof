@@ -48,7 +48,7 @@ fn_relative(){	# get relative path by env variables like realpath
 	fi
 
 	item=$(_loop_parent "$thedir" | warp head '$')
-	itempath=$(tools/expand_env "$item")
+	itempath=$(./expand_env "$item")
 	echo "${real/$itempath/$item}"
 
 }

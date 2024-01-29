@@ -61,7 +61,7 @@ aa(){
 			Toggle_index=$((Toggle_index + 1))
 
 			item=$(echo "$Toggle_dirs" | cut -d: -f${Toggle_index})
-			item=$(tools/expand_env "$item")
+			item=$(./expand_env "$item")
 			cd "$item"
 			len=$(echo "${Toggle_dirs}" |grep -o ":"| wc -l)
 
@@ -152,13 +152,13 @@ zz(){
 	    cat "$jumpdir" | tool lastf '/' | rg '^' -n| pr -t -3
 	elif [[ "$1" =~ ^[0-9]+$ ]]; then
     	item=$(sed -n "${1}p" "$jumpdir")
-    	item=$(tools/expand_env "$item")
+    	item=$(./expand_env "$item")
     	color ${item}
     	cd "$item"
     	ls
     else
 	    item=`cat "$jumpdir" | fzf --filter="$1" | head -n 1`
-    	item=$(tools/expand_env "$item")
+    	item=$(./expand_env "$item")
     	color ${item}
     	cd "$item"
     	ls
