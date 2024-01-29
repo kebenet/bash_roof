@@ -62,8 +62,7 @@ do_nocolor(){
 
 do_replace(){
 	local allfile
-	# check git status
-	# if has to commit, stop
+
 	gitcount=$(gitt ls | wc -l)
 	[ $gitcount -gt 0 ] && echo 'Commit 1st: before replacement' && exit
 
@@ -78,14 +77,10 @@ do_replace(){
 		allfile+="$thefile "
 
 	done
-	echo "$allfile" | uniq -u | warp head 'gitt all '
+	echo
+	echo "$allfile" | tool seenspace | warp head 'gitt add '
 	# show confirm 'Confirm: to: Proceed'
 
-}
-
-do_restore(){
-	echo
-	# git restore here
 }
 
 #TODO! create cmd for replacement
