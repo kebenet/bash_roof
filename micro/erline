@@ -1,0 +1,12 @@
+#!/bin/sh
+# get last execute error line number and show
+
+error=`history | tail -n 2 | head -n 1 | tool cutd ' ' 4`
+
+line=$(eval "$error" 2>&1 >/dev/null | rg '[0-9]+' -o --color=never)
+
+item=`echo $line | warp lines | fuzzy one`
+[ -z "$item" ] && color 'User: Cancel' && return
+
+st line "$item"
+

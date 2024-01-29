@@ -1,0 +1,47 @@
+#!/bin/sh
+
+
+copy(){	# copy file path to clip
+
+    if [ -z "$1" ]; then
+        message "File : name is missing"
+        return
+    fi
+
+	_clip "$1"
+	message "$1 : Copy to clip"
+}
+
+
+paste(){	# paste file to clipboard
+
+	if [ ! -f "$TT_CLIP" ]; then
+		message "FILE ERROR!: not a file or empty"
+		return 7
+	fi
+
+	cp "$TT_CLIP" "$PWD"
+
+	item=$(basename "$TT_CLIP")
+	message "DONE copy to: $item"
+
+}
+
+
+_clip() {
+	#CODE! press . to empty fclip
+	
+	if [[ "$1" == "." ]]; then
+		unset TT_CLIP
+		message "EMPTY: the clipboard"
+		return
+	fi
+
+	#CODE! store the directory path to TT fclip
+    TT_CLIP=$(realpath "$1")
+    varmem setenv TT_CLIP "$TT_CLIP"
+
+}
+
+message "Use . to: Paste"
+[ "$1" == '.' ] && paste "$@" || copy "$@"

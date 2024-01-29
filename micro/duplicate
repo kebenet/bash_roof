@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+if [ ! -f "$1" ]; then
+	message "Missing: file to duplicate"
+	return 7
+fi
+
+message "DUPLICATE: provide new Name"
+
+item=$(show input 'new: name?')
+
+cp "$1" "$item"
+message "DONE!: duplicate : $item"

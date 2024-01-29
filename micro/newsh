@@ -1,0 +1,13 @@
+#!/bin/sh
+
+
+item="$1"
+[ -z "$item" ] && color 'Missing: Argument: name?' && exit 7
+
+cp "$TT_VAR/template.sh" "$item"
+chmod 700 "$item"
+ls
+
+item=$(realpath $item)
+st open "$item"
+

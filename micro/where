@@ -1,0 +1,8 @@
+#!/bin/sh
+
+
+item=$(which "${1}")
+
+st open "$item"
+varm append_relative "${item}"
+

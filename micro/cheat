@@ -1,0 +1,17 @@
+#!/bin/bash
+
+LANG="bash"
+message "FIND_CODE: search anyting"
+message "Options -l: change language"
+
+if [ "$1" == '-l' ]; then
+	LANG="$2"
+  	message "Set lang: to $2"
+  	shift 2
+fi
+
+item=$(echo "$@" | tr ' ' '+')
+[ ! "$item" ] && echo "empty string. cancels.." && return 7
+
+
+curl "cheat.sh/${LANG}/${item}"

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+find_github_code() {
+
+    search_string=$1
+    language=$2
+
+    #CODE! Replace spaces in the search string with '+'
+    search_string=${search_string// /+}
+
+    # Open the search results in a web browser
+    open "https://github.com/search?q=$search_string+language:$language&type=code"
+
+}
+
+find_github_code "$@"
