@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 maxsize=300000 # 300kb limit
 item="$1"
