@@ -1,0 +1,14 @@
+#!/bin/sh
+
+active="$(get_var 'subl_active_view')"
+
+if [ -f "$1" ]; then
+	active="${1}"
+fi
+
+item=$(rg "^(\w+)" -n "$active" |fzy)
+
+index="$(echo $item | cut -d ':' -f 1)"
+st open_line "$active" "$index"
+
+
