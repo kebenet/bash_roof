@@ -1,16 +1,16 @@
 #!/bin/sh
+#FILE! download file from github file link
 
+# https://raw.githubusercontent.com/username/repo/master/file
+item="$@"
+[ ! "$item" ] && color 'Error: empty args'
 
-curl_file(){	# download by url git repo file to local 
-	# https://raw.githubusercontent.com/username/repo/master/file
-	item=$(echo "$1" |
-		sd 'github.com' 'raw.githubusercontent.com'|
-		sd 'blob/' '')
+item=$(echo "$item" |
+	sd 'github.com' 'raw.githubusercontent.com'|
+	sd 'blob/' '')
 
-	filename=$(echo "$item" |awk -F'/' '{print $(NF)}')
-	echo "$filename"
-	
-	curl -o "$filename" "$item"
-}
+filename=$(echo "$item" |awk -F'/' '{print $(NF)}')
+echo "$filename"
 
-curl_file "$@"
+curl -o "$filename" "$item"
+
