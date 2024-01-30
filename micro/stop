@@ -5,10 +5,9 @@
 
 if [ "$#" -eq 1 ]; then
     varmem setenv SAVEPWD "$PWD"
-    echo
 else
     if [ -z "$SAVEPWD" ]; then
-        message "press: . to save current folder"
+        color "press: . to save current folder"
     else
         send_for_cd "$SAVEPWD"
     fi
