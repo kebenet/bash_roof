@@ -1,0 +1,12 @@
+#!/bin/sh
+#FILE! confirmation inputs
+
+promp=$(color 'confirm : (y/n): ❯ ')
+read -rp "$promp" keyitem
+
+#TODO! esc to cancel
+if [ "$keyitem" = "y" ]; then
+	exit 0 
+else
+	exit 7
+fi
