@@ -1,0 +1,12 @@
+#!/bin/sh
+
+item="$@"
+[ ! "$item" ]&& color 'Error: enpty args' && exit 7
+
+color "Loading search for :$item"
+all=$(apt search "$item"| sed -n "3,\$p"|cut -d '/' -f1)
+
+echo "$all"| tool trim | tool concat 3 |
+rg '^[a-zA-Z0-9_-]+' --colors match:fg:green
+
+exit 0

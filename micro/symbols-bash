@@ -1,0 +1,38 @@
+#!/bin/sh
+
+
+	dirs="$(get_var 'PWD_PROJECT')"
+	
+	message "." "to search at Current PWD"
+
+	if [ $1 == "." ]; then
+		dirs="$PWD"	
+	fi
+
+	if [ ! "${number}" ]; then
+		message "Add Count" "to show matxh line count"
+		number=7
+	fi
+
+	item=$({
+	        declare -F | awk '{print $3}'
+	        export | cut -d "=" -f 1 | awk '{print "@"$3}'
+	    } | fzy)
+
+	if [ ! "${item}" ]; then
+		message "CANCEL" "Operation..."
+		return 7
+	fi
+
+	reg="^$item"
+
+	if [[ $item == "@"* ]]; then
+		# export
+		item=$(echo "$item" | cut -c 2-)
+		reg="^(export ${item})"
+	fi
+	
+
+    rg "$reg"  -N --follow --max-depth 3 --hidden \
+		--after-context 7 "$dirs"
+
