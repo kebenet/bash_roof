@@ -30,7 +30,9 @@ __auto(){
 onoff() {
     if [ $terabomap -eq 0 ]; then
         terabomap=1
+        color 'map is : on'
     else
+        color 'map is : off'
         terabomap=0
     fi
 }
