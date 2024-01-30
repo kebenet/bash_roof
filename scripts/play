@@ -49,7 +49,7 @@ fn_asmicro() {	# save PLAY item into db with title
 	cd "$TT_BASH/micro"
 	if item=$(newsh -e "$item"); then
 		{
-			tool line 1 "$TT_VAR/template.sh"
+			liner getat 1 "$TT_VAR/template.sh"
 			awk 'NR>2 {print}' "$PLAY_FILE"
 		} > "$item"
 
