@@ -41,7 +41,7 @@ fn_sub_pwd(){
 	item=$(realpath "${item}")
 	[ ! -f "$item" ] && color 'User: Cancel...' && exit 7
 
-	if ! check_file_size "$item"; then exit 7; fi
+	if ! check-file-size "$item"; then exit 7; fi
 
 	st open "$item"
 	varm append_relative "${item}" &
@@ -59,7 +59,6 @@ fn_open_script(){
 	if item=`realpath "$item"`; then
 		st open "$item"
 		varm append_relative "${item}" &
-
 	fi
 }
 
