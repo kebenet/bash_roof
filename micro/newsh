@@ -1,21 +1,38 @@
 #!/bin/sh
 
-item="$1"
-needopen='true'
+item=
+option=
 
-[ "$1" = '-n' ]&& item="$2" && needopen=
 
-[ -z "$item" ] && color 'Missing: Argument: name?' && exit 7
+case $1 in
+  '-s' | '--sub') option='sub'; item="$2" ;;
+  '-e'| '--echo') option='echo'; item="$2" ;;
+  *) item="$1" ;;
+esac
+
+
+[ -z "$item" ] && color 'Missing: Argument: name?' >&2  && exit 7
+[ ! "$item" ] && color 'Missing: Argument: name?'  >&2  && exit 7
+
 
 cp "$TT_VAR/template.sh" "$item"
 chmod 700 "$item"
 
-if [ "$needopen" ];then
+
+_open(){
 	if item=$(realpath $item); then
 		st open "$item"
-	else
-		color "failed: creating & opening sh file!"
 	fi
-fi
+}
+
+_getpath(){
+	realpath "$item"
+}
+
+case "$option" in
+  'sub')  _open ;;
+  'echo') _getpath ;;
+  *) color 'Error: unknown' ;;
+esac
 
 exit $?
