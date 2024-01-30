@@ -17,4 +17,5 @@ export TT_TEMP="/dev/shm/Tt_temp_file.tmp"
 export Tt_VARIABLE="${TT_BASH}/VARIABLE"
 export TT_Completion="${TT_BASH}/bash.sublime-completions"
 export TT_IPC='/dev/shm/TtMemory/ipcvar'
+export TT_Refactor="/dev/shm/TtMemory/0f7refactor"
 
