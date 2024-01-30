@@ -30,7 +30,7 @@ fn_new() {	# create new PLAY item [-s] for save
 fn_save() {	# save PLAY item into db with title
 
 	if title=$(_ensure_title); then
-		
+
 		newdate=$(date +%Y-%m-%d)
 		{
 			echo "${SAPERATOR}$title:$newdate"
@@ -46,6 +46,7 @@ fn_save() {	# save PLAY item into db with title
 fn_asmicro() {	# save PLAY item into db with title
 
 	item="$2"
+	cd "$TT_BASH/micro"
 	if item=$(newsh -e "$item"); then
 		{
 			tool line 1 "$TT_VAR/template.sh"
@@ -54,6 +55,7 @@ fn_asmicro() {	# save PLAY item into db with title
 
 		st open "$item"
 	fi
+	
 }
 
 
