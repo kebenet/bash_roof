@@ -6,7 +6,7 @@ fn_symbols(){
 	# sample symbol, get_var, workon
 	#CODE! this is holdon_que symbol
 
-	dirs="$(get_var 'PWDPROJECT')"
+	dirs="$(varm get_var 'PWDPROJECT')"
 
 	for i in "$@"; do
 		echo "${files}" | fzy -e "$i" | head -n 1 | \
@@ -18,7 +18,7 @@ fn_symbols(){
 	        export | cut -d "=" -f 1 | awk '{print "@"$3}'
 	    } | fzy)
 
-	dirs="$(get_var 'PWDPROJECT')"
+	dirs="$(varm get_var 'PWDPROJECT')"
 
 	item=$({
 	        declare -F | awk '{print $3}'

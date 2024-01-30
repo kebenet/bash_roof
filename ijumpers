@@ -10,7 +10,7 @@ cdp(){
 	if [ "$#" -gt 0 ]; then
 
 		if [[ "$1" == "." ]]; then
-		    get_var "$var_name"
+		    varm get_var "$var_name"
 		    
 		elif [[ "$1" == "ls" ]]; then
 			list_var "$var_name"
@@ -36,8 +36,8 @@ aa(){
 	namedir="Toggle_dirs"
 	nameidx="Toggle_index"
 
-	Toggle_index=$(get_var "$nameidx" '0')
-	Toggle_dirs=$(get_var "$namedir" ' ')
+	Toggle_index=$(varm get_var "$nameidx" '0')
+	Toggle_dirs=$(varm get_var "$namedir" ' ')
 
 
 	if [[ $# -eq 0 ]]; then

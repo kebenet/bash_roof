@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-	dirs="$(get_var 'PWD_PROJECT')"
+	dirs="$(varm get_var 'PWD_PROJECT')"
 	
 	message "." "to search at Current PWD"
 

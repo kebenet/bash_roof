@@ -48,7 +48,7 @@ _get_active_fn(){
 	old="${READLINE_LINE}"
 	second=$(echo "$old" | cut -d' ' -f2)
 	old=$(echo "$old" | cut -d' ' -f1)
-	view="$(get_var 'subl_active_view')"
+	view="$(varm get_var 'subl_active_view')"
 	item=$(rg "^(\w+)" -o "${view}" |fuzzy one "$second")
 
 	READLINE_LINE="${old} ${item}"

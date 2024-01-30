@@ -6,7 +6,7 @@ varname="WORK_QUE"
 if [ "$#" -gt 0 ]; then
 
 	if [[ "$1" == "." ]]; then
-		get_var "$varname"
+		varm get_var "$varname"
 	    
 	elif [[ "$1" == "ls" ]]; then
 		list_var "$varname"
@@ -18,7 +18,7 @@ if [ "$#" -gt 0 ]; then
 		
 		#CODE! select index then delete using sed
 		item=$(list_var "$varname" | fzy)
-		varpath="$(get_var_file ${varname})"
+		varpath="$(varm get_var_file ${varname})"
 
 		index=$(echo "${item}" | cut -f 1)
 
@@ -42,11 +42,11 @@ else
 
 	st set_active_symbol
 	sleep 0.2
-	symbol="$(get_var 'subl_active_symbol')"
+	symbol="$(varm get_var 'subl_active_symbol')"
 
 	set_recents "$varname" "${symbol}"
 
-	message "DONE add to Que: $(get_var "$varname")"
+	message "DONE add to Que
     message "Aviable CMD: sub ls rm ."
 fi
 
