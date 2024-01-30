@@ -86,6 +86,10 @@ fn_linedel(){	# Remove at line using sed
 	sed -i "${2}d" "$3"
 }
 
+fn_between(){	# Take Range of lines from stdin
+	awk -v one="$2" -v two="$3" \
+	'NR >= one && NR <= two'
+}
 
 
 "fn_$1" "$@"

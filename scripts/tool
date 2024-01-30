@@ -10,10 +10,6 @@ fn_cutd(){	# cut with delimiter. given field position
 	cut -d"$del" -f "$3"
 }
 
-fn_triml(){	# trim any empty line
-	awk 'NF'
-}
-
 
 fn_trim(){	# trim any extra spaces
 	awk '{$1=$1};1'
@@ -27,31 +23,15 @@ fn_lastf(){	# awk print last field with delimiter '/' arg
 	awk -F "$2" '{print $(NF)}'
 }
 
-fn_concat(){	# join multiple Lines by % into single line
-	awk -v idx="$2" '{ORS = (NR % idx ? " " : RS)} 1'
-}
-
-fn_line(){	# awk get line at index
-	awk "NR==$2 {print; exit}" "$3"
-}
-
-fn_seen(){	# awk get line at index
-	awk '!seen[$0]++' "$3"
-}
-
 fn_seenspace(){	# awk get line at index
 	awk 'BEGIN {RS=" ";} !seen[$0]++ {printf("%s ", $0)}'
 }
 
-fn_count(){	# awk get line at index
-	echo "$2" | wc -l
-}
-
 
 #CODE! pipe is coming bro..
-if [ ! -t 0 ]; then
-	"fn_$1" "$@"
-	exit
-fi
+# if [ ! -t 0 ]; then
+# 	"fn_$1" "$@"
+# 	exit
+# fi
 
 "fn_$1" "$@"

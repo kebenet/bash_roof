@@ -42,18 +42,6 @@ fn_squeeze(){	# Removes leading/trailing whitespace and condenses
 
 # ==================================== TERABOTERABA
 
-fn_sep(){	# Convert/Join lines into Saperator
-
-	item=$(cat| tr '\n' "${2}")
-	echo "${item%?}"
-
-}
-
-
-fn_trim(){	# Trim stdin space.
-	awk '{$1=$1};1'
-}
-
 
 fn_pair(){	# surround 2 Pair from lines
 	awk -v one="$2" -v two="$3" '{ print one $0 two}'
@@ -87,6 +75,7 @@ fn_each(){	# generate all args combine with [-] as stdin.
 
 
 fn_com(){	# Merge from [stdin & args] by a delimiter
+
 	paste -d "$2" - "${tempf}"
 }
 
@@ -125,20 +114,6 @@ fn_str(){	# get substring from stdin by delimiter
 }
 
 
-fn_tolines(){	# Convert delimiter into Lines
-	tr "$2" '\n'
-}
-
-fn_lines(){	# Convert Spaces to Lines
-	tr ' ' '\n'
-}
-
-fn_join(){	# join Lines to delimiter
-	sd '\n$' '' | sd '\n' "$2"
-}
-
-
-
 fn_store(){	# Store to temp then print result
 	tee - "$tempf"
 }
@@ -156,11 +131,6 @@ fn_num(){	# print & add numbers
 	awk '{ print NR ":" $0 }'
 }
 
-
-fn_range(){	# Take Range of lines from stdin
-	awk -v one="$2" -v two="$3" \
-	'NR >= one && NR <= two'
-}
 
 #CODE! pipe is coming bro..
 if [ ! -t 0 ]; then

@@ -100,7 +100,7 @@ _getby_index(){
 
 _list_compact(){
 	jq -cr '.[] | .keys,.command' "$THE_FILE" | 
-	warp concat 2 | rg '^' -n
+	liner concat 2 | rg '^' -n
 }
 
 _select(){
