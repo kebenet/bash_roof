@@ -1,14 +1,8 @@
 #!/bin/sh
 
 fn_new(){
-
-	item="$2"
-	[ -z "$item" ] && color 'Missing: Argument: name?' && exit 7
-	
-	cp "$TT_VAR/template.sh" "$item"
-	chmod 700 "$item"
-	ls
-
+	cd "$TT_BASH/micro"
+	newsh "$2"
 }
 
 
