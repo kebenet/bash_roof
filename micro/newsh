@@ -1,13 +1,21 @@
 #!/bin/sh
 
-
 item="$1"
+needopen='true'
+
+[ "$1" = '-n' ]&& item="$2" && needopen=
+
 [ -z "$item" ] && color 'Missing: Argument: name?' && exit 7
 
 cp "$TT_VAR/template.sh" "$item"
 chmod 700 "$item"
-ls
 
-item=$(realpath $item)
-st open "$item"
+if [ "$needopen" ];then
+	if item=$(realpath $item); then
+		st open "$item"
+	else
+		color "failed: creating & opening sh file!"
+	fi
+fi
 
+exit $?
