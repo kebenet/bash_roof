@@ -206,7 +206,7 @@ _ensure_title(){
 
 		if [ -z "$_title" ]; then
 
-			if ! title=$(show input 'Save title?'); then
+			if ! title=$(show_input 'Save title?'); then
 				color "Empty!: Cancel: Operations."
 				return 7
 			fi
