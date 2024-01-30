@@ -27,6 +27,10 @@ fn_lastf(){	# awk print last field with delimiter '/' arg
 	awk -F "$2" '{print $(NF)}'
 }
 
+fn_concat(){	# join multiple Lines by % into single line
+	awk -v idx="$2" '{ORS = (NR % idx ? " " : RS)} 1'
+}
+
 fn_line(){	# awk get line at index
 	awk "NR==$2 {print; exit}" "$3"
 }
