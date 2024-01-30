@@ -9,7 +9,7 @@ fn_sub_project(){
 	found=
 	count=0
 
-	while [[ $count -lt 5 ]]; do
+	while [ $count -lt 5 ]; do
 		if [ -f "$thedir/.gitignore" ]; then
 			found='found' && break
 		else
@@ -41,7 +41,7 @@ fn_sub_pwd(){
 	item=$(realpath "${item}")
 	[ ! -f "$item" ] && color 'User: Cancel...' && exit 7
 
-	if ! _check_file_size "$item"; then exit 7; fi
+	if ! check_file_size "$item"; then exit 7; fi
 
 	st open "$item"
 	varm append_relative "${item}" &
@@ -61,24 +61,6 @@ fn_open_script(){
 		varm append_relative "${item}" &
 
 	fi
-}
-
-_check_file_size(){
-
-	maxsize=300000 # 300kb limit
-	item="$1"
-	filesize=$(stat -c%s "$item")
-	type=$(file -b --mime-type "$item")
-
-	if [[ ! "$type" == text/* ]]; then
-		return 7
-	fi
-
-	if (( filesize > maxsize )); then
-	    message "ERROR: File size is over the limit. 300kb"
-	    return 7
-	fi
-
 }
 
 "fn_$1" "$@"

@@ -32,18 +32,8 @@ fn_input(){
 
 }
 
-fn_confirm() {
 
-  promp=`color 'confirm : (y/n): ❯ '`
-  read -p "$promp" confirm
-  if [ "$confirm" = "y" ]; then
-    exit 0
-  else
-    exit 7
-  fi
-}
-
-fn_msg(){
+fn_message(){
   color "$@"
 }
 
