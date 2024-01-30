@@ -1,6 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 terabomap=1
+
+
+_git-add-all(){
+	item=$(gitt ls | liner join)
+	READLINE_LINE="gitt add $item"
+	READLINE_POINT=${#READLINE_LINE}
+}
 
 __auto(){
 

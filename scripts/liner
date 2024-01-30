@@ -22,8 +22,10 @@ fn_space(){	# Convert Spaces to Lines
 	tr ' ' '\n'
 }
 
-fn_join(){	# join Lines to delimiter
-	sd '\n$' '' | sd '\n' "$2"
+fn_join(){	# join Lines to delimiter 
+	item="${2:- }"
+	item=$(tr '\n' "$item")
+	echo "${item%?}" # remove last char
 }
 
 fn_trim(){	# trim any empty line
