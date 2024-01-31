@@ -6,32 +6,22 @@ shared="${TT_TEMP}"
 
 #CODE! Generate completion to ${TT_VAR}/completions.ttpath
 fn_gen(){
-
 	_find_export "$TT_BASH/VARIABLE" > "$completion_file"
-
-	# cd "$TT_VAR"
-	# fd . -H -t f -d 1 -E '*.pattern'  >> $completion_file 
-	# cat $completion_file
-
 }
 
 fn_item(){
-
 	dirs="${PWD/$TT_VAR/$TT_VAR}"
 	cd "$TT_VAR"
 	fd . -H -t f -d 1 -E '*.pattern'
-
 }
 
 _find_export(){
-
-	regex='^export (TT|XDG|HOME)'
+	regex='^export (TT|HOME)'
 	cat "$1" | rg "$regex" |cut -d " " -f 2 | cut -d= -f 1
-
 }
 
 fn_env(){
-	regex='^export (TT|XDG|HOME|PATH)'
+	regex='^export (TT|HOME|PATH)'
 	cat "$Tt_VARIABLE" | rg "$regex" |cut -d " " -f 2
 }
 
