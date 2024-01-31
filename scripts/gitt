@@ -1,25 +1,49 @@
 #!/bin/bash
 
+
 fn_add(){	# Add multiple files and commit msg
 
-	# item=$(_first_uncommit_file)
+	set -e
 	desc=$(_read-desc)
+
 	shift
 	git add "$@"
 	git commit -m "$desc"
 
 }
 
+fn_recent(){	# Add multiple files and commit msg
+
+	item=$(_get_recent_change "$2")
+	echo "gitt add $item"
+}
+
+_get_recent_change(){
+
+	mnt="${1:-1}"
+
+	thedir=$(_get_top_dir)
+
+	cd "$thedir"
+	fd . --changed-within ${mnt}m | liner join
+}
+
+_get_top_dir(){
+	item=$(git rev-parse --show-toplevel)
+	[ $? -ne 0 ]  && exit 7
+
+}
 fn_all(){	# Auto Add files and commit msg
 
 	fn_ls
-	
+	set -e
 	desc=$(_read-desc)
 	git commit -a -m "$desc"
 
 }
 
 fn_single(){	# Add single file and commit
+	set -e
 	local thefile="$2"
 
 	item=$(_first_uncommit_file)
@@ -59,7 +83,7 @@ fn_branch(){	# get: current branch
 
 _is_gitdir(){
 	item=$(git status)
-	[[ "$item" == fatal* ]]&& echo "Not in git dir.. Exit.." && exit 7
+	[ ! "$item" ] && exit 7
 }
 
 _first_uncommit_file(){
@@ -67,9 +91,9 @@ _first_uncommit_file(){
 }
 
 _read-desc(){
-	set -e
+
 	read -erp "Descriptions $ARROW " _desc
-	[ -z "$_desc" ] && echo 'empty description..' && exit 7
+	[ ! "$_desc" ] && echo 'empty description..' >&2 && exit 7
 	echo "$_desc"
 }
 
