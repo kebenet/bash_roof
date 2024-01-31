@@ -1,0 +1,64 @@
+#!/bin/bash
+
+
+check_refactor(){
+	
+	if [ ! -e "$TT_Refactor" ] || [ ! -s "$TT_Refactor" ]; then
+		color 'refactor file: is empty'
+		color "Usage: ripg find anything | sd 'replace' 'things' | ripg --save"
+		exit 7
+	fi
+
+	gitcount=$(gitt ls | wc -l)
+	if [ $gitcount -gt 0 ]; then
+		color 'we have Uncommit files: continue before replacement?'
+		if ! confirm; then color 'User: cancel...'; exit 7; fi
+	fi
+
+}
+
+do_check_replace(){
+	check_refactor
+	_replace
+}
+
+
+_replace(){
+
+	local allfile
+
+	while read -r line; do
+		item="$line"
+		thefile=$(echo "$item" | tool cut 1)
+		index=$(echo "$item" | tool cut 2)
+		value=$(echo "$item" | tool cut 3)
+
+		echo "processing $thefile: at $index"
+		range change "$index" "$value" "$thefile"
+		allfile+="$thefile "
+
+	done
+	
+	echo "$allfile" | tool seenspace | warp head 'gitt add '
+	# show confirm 'Confirm: to: Proceed'
+
+}
+
+do_save(){
+	cat | > "$TT_Refactor"
+	[ -f "$TT_Refactor" ]&& color 'Done Saved!: coderef --run to refactor'
+}
+
+len="$#"
+[ $len -eq 0 ]&& exit 7
+
+case $1 in
+
+  '-r'| '--run') do_replace ;;
+  '-s'| '--save') do_save ;;
+  '-'*) echo error unknown options ;;
+
+  *) do_replace ;;
+esac
+
+
