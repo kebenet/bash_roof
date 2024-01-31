@@ -1,31 +1,25 @@
 #!/bin/sh
 
-index=0
-sep=':'
+INDEX=0
+SEP=':'
 
-while getopts "f:i:" opt; do
-  case ${opt} in
-    f )
-      sep=${OPTARG}
-      shift 2
-      ;;
-    i )
-      index=${OPTARG}
-      shift 2
-      ;;
-    \? )
-      echo "Invalid option: $OPTARG" 1>&2
-      ;;
-    : )
-      echo "Invalid option: $OPTARG requires an argument" 1>&2
-      ;;
-  esac
-done
+
+case ${1} in
+-f) SEP=${2} shift 2 ;;
+-i) INDEX=${2} shift 2 ;;
+\? | :) echo "Invalid option: $1" 1>&2 ;;
+esac
+
+case ${1} in
+-f) SEP=${2} shift 2 ;;
+-i) INDEX=${2} shift 2 ;;
+\? | :) echo "Invalid option: $1" 1>&2 ;;
+esac
 
 
 clr(){
 
-    awk -v sep="$sep" -v idx="$index" \
+    awk -v sep="$SEP" -v idx="$INDEX" \
     'BEGIN {
         FS = (sep == "" ? ":" : sep);
 
@@ -51,15 +45,10 @@ clr(){
 
 }
 
-
-
-#CODE! pipe is coming bro..
-if [ -t 0 ]; then
-
-    echo "$@" | clr "$sep"
-
-else
-    clr "$@"
-    # echo 'pipe true'
+if [ ! -t 0 ]; then
+    clr
+ else
+    echo "$@" | clr
 fi
+
 
