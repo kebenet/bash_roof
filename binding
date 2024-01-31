@@ -19,7 +19,7 @@ __auto(){
 
 	local item
 	old="${READLINE_LINE}"
-	
+
 	item=$(_get_script_fn | fuzzy one "$old")
 
 	READLINE_LINE="${item}"
@@ -67,14 +67,16 @@ _insert_at(){
 
 
 _get_script_fn(){
-	fd . -t f --base-directory "$TT_BASH/scripts" -X \
-	rg '^fn_\w+' --no-heading -No --color=never |
-	sd '[.]/|fn_' '' | sd -F ':' ' ' | rg ' \w+'
+	(
+		cd "$TT_BASH/scripts"
+		rg '^fn_\w+' --no-heading -No --color=never |
+		sd '[.]/|fn_' '' | sd -F ':' ' ' | rg ' \w+'
+	)
 }
 
 _get_script_file(){
 
-	item=$(fdls --base-directory "$TT_BASH/scripts" |fuzzy one)
+	item=$(cd "$TT_BASH/scripts" && fd . -tf -H | fuzzy one)
 	echo "$item"
 }
 
