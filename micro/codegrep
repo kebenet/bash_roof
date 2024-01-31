@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# Initialize an empty array for the option
+words=()
+
+idx=0
+result=
+ignore=
+NOCOLOR=
+THEFILE=
+
+colors=("green" "cyan" "red" "green" "white")
+
+
+tester(){
+
+	if [ $idx -eq 0 ];then
+		result+="rg \"$1\" --no-heading -n --no-unicode"
+		[ "$THEFILE" ]&& result+=" $THEFILE"
+	else
+		result+="|rg \"$1\""
+	fi
+
+	[ "$2" ] && result+=" $2"	# rg options
+
+	if [ ! "$NOCOLOR" ]; then
+		result+=" --color=always --colors match:fg:${colors[$idx]}"
+	else
+		result+=' --color=never'
+	fi
+
+	words+=("$1")
+	idx=$((1 + idx % 4))
+
+}
+
+sdreplace(){
+	result+="| sd '$1'"
+}
+
+singlereplace(){
+	# Get the index of the last element
+	# lastidx=$(( ${#words[@]} - 1 ))
+	# echo ${words[$lastidx]}
+	result+=" -r $1"
+}
+
+initialize(){
+
+	parse_opt "$@"
+	clear -x
+	echo
+	echo 'Ripgrep finder: v.0.1 by : TERABO INC'
+	echo
+}
+
+parse_opt(){
+
+	[ ${!#} = '-n' ]&& NOCOLOR=yes
+
+	while [ $# -gt 0 ]; do
+	  case "$1" in
+	    -n) NOCOLOR=yes; shift ;;
+	    -w) tester "$2" -w; shift 2 ;; # word bound \bword\b
+	    -i) tester "$2" -v; shift 2 ;; # invert match
+	    -F) tester "$2" -F;	shift 2 ;; # fixed string
+	    -file) THEFILE="$2"; shift 2 ;;
+	    -r) singlereplace "$2"; shift 2 ;;
+	    -sdi) sdreplace "$2"; shift 2 ;;
+	    -sdr) result+=" $2"; shift 2 ;;
+	    -*) echo "Invalid option: $1" && exit 7 ;;
+
+		# args
+	    *)
+	      tester "$1"; shift;;
+	  esac
+	done
+}
+
+#TODO! saperate replace cmd
+
+# pipe is coming
+if [ ! -t 0 ]; then
+	# THEFILE=$(cat -)
+	initialize "$@"
+	cat|eval "$result"
+else
+	initialize "$@"
+	eval "$result"
+fi
+
+
+
+
