@@ -12,7 +12,7 @@
 # Note: You can also use `refactor dry lines.txt` to show the changes that will be made
 # Note2: Make sure that you run the script from the same directory and that you don't make line-numbering changes between gen and run
 
-UNDO_file="${PWD}/_refactor.ttundo"
+UNDO_file="$TT_Refactor"
 
 
 fn_gen(){	# generate code replacement file at current directory 
@@ -26,24 +26,6 @@ fn_gen(){	# generate code replacement file at current directory
 	message "DO SEARCH At: $(basename $PWD)"
 }
 
-fn_testing(){
-	regex="$2"
-	[ ! "${regex}" ] && echo "empty Pattern. Cancel.." && exit 7
-	
-	rg $regex  -n --hidden --no-heading --color never > "${UNDO_file}"
-	[ ! $? -eq 0 ] && echo "ripgrep Error.." && exit 7
-
-	cat "${UNDO_file}"
-
-	read  -e -p "${BOLD}Press y to continue ${ARROW} " -i "y" new
-	[ ! "${new}" ] && echo "cancelling.." && exit 7
-
-	sed -i "s/\b${item}\b/${new}/g" "${UNDO_file}"
-
-	dry
-	
-	message "DONE Gen at: $(basename $PWD)"
-}
 
 fn_dry(){	# Testing and preview the replacement Refactor Files
 
@@ -99,7 +81,7 @@ fn_replace(){	# Confirm to Replace All Files
 		tail -n +$((LINE+1)); } > "${TT_TEMP}"
 
 		cat "${TT_TEMP}" > $F
-		rm "${TT_TEMP}"
+		> "${TT_TEMP}"
 	done;
 }
 
@@ -121,38 +103,6 @@ fn_undo(){	# Undo All replacement
 		echo $EXISTING
 		# undo rename path
 	done;
-}
-
-fn_rename(){	# Rename Variable file name with in Code: TODO: not complete
-
-	item=$(fd . "$TT_VAR" -x basename |cut -d. -f1|fzy)
-
-	# echo "${item}"
-	[ ! "${item}" ] && echo "cancelling.." && exit 7
-	echo "${item}"
-
-	refactor gen "\b${item}\b" > "${UNDO_file}"
-
-	read  -e -p "${BOLD}Press y to continue ${ARROW} " -i "$item" new
-	[ ! "${new}" ] && echo "cancelling.." && exit 7
-
-	sed -i "s/\b${item}\b/${new}/g" "${UNDO_file}"
-
-	refactor dry
-
-	exit
-
-	# sleep 1
-	st open "${UNDO_file}"
-
-	read  -e -p "${BOLD}Press y to continue ${ARROW} " -i "y" new
-	# rename file path
-
-	[ ! "${new}" ] && echo "cancelling.." && exit 7
-	
-	echo ${item}
-	# rg "\b${item}\b" "$TT_BASH"
-
 }
 
 fn_rm(){
