@@ -110,7 +110,7 @@ _update_title_index(){
 	index=`_get_last_record_index`
 
 	if [ -z "$title" ]; then
-		title=`tool line 2 "$PLAY_FILE" | tool cut 1`
+		title=`liner getat 2 "$PLAY_FILE" | tool cut 1`
 		title="${title}:${index}"
 	else
 		title="${PLAY_TITLE} ${title}:${index}"
@@ -121,11 +121,11 @@ _update_title_index(){
 
 fn_update() {	# Update Play item from original position
 	# set -x
-	title=`tool line 2 "$PLAY_FILE" | tool cutd ' ' 2-`
+	title=`liner getat 2 "$PLAY_FILE" | tool cutd ' ' 2-`
 	index=$(echo "$title" | tool cut 2)
 
 	#TODO: refactor saperator delimiter ':'
-	thedate=$(tool line "$index" "$DB_FILE" | tool cut 2)
+	thedate=$(liner getat "$index" "$DB_FILE" | tool cut 2)
 	
 	title=$(echo "$title" | tool cut 1)
 
@@ -150,9 +150,9 @@ fn_update() {	# Update Play item from original position
 fn_rename() {	# Rename Play title
 
 	# get item by title at DB_FILE
-	title=`tool line 2 "$PLAY_FILE" | tool cutd ' ' 2-`
+	title=`liner getat 2 "$PLAY_FILE" | tool cutd ' ' 2-`
 	index=$(echo "$title" | tool cut 2)
-	thedate=$(tool line "$index" "$DB_FILE" | tool cut 2)
+	thedate=$(liner getat "$index" "$DB_FILE" | tool cut 2)
 
 	title=$(echo "$title" | tool cut 1)
 
@@ -214,7 +214,7 @@ _get_code() {
 
 _ensure_title(){
 
-	_title=$(tool line 2 "$PLAY_FILE")
+	_title=$(liner getat 2 "$PLAY_FILE")
 	if [[ $_title == "$PLAY_TITLE"* ]]; then
 
 		_title=`echo $_title | tool cutd '!' 2-`

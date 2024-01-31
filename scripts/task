@@ -14,7 +14,7 @@ fn_load() {	# search & view LAST Play item
 	item=$(rg "^[+] ${SAPERATOR}" "$DB_FILE" | tool cut 2 | warp num |fzy)
 	idx=`echo $item | tool cut 1`
 
-	item=$(rg "^[+] ${SAPERATOR}" -n  "$DB_FILE" | tool line "$idx")
+	item=$(rg "^[+] ${SAPERATOR}" -n  "$DB_FILE" | liner getat "$idx")
 
 	_load_record "$item"
 
@@ -101,7 +101,7 @@ _write_info(){
 
 fn_update() {	# updates task item into db
 
-	id=`tool line 1 "$play_file" | tool cut 3 | tool trim`
+	id=`liner getat 1 "$play_file" | tool cut 3 | tool trim`
 	num=`rg "$id" -nF "$DB_FILE" | tool cut 1`
 
 	end=$(range lineto "$num" "^[+] $SAPERATOR" "$DB_FILE" | wc -l)
@@ -110,7 +110,7 @@ fn_update() {	# updates task item into db
 	# exit
 	range delete $num $end "$DB_FILE"
 
-	title=`tool line 2 "$play_file" | tool cut 2- | tool trim`
+	title=`liner getat 2 "$play_file" | tool cut 2- | tool trim`
 	play_line=`rg "^${PRJ_SEP}" -nm 1 "$play_file" | tool cut 1`
 
 	newdata=$(
@@ -137,7 +137,7 @@ fn_save() {	# save task item into db with title
 }
 
 _get_date_id(){
-	id=$(tool line 1 "$play_file" |  tool cut 3 | tool trim)
+	id=$(liner getat 1 "$play_file" |  tool cut 3 | tool trim)
 	if [ -z "$id" ]; then
 		color 'ERROR : date ID not found! : play_file'
 	fi
@@ -146,7 +146,7 @@ _get_date_id(){
 
 _ensure_title(){
 	# local title
-	_title=$(tool line 2 "$play_file")
+	_title=$(liner getat 2 "$play_file")
 
 	if [[ $_title == '# Title'* ]]; then
 
