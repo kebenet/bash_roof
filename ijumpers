@@ -1,7 +1,12 @@
 #!/bin/bash
 #FILE! JUMP operations
 
-
+cd_child(){
+	[ ! "$1" ] && color 'Cant : Empty Query!'
+	item=$(fd "$1" -td -d 1 -H)
+	cd "$item" || $pwd
+	ls
+}
 
 cdp(){
 
