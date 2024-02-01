@@ -1,0 +1,55 @@
+#!/bin/sh
+
+
+DB_FILE="$TT_VAR/Code_Snippets.ttdb"
+
+# create table
+# append new record, title , tags, lang, code
+# update record, title || code || tags
+# update record, title && code
+# update last record, title && code
+# rename title || tags
+
+# ls by title || tags || lang
+# cat : select & cat
+# sub : open code
+# last : open last code
+
+# function to save to git repo : 
+	# mv to TTBASH && git add db && git push mv back
+
+newtag(){
+	sql="INSERT OR IGNORE INTO tags (name) VALUES ('$1');"
+	sqlite3 "$DB_FILE" "$sql"
+}
+
+rmtag(){
+	sql="DELETE FROM language WHERE id = $1;"
+	sqlite3 "$DB_FILE" "$sql"
+}
+
+_select(){
+	sql="SELECT id, title FROM snippets WHERE language = '$lang';"
+	sqlite3 "$DB_FILE" "$sql"
+}
+
+lst(){
+	lang='bash'
+	sql="SELECT id, title FROM snippets WHERE language = '$lang';"
+	sqlite3 "$DB_FILE" "$sql"
+}
+
+append(){
+	# to set multiple tags, make multiple insert statement
+
+	sqlite3 "$DB_FILE" <<EOF
+	INSERT INTO snippets (title, code) VALUES ('$1', '?');
+	INSERT INTO tags (name) VALUES ('python'), ('beginner');
+	SELECT LAST_INSERT_ID();
+EOF
+}
+
+gen_list(){
+	echo "INSERT INTO $1 (name) VALUES"
+}
+# how change ,update tags. from selected record 
