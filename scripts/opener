@@ -36,7 +36,7 @@ fn_sub_project(){
 
 fn_sub_pwd(){
 
-	item=$(fd "$2" -H -tf -d 2 | fuzzy one "${2}")
+	item=$(fd "$2" -HI -tf -d 2 | fuzzy one "${2}")
 
 	item=$(realpath "${item}")
 	[ ! -f "$item" ] && color 'User: Cancel...' && exit 7
