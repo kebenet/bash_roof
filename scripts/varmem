@@ -4,7 +4,7 @@ mem_file='/dev/shm/TtMemory'
 
 fn_init(){
 	[ ! -d "$mem_file" ] && mkdir "$mem_file"
-	[ ! -p "$TT_IPC" ] && mkfifo "$TT_IPC"
+	# [ ! -p "$TT_IPC" ] && mkfifo "$TT_IPC"
 }
 
 fn_setenv(){
