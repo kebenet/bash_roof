@@ -1,17 +1,20 @@
 #!/bin/bash
 #FILE! line editing tools
 
+fn_seq(){	# generate seq empty lines
+	awk -v count=$2 'BEGIN { for (i = 1; i <= count; i++) {print "" } }'
+}
 
 fn_append(){
-	sed -i "${index}a\\${new}" "${filepath}"
+	sed -i "${2}a\\${3}" "${4}"
 }
 
 fn_change(){
-	sed -i "${index}c\\${new}" "${filepath}"
+	sed -i "${2}c\\${3}" "${4}"
 }
 
 fn_delete(){
-	sed -i "${index}d" "${filepath}"
+	sed -i "${2}d" "${3}"
 }
 
 fn_from(){	# Convert delimiter into Lines
