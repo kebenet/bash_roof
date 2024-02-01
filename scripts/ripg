@@ -2,31 +2,6 @@
 #TITLE! find multiple pattern using rg ripgrep
 
 # max count 1 all but not 1st
-do_match(){
-
-	run1(){
-		rg "$1" -n --color=always --colors match:fg:green
-	}
-	run2(){
-		run1 "$1" | 
-		rg "$2" --color=always --colors match:fg:cyan
-	}
-	run3(){
-		run2 "$1" "$2" | 
-		rg "$3" --color=always --colors match:fg:red
-	}
-	run4(){
-		run3  "$1" "$2" "$3" | 
-		rg "$4" --color=always --colors match:fg:green
-	}
-	run5(){
-		run3  "$1" "$2" "$3" "$4" | 
-		rg "$5" --color=always --colors match:fg:white
-	}
-
-	"run$len" "$@"
-
-}
 
 do_match2() {
     local colors=("green" "cyan" "red" "green" "white")
@@ -35,36 +10,39 @@ do_match2() {
     for ((i = 1; i < $#; i++)); do
         command+=" | rg \"\$$((i+1))\" --color=always --colors match:fg:${colors[$i]}"
     done
-
     eval "$command"
 }
 
-do_nocolor(){
+do_nocolor2() {
+    local command="rg \"$1\" -n --color=never"
 
-	run1(){
-		rg "$1" -n --color=never
-	}
-	run2(){
-		run1 "$1" | rg "$2" --color=never
-	}
-	run3(){
-		run2 "$1" "$2" | rg "$3" --color=never
-	}
-	run4(){
-		run3  "$1" "$2" "$3" | rg "$4" --color=never
-	}
-	run5(){
-		run3  "$1" "$2" "$3" "$4" | rg "$5" --color=never
-	}
+    for ((i = 1; i < $#; i++)); do
+        command+=" | rg \"\$$((i+1))\" --color=never"
+    done
+    eval "$command"
+}
 
-	"run$len" "$@"
+
+check_refactor(){
+	
+	if [ ! -e "$TT_Refactor" ] || [ ! -s "$TT_Refactor" ]; then
+		color 'refactor file: is empty'
+		color "Usage: ripg find anything | sd 'replace' 'things' | ripg --save"
+		exit 7
+	fi
+
+	gitcount=$(gitt ls | wc -l)
+	if [ $gitcount -gt 0 ]; then
+		color 'we have Uncommit files: continue before replacement?'
+		if ! confirm; then color 'User: cancel...'; exit 7; fi
+	fi
+
 }
 
 do_replace(){
-	local allfile
+	check_refactor
 
-	# gitcount=$(gitt ls | wc -l)
-	# [ $gitcount -gt 0 ] && echo 'Commit 1st: before replacement' && exit
+	local allfile
 
 	while read -r line; do
 		item="$line"
@@ -76,27 +54,41 @@ do_replace(){
 		range change "$index" "$value" "$thefile"
 		allfile+="$thefile "
 
-	done
-	echo
+	done < "$TT_Refactor"
+	
 	echo "$allfile" | tool seenspace | warp head 'gitt add '
 	# show confirm 'Confirm: to: Proceed'
 
 }
 
-#TODO! create cmd for replacement
-#TODO! replacement cant be colors
+do_save(){
+	cat | fzy  #> "$TT_Refactor"
+	[ -f "$TT_Refactor" ]&& color 'Done Saved!: ripg --run to refactor'
+}
+
+
+do_list(){
+	[ -e "$TT_Refactor" ] && cat "$TT_Refactor"
+	color 'Usage: ripg --run to refactor'
+}
 
 
 len="$#"
 [ $len -eq 0 ]&& exit 7
 
-if [ "$1" = '-n' ]; then
-	shift
-	len=$((len-1))
+case $1 in
 
-	do_nocolor "$@"
-elif [ "$1" = '--run' ]; then
-	do_replace
-else
-	do_match2 "$@"
-fi
+  '-n' | '--no-color') 
+		shift
+		len=$((len-1))
+		do_nocolor2 "$@"
+	;;
+
+  '-r'| '--run') do_replace ;;
+  '-s'| '--save') do_save ;;
+  '-l'| '--list') do_list ;;
+  '-'*) echo error unknown options ;;
+
+  *) do_match2 "$@";;
+esac
+
