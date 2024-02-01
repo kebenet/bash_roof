@@ -1,0 +1,66 @@
+#!/bin/sh
+
+aa(){
+	
+	namedir="Toggle_dirs"
+	nameidx="Toggle_index"
+
+	Toggle_index=$(varm get_var "$nameidx" '0')
+	Toggle_dirs=$(varm get_var "$namedir" ' ')
+
+
+	if [ $# -eq 0 ]; then
+
+		if [ -n "${Toggle_dirs}" ]; then
+
+			Toggle_index=$((Toggle_index + 1))
+
+			item=$(echo "$Toggle_dirs" | cut -d: -f${Toggle_index})
+			item=$(expand_env "$item")
+			cd "$item"
+			len=$(echo "${Toggle_dirs}" |grep -o ":"| wc -l)
+
+			Toggle_index=$((Toggle_index % ${len}))
+
+			set_var "$nameidx" "${Toggle_index}"
+			
+		fi
+
+	elif [ "$#" -ge 1 ]; then
+
+		if [ "$1" = "." ]; then
+			# ls recent and current 
+			list_var "$namedir"
+			return
+		else
+			# set dir to toggles
+			Toggle_dirs=$(expand_name "$@")
+			Toggle_index=0
+
+			set_recents "$namedir" "$Toggle_dirs"
+			set_var "$nameidx" "$Toggle_index"
+
+			echo "Directories: $Toggle_dirs"
+		fi
+
+	else
+		echo "Invalid argument. toogle jump"
+	fi
+
+}
+
+expand_name(){
+	
+	jumpdir="${TT_VAR}/jump_folders.ttpath"
+
+	data=""
+	for item in "$@"
+	do
+		name=$(cat "$jumpdir" | fzy -e "$item" | head -n 1) # get full path
+		data+="${name}:"
+	done
+	echo "$data"
+
+}
+
+
