@@ -1,10 +1,10 @@
 #!/bin/sh
 
-mem_file='/dev/shm/TtMemory'
+MEM_DIR='/dev/shm/TtMemory'
 
 fn_init(){
-	[ ! -d "$mem_file" ] && mkdir "$mem_file"
-	# [ ! -p "$TT_IPC" ] && mkfifo "$TT_IPC"
+	[ ! -d "$MEM_DIR" ] && mkdir "$MEM_DIR"
+	[ ! -p "$TT_IPC" ] && mkfifo "$TT_IPC"
 }
 
 fn_setenv(){
@@ -18,29 +18,27 @@ fn_setenv(){
 	if bash -c "kill -s SIGRTMIN $pid" ;then
 		exit 0
 	else
-		(
-			cat "$TT_IPC"
-		)
+		(cat "$TT_IPC")
 		exit 7
 	fi
 
 }
 
 fn_set(){
-	printf "$3" > "$mem_file/${2}.ttvar"
+	printf "$3" > "$MEM_DIR/${2}.ttvar"
 }
 
 fn_get(){
-	item="$mem_file/${2}.ttvar"
-	[ -f "$item" ] && awk 'NR==1 {print}' "$item"
+	item="$MEM_DIR/${2}.ttvar"
+	[ -f "$item" ] && awk 'NR==1 {print; exit}' "$item"
 }
 
-fn_get_file(){
-	echo "$mem_file/${2}.ttvar"
+fn_file(){
+	echo "$MEM_DIR/${2}.ttvar"
 }
 
 fn_ls(){
-	fd . -t f -d 2 --base-directory "$mem_file"
+	cd "$MEM_DIR"; fd . -tf -d 2
 }
 
 
