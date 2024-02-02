@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+
 
 fn_one(){	# Select one from PIPE input
 	shift
@@ -22,7 +22,8 @@ fn_one(){	# Select one from PIPE input
 fn_onef(){	# Select one from PIPE input
 	shift
 	data="$@"
-	item=$(cat | fzf -1 -f "$data" -q "$data" )
+	# --tiebreak= length|chunk|begin|end|index
+	item=$(cat | fzf --no-sort -1 -f "$data" -q "$data" )
 
 	count=$(echo "$item" | tr ' ' '\n' | wc -l)
 
