@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 mem_file='/dev/shm/TtMemory'
 
@@ -14,7 +14,8 @@ fn_setenv(){
 	echo "$key='$val'"  > "$TT_IPC" &
 	
 	#TODO: fixed kill signal
-	if bash -c 'kill -s SIGRTMIN $$' ;then
+	pid=$( ps|rg '[0-9]+' -om 1  | sed -n 1p)
+	if bash -c "kill -s SIGRTMIN $pid" ;then
 		exit 0
 	else
 		(
