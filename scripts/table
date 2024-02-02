@@ -16,40 +16,100 @@ DB_FILE="$TT_VAR/Code_Snippets.ttdb"
 # last : open last code
 
 # function to save to git repo : 
-	# mv to TTBASH && git add db && git push mv back
+	# mv to TTBASH && git add db && git push mv back 
+	# or : auto commit by 
+
+
+fn_createdb(){
+	check="SELECT name FROM sqlite_master WHERE type='table' AND name='Main';"
+	echo creating TERABO sqdb
+	sqlite3 "$DB_FILE" < table.sql
+}
 
 newtag(){
 	sql="INSERT OR IGNORE INTO tags (name) VALUES ('$1');"
 	sqlite3 "$DB_FILE" "$sql"
 }
 
-rmtag(){
-	sql="DELETE FROM language WHERE id = $1;"
+rm(){
+	sql="DELETE FROM snippets WHERE id = $1;"
 	sqlite3 "$DB_FILE" "$sql"
 }
 
-_select(){
+_list(){
+	lang="${1:-bash}"
 	sql="SELECT id, title FROM snippets WHERE language = '$lang';"
 	sqlite3 "$DB_FILE" "$sql"
 }
 
-lst(){
-	lang='bash'
-	sql="SELECT id, title FROM snippets WHERE language = '$lang';"
-	sqlite3 "$DB_FILE" "$sql"
+fn_ls(){
+	lang="${1:-bash}"
+	_list "$lang"
 }
+
+update(){
+	sqlite3 "$DB_FILE" "UPDATE table_name SET title = value1, code = value2 WHERE id = $1;"
+}
+
 
 append(){
-	# to set multiple tags, make multiple insert statement
 
-	sqlite3 "$DB_FILE" <<EOF
-	INSERT INTO snippets (title, code) VALUES ('$1', '?');
-	INSERT INTO tags (name) VALUES ('python'), ('beginner');
-	SELECT LAST_INSERT_ID();
-EOF
+	title="$1"
+	code="$2"
+	language="$3"
+	
+	if [ ! "$title" ] && [ ! "$language" ] && [ ! "$code" ];then
+		exit 7
+	fi
+	
+	# Escape single quotes in the code
+	code="${code//\'/\'\'}"
+
+	shift 3
+	gentags=$(gen_insert_tags "$@")
+	sqlite3 "$DB_FILE" "$gentags"
+
+	sql="INSERT INTO snippets (title, language, code) VALUES ('$title', '$language', '$code');"
+	last_id=$(sqlite3 "$DB_FILE" "$sql; SELECT last_insert_rowid();")
+	
+	insert_tags_at "$last_id" "$@"
+	
 }
 
-gen_list(){
-	echo "INSERT INTO $1 (name) VALUES"
+
+insert_tags_at(){	# Add taglist into selected snippets
+	snippet_id="$1"
+	shift
+	tags=$(warptags $@)
+	sqlite3 "$DB_FILE" "INSERT INTO Main (snippets_id, tag_id) 
+		SELECT $snippet_id, id FROM tags WHERE name IN ${tags};"
 }
+
+warptags(){
+	echo $@ |liner space | warp single | liner join ',' | warp pair '(' ')'
+}
+
+gen_insert_tags(){
+	echo $@ | liner space | warp single |
+	warp pair '(' ')' | liner join ','| warp tail ';' | 
+	warp head 'INSERT OR IGNORE INTO tags (name) VALUES '
+}
+
+fn_last(){	# get last record
+	# SELECT MAX(id) FROM Main language = bash
+	sqlite3 "$DB_FILE" "SELECT id FROM snippets 
+		WHERE language = $1
+		ORDER BY snippets_id DESC LIMIT 1;"
+}
+
+fn_sub(){
+	st open "$TT_BASH/table.sql"
+}
+
+fn_db(){
+	cat "$DB_FILE"
+}
+
 # how change ,update tags. from selected record 
+
+"fn_$1" "$@"

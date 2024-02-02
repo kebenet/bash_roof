@@ -1,6 +1,6 @@
 
 -- Items table
-CREATE TABLE snippets (
+CREATE TABLE IF NOT EXISTS snippets (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	date_create TEXT DEFAULT CURRENT_TIMESTAMP,
 	date_modified TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -10,13 +10,13 @@ CREATE TABLE snippets (
 );
 
 -- Tags table
-CREATE TABLE tags (
+CREATE TABLE IF NOT EXISTS tags (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT UNIQUE
 );
 
 -- Many-to-Many Relationship table
-CREATE TABLE Main (
+CREATE TABLE IF NOT EXISTS Main (
 	snippets_id INTEGER,
 	tag_id INTEGER,
 	
@@ -24,6 +24,7 @@ CREATE TABLE Main (
 	
 	FOREIGN KEY (snippets_id) REFERENCES snippets(id),
 	FOREIGN KEY (tag_id) REFERENCES tags(id)
+	
 );
 
 
@@ -34,3 +35,4 @@ FOR EACH ROW
 BEGIN
    UPDATE snippets SET date_modified = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
+
