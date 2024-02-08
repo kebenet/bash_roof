@@ -32,7 +32,7 @@ _getpath(){
 case "$option" in
   'sub')  _open ;;
   'echo') _getpath ;;
-  *) color 'Error: unknown' ;;
+  *) ;;
 esac
 
 exit $?
