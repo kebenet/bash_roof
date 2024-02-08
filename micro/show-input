@@ -1,6 +1,6 @@
 #!/bin/sh
 
-promp=$(color -i 2 "${2}: ❯ ")
+promp=$(color -i 2 "${1}: ❯ ")
 
 read  -rp "$promp" keyitem
 

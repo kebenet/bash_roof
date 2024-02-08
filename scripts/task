@@ -150,11 +150,11 @@ _ensure_title(){
 
 	if [[ $_title == '# Title'* ]]; then
 
-		_title=`echo $_title | tool cut 2- | tool triml`
+		_title=`echo $_title | tool cut 2- | tool trim`
 
 		if [ -z "$_title" ]; then
 
-			if ! title=$(show_input 'Title: name?'); then
+			if ! title=$(show-input 'Title: name?'); then
 				color "Empty!: Cancel: Operations."
 				exit 7
 			fi
