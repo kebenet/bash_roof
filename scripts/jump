@@ -5,8 +5,8 @@ _jumpfile="${TT_VAR}/jump_files.ttpath"
 _jumpdir="${TT_VAR}/jump_folders.ttpath"
 
 fn_db(){	# open jump [file | folder] in editor
-
-	item=$( { echo '$TT_VAR/jump_files.ttpath'; echo '$TT_VAR/jump_folders.ttpath'; } | fzy )
+	
+	item=$( { echo '$TT_VAR/sub_recent_files.ttvar'; echo '$TT_VAR/jump_files.ttpath'; echo '$TT_VAR/jump_folders.ttpath'; } | fzy )
 	item=$(expand_env "$item")
 	st open "$item"
 
