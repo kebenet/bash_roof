@@ -1,8 +1,12 @@
 #!/bin/sh
 
+
 fn_new(){
 	cd "$TT_BASH/micro"
 	newsh "$2"
+
+	wait
+	[ -f "$2" ] && st open "$2" 
 }
 
 
