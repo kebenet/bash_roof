@@ -2,6 +2,7 @@
 
 
 fn_one(){	# Select one from PIPE input
+
 	shift
 	data="$@"
 	item=`cat | fzy -e "$data"`
@@ -35,8 +36,8 @@ fn_onef(){	# Select one from PIPE input
 		echo "$item" | head -n 1
 	else
 		echo "$item" | fzy -q "$data"
-
 	fi
+
 }
 
 fn_two(){
