@@ -11,8 +11,8 @@ case $1 in
 esac
 
 
-[ -z "$item" ] && color 'Missing: Argument: name?' >&2  && exit 7
-[ ! "$item" ] && color 'Missing: Argument: name?'  >&2  && exit 7
+[ -z "$item" ] && empty-error  && exit 7
+[ ! "$item" ] && empty-error  && exit 7
 
 
 cp "$TT_VAR/template.sh" "$item"
