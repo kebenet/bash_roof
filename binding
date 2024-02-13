@@ -2,6 +2,21 @@
 
 terabomap=1
 
+_in_bash_roof() {
+    
+	    local cur prev opts
+	    COMPREPLY=()
+	    cur="${COMP_WORDS[COMP_CWORD]}"
+	    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+	    opts=$(cd "$TT_BASH" && fd "$cur" -tf -HI | tool lastf '/')
+	    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+	    return 0
+    
+}
+
+complete -F _in_bash_roof opn
+
 
 _git-add-all(){
 	item=$(gitt ls | liner join)

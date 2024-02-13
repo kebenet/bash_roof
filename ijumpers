@@ -2,10 +2,12 @@
 #FILE! JUMP operations
 
 cd_child(){
+
 	[ ! "$1" ] && color 'Cant : Empty Query!'
 	item=$(fd "$1" -td -d 1 -H)
 	cd "$item" || $pwd
 	ls
+
 }
 
 qq(){
@@ -19,11 +21,11 @@ qq(){
 
 	for item in "$@"
 	do
-		name=$(cat "$jumpdir" | fzy -e "$item" | head -n 1) # get full path
-
+		name=$(cat "$jumpdir" | fzy -e "$item" | head -n 1)
 		item=$(expand_env "$name")
 		pushd -n "$item"
 	done
+	
 }
 
 cdp(){
@@ -54,37 +56,13 @@ cdp(){
 }
 
 
-
 j(){
 
-	if [ "$#" -eq 0 ]; then
-	    message "EMPTY Arg: provide string to search.."
-	    return 7
-	fi
+	[ "$#" -eq 0 ] && message "EMPTY Arg: provide string to search.."&&  return 7
 
-	# support multiple words?
+	alif=$(fd "$1" -td -d 5 -1 -H -E __pycache__ -E lib -E Lib -E target -E binaries -E src -E registry -E toolchains ~ | fuzzy onef "$@")
 
-	jumpfile="${TT_VAR}/fd_exclude_folders.pattern"
-
-	#CODE! the exclude folder make fd more fast. less travel ops
-	exclude="$(cat "$jumpfile" | tr '\n' ' ')"
-
-	list=$(eval "fd ${1} -t d -H "$exclude" $TT_WORKSPACE")
-
-	items="$(echo ${list} | tr ' ' '\n' | fzy -e ${1})"
-	
-
-	count="$(echo "$items" | tr ' ' '\n'| wc -l)"
-
-	# echo "$count"
-
-	if [ "$count" -eq 1 ]; then
-    	cd "$items"
-	else
-    	# echo  "$items"
-	    cd "$(echo ${items} |tr ' ' '\n' | fzy -q ${1})"
-	fi
-
+	cd "$alif"
 	ls
 
 }
@@ -111,7 +89,4 @@ zz(){
 	fi
 	
 }
-
-
-
 
