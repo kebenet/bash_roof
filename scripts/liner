@@ -46,7 +46,11 @@ fn_getat(){	# awk get line at index
 }
 
 fn_uniq(){	# awk get uniq line no duplicate
-	awk '!seen[$0]++' "$3"
+	awk '!seen[$0]++ && NF' "$3"
+}
+
+fn_exist(){	# awk print if path is exist
+	awk '{if (system("[ -e $0 ]")) print $0}'
 }
 
 fn_count(){	# awk get line at index

@@ -1,26 +1,23 @@
 #!/bin/sh
 
 
-
-
 _cleanup(){
 
 	_trim_duplicate_lines "$TT_VAR/sub_recent_files.ttvar"
-	_trim_duplicate_lines "$TT_VAR/LastPWD.ttvar"
-	_filter_path "$TT_VAR/LastPWD.ttvar"
+	_trim_head "$TT_VAR/LastPWD.ttvar"
 	
 	> "$TT_TEMP"
 	_last_run
 }
 
 _trim_duplicate_lines(){
-	cat "$1" > "$TT_TEMP"
-	cat "$TT_TEMP" | awk '!seen[$0]++ && NF' > "$1"
+	cat "$1" | liner uniq > "$TT_TEMP"
+	cat "$TT_TEMP" > "$1"
 }
 
-_filter_path(){
-	cat "$1" > "$TT_TEMP"
-	cat "$TT_TEMP" | awk '{if (system("[ -e $0 ]")) print $0}' > "$1"
+_trim_head(){
+	head -n 7 "$1" | liner exist > "$TT_TEMP"
+	cat "$TT_TEMP" > "$1"
 }
 
 _last_run(){
