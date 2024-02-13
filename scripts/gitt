@@ -14,8 +14,13 @@ fn_add(){	# Add multiple files and commit msg
 
 fn_recent(){	# Add multiple files and commit msg
 
-	item=$(_get_recent_change "$2")
-	echo "gitt add $item"
+	item=$(git ls-files --modified| liner join ' '| warp head 'gitt add ')
+	echo "$item"
+
+	if confirm ; then
+		eval "$item"
+	fi
+	
 }
 
 _get_recent_change(){
@@ -63,7 +68,7 @@ fn_commit(){	# Add  commit msg only
 
 fn_ls(){	# list: uncommit files
 	_is_gitdir
-	git diff --name-only
+	git ls-files --modified
 }
 
 fn_mv(){	# list: uncommit files
