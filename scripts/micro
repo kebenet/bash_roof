@@ -2,11 +2,18 @@
 
 
 fn_new(){
+	
 	cd "$TT_BASH/micro"
-	newsh "$2"
+	alif="$2"
+	newsh "$alif"
 
 	wait
-	[ -f "$2" ] && st open "$2" 
+	if [ -e "$alif" ]; then
+		color "Add: file $alif : to git"
+		gitt add "$alif"
+		st open "$alif"
+	fi
+
 }
 
 
