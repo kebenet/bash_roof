@@ -1,0 +1,3 @@
+#!/bin/sh
+
+color "Empty: Arguments cant be empty" >&2

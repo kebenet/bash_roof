@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ ! "$1" ] && empty-error && exit 7
+
+alif=$(stat -c %s "$1")
+numfmt --to=iec-i --suffix=B "$alif"
+
