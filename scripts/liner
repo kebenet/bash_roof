@@ -39,6 +39,14 @@ fn_concat(){	# join multiple Lines by % into single line
 	awk -v idx="$2" '{ORS = (NR % idx ? " " : RS)} 1'
 }
 
+fn_num(){	# print & add numbers
+	awk '{ print NR ":" $0 }'
+}
+
+fn_eval(){	# Take args as command and Eval all Lines
+	awk '{cmd = "eval $0"; system(cmd)}'
+}
+
 #get line area --------------------------------------
 
 fn_getat(){	# awk get line at index

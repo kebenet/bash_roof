@@ -127,11 +127,6 @@ fn_eval(){	# Take args as command and Eval all Lines
 }
 
 
-fn_num(){	# print & add numbers
-	awk '{ print NR ":" $0 }'
-}
-
-
 #CODE! pipe is coming bro..
 if [ ! -t 0 ]; then
 	"fn_$1" "$@"
